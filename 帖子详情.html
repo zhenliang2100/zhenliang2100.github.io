@@ -1,0 +1,511 @@
+<!-- 帖子详情页 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>展业助手 - 员工论坛 - 帖子详情</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            accent: '#FF9F1C',
+            neutral: {
+              100: '#F9FAFB',
+              200: '#F3F4F6',
+              300: '#E5E7EB',
+              400: '#D1D5DB',
+              500: '#9CA3AF',
+              600: '#6B7280',
+              700: '#4B5563',
+              800: '#1F2937',
+              900: '#111827'
+            }
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+            'card-hover': '0 10px 30px rgba(0, 0, 0, 0.08)',
+          }
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .transition-custom {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+      }
+      @keyframes skeleton-loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-neutral-100 text-neutral-800 min-h-screen">
+
+  <!-- 主内容区 -->
+  <main class="p-4 max-w-full">
+    <!-- 顶部导航栏 -->
+     <div class="sticky top-0 bg-white shadow-sm z-10 p-4">
+       <div class="flex items-center">
+         <button onclick="window.location.href='论坛首页.html'" class="text-primary mr-4">
+           <i class="fa fa-arrow-left text-xl"></i>
+         </button>
+         <div class="flex items-center flex-1">
+           <img class="h-8 w-8 rounded-full object-cover mr-3" src="https://picsum.photos/200/200?random=2" alt="用户头像">
+           <div>
+             <div class="font-medium text-neutral-800 text-sm">王总监</div>
+             <div class="flex items-center text-xs text-neutral-500">
+               <i class="fa fa-calendar-o mr-1"></i>
+               <span>2025-06-15</span>
+             </div>
+           </div>
+         </div>
+       </div>
+     </div>
+     
+     <!-- 帖子内容区 -->
+     <div class="bg-white rounded-xl shadow-card p-6 mb-6">
+       <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+         <h1 class="text-xl font-bold text-neutral-800">最新延保话术模板，提升30%转化率！</h1>
+         <div class="flex items-center space-x-4 mt-2 md:mt-0">
+           <div class="flex items-center text-sm text-neutral-500">
+             <i class="fa fa-eye mr-1"></i>
+             <span>328 次浏览</span>
+           </div>
+           <div class="flex items-center text-sm text-neutral-500">
+             <i class="fa fa-comment-o mr-1"></i>
+             <span>24 条评论</span>
+           </div>
+         </div>
+       </div>
+       <div class="flex flex-wrap gap-2">
+         <span class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">#优秀话术</span>
+         <span class="px-3 py-1 bg-neutral-100 text-neutral-600 text-xs rounded-full">#转化率提升</span>
+       </div>
+     </div>
+      
+      <!-- 帖子内容 -->
+    <div class="prose max-w-none mb-6 bg-white border border-neutral-200 rounded-lg p-6">
+      <p class="text-lg text-neutral-700 mb-4">经过团队反复测试和优化，整理出一套针对不同客户类型的延保销售话术模板，包含初次接触、需求挖掘、产品介绍、异议处理和促成交易五个关键环节。</p>
+      
+      <h2 class="text-xl font-bold text-neutral-800 mt-6 mb-3">一、客户类型分类</h2>
+      <p class="text-neutral-700 mb-3">根据客户的购买行为、决策风格和沟通方式，我们将客户分为以下四类：</p>
+      <ol class="list-decimal pl-5 text-neutral-700 space-y-2 mb-4">
+        <li><strong>理性型客户</strong>：注重产品细节和性价比，决策谨慎</li>
+        <li><strong>冲动型客户</strong>：容易受情绪影响，决策迅速</li>
+        <li><strong>疑虑型客户</strong>：对产品缺乏信任，需要大量信息</li>
+        <li><strong>随意型客户</strong>：对产品兴趣不高，需要引导需求</li>
+      </ol>
+        <p class="text-lg text-neutral-700 mb-4">经过团队反复测试和优化，整理出一套针对不同客户类型的延保销售话术模板，包含初次接触、需求挖掘、产品介绍、异议处理和促成交易五个关键环节。</p>
+        
+        <h2 class="text-xl font-bold text-neutral-800 mt-6 mb-3">一、客户类型分类</h2>
+        <p class="text-neutral-700 mb-3">根据客户的购买行为、决策风格和沟通方式，我们将客户分为以下四类：</p>
+        <ol class="list-decimal pl-5 text-neutral-700 space-y-2 mb-4">
+          <li><strong>理性型客户</strong>：注重产品细节和性价比，决策谨慎</li>
+          <li><strong>冲动型客户</strong>：容易受情绪影响，决策迅速</li>
+          <li><strong>疑虑型客户</strong>：对产品缺乏信任，需要大量信息</li>
+          <li><strong>随意型客户</strong>：对产品兴趣不高，需要引导需求</li>
+        </ol>
+        
+        <h2 class="text-xl font-bold text-neutral-800 mt-6 mb-3">二、话术模板设计</h2>
+        
+        <h3 class="text-lg font-bold text-neutral-800 mt-4 mb-2">1. 初次接触环节</h3>
+        <p class="text-neutral-700 mb-3">针对不同类型客户的开场白设计：</p>
+        <pre class="bg-neutral-100 p-4 rounded-lg text-neutral-700 text-sm mb-4 overflow-x-auto mx-4">
+理性型客户："您好，我注意到您对我们的产品很感兴趣，我可以为您详细介绍一下我们的延保服务吗？我们的服务包含...</p>
+
+冲动型客户："先生/女士，我们现在有一个限时优惠的延保服务，非常适合您的需求，只需要额外支付少量费用，就可以获得..."
+
+疑虑型客户："您好，我知道您可能对延保服务有一些疑问，这很正常。我们的服务是由保险公司提供的，有严格的保障条款，您可以看看这份详细说明..."
+
+随意型客户："先生/女士，您平时使用电子产品比较多吧？我们的延保服务可以为您的产品提供全方位的保障，让您使用更加放心..."
+        </pre>
+        
+        <h3 class="text-lg font-bold text-neutral-800 mt-4 mb-2">2. 需求挖掘环节</h3>
+        <p class="text-neutral-700 mb-3">通过提问了解客户的真实需求：</p>
+        <pre class="bg-neutral-100 p-4 rounded-lg text-neutral-700 text-sm mb-4 overflow-x-auto">
+"您购买这个产品主要用于什么场景呢？"
+"您之前有过产品维修的经历吗？体验如何？"
+"您对产品的使用寿命有什么期望吗？"
+"如果产品出现故障，您最担心的是什么？"
+        </pre>
+        
+        <div class="text-center my-6 mx-4">
+          <img src="https://picsum.photos/800/400?random=10" alt="话术效果对比图" class="rounded-lg shadow-md mx-auto max-w-full">
+          <p class="text-sm text-neutral-500 mt-2">图1：使用新话术前后转化率对比</p>
+        </div>
+        
+        <h3 class="text-lg font-bold text-neutral-800 mt-4 mb-2">3. 产品介绍环节</h3>
+        <p class="text-neutral-700 mb-3">根据客户类型，突出不同的产品卖点：</p>
+        <ul class="list-disc pl-5 text-neutral-700 space-y-2 mb-4">
+          <li>理性型客户：强调服务的性价比、保障范围和条款细节</li>
+          <li>冲动型客户：强调限时优惠、赠品和快速理赔</li>
+          <li>疑虑型客户：强调品牌信誉、保险公司背景和成功案例</li>
+          <li>随意型客户：强调使用便利性、减少后顾之忧和增值服务</li>
+        </ul>
+        
+        <h2 class="text-xl font-bold text-neutral-800 mt-6 mb-3">三、实际应用案例</h2>
+        <p class="text-neutral-700 mb-3">分享几个实际应用中的成功案例：</p>
+        
+        <div class="bg-white border-l-4 border-primary p-4 rounded-r-lg mb-4">
+          <p class="font-medium text-neutral-800 mb-2">案例1：理性型客户转化</p>
+          <p class="text-neutral-700 mb-2">客户李先生购买了一台价值8000元的笔记本电脑，最初对延保服务兴趣不大。我们的销售顾问通过以下步骤成功促成转化：</p>
+          <ol class="list-decimal pl-5 text-neutral-700 space-y-1 mb-2">
+            <li>详细介绍延保服务的具体内容，包括维修范围、服务期限和理赔流程</li>
+            <li>对比市场上其他品牌的延保服务价格和条款</li>
+            <li>提供数据说明该型号电脑常见故障和维修成本</li>
+            <li>强调延保服务可以提高产品的二手保值率</li>
+          </ol>
+          <p class="text-neutral-700">最终李先生选择了三年期延保服务，额外支付了800元。</p>
+        </div>
+        
+        <p class="text-neutral-700 mb-3">这套话术模板在我们团队内部测试期间，转化率提升了30%，平均客单价提高了15%。希望对大家的销售工作有所帮助！</p>
+      </div>
+      
+      <!-- 投票模块 -->
+    <div class="bg-white rounded-xl shadow-card p-6 mb-6">
+      <h3 class="text-lg font-bold mb-4">您觉得这个话术模板有帮助吗？</h3>
+      <div class="flex flex-col space-y-3" id="vote-options">
+        <button class="vote-option px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-left" data-value="1">
+          <span class="font-medium">非常有用</span>
+          <span class="text-sm text-neutral-500 block mt-1">已帮助我提升30%转化率</span>
+        </button>
+        <button class="vote-option px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-left" data-value="2">
+          <span class="font-medium">有一定帮助</span>
+        </button>
+        <button class="vote-option px-4 py-3 border border-neutral-200 rounded-lg hover:bg-neutral-50 transition-colors text-left" data-value="3">
+          <span class="font-medium">帮助不大</span>
+          <span class="text-sm text-neutral-500 block mt-1">需要更多实际案例</span>
+        </button>
+      </div>
+      
+      <!-- 投票结果容器 -->
+      <div id="vote-results" class="mt-4 hidden">
+        <div class="flex items-center mb-2">
+          <span class="w-24 text-sm">非常有用</span>
+          <div class="flex-1 bg-neutral-200 rounded-full h-2">
+            <div class="bg-primary h-2 rounded-full vote-bar" data-value="1" style="width: 0%"></div>
+          </div>
+          <span class="ml-2 text-sm vote-percent" data-value="1">0%</span>
+        </div>
+        <div class="flex items-center mb-2">
+          <span class="w-24 text-sm">有一定帮助</span>
+          <div class="flex-1 bg-neutral-200 rounded-full h-2">
+            <div class="bg-primary h-2 rounded-full vote-bar" data-value="2" style="width: 0%"></div>
+          </div>
+          <span class="ml-2 text-sm vote-percent" data-value="2">0%</span>
+        </div>
+        <div class="flex items-center">
+          <span class="w-24 text-sm">帮助不大</span>
+          <div class="flex-1 bg-neutral-200 rounded-full h-2">
+            <div class="bg-primary h-2 rounded-full vote-bar" data-value="3" style="width: 0%"></div>
+          </div>
+          <span class="ml-2 text-sm vote-percent" data-value="3">0%</span>
+        </div>
+        <p class="text-sm text-neutral-500 mt-3">感谢您的投票！</p>
+      </div>
+    </div>
+      
+      <!-- 帖子内容底部操作区 -->
+      <div class="mt-8 mb-6 flex justify-center space-x-6">
+        <button id="like-btn" class="flex flex-col items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+          <i class="fa fa-thumbs-up text-xl mb-1"></i>
+          <span id="like-count" class="text-xs">56</span>
+        </button>
+        <button class="flex flex-col items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+          <i class="fa fa-share-alt text-xl mb-1"></i>
+          <span class="text-xs">分享</span>
+        </button>
+        <button class="flex flex-col items-center justify-center w-16 h-16 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+          <i class="fa fa-bookmark text-xl mb-1"></i>
+          <span class="text-xs">收藏</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- 评论区 -->
+    <div class="bg-white rounded-xl shadow-card p-6 mb-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold text-neutral-800">评论区</h2>
+        <span class="text-sm text-neutral-500">24 条评论</span>
+      </div>
+      
+      <!-- 评论输入框 -->
+      <div class="mb-8">
+        <div class="flex gap-3">
+          <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/200/200?random=1" alt="当前用户头像">
+          <div class="flex-1">
+            <textarea class="w-full border border-neutral-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all resize-none" rows="3" placeholder="写下你的评论..."></textarea>
+            <div class="flex justify-end mt-2">
+              <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">发布评论</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 评论列表 -->
+      <div class="space-y-6" id="comments-container">
+        <!-- 评论 1 -->
+        <div class="border-b border-neutral-100 pb-6">
+          <div class="flex gap-3">
+            <img class="h-10 w-10 rounded-full object-cover" src="https://picsum.photos/200/200?random=3" alt="评论用户头像">
+            <div class="flex-1">
+              <div class="flex justify-between items-start mb-1">
+                <h4 class="font-medium text-neutral-800">李经理</h4>
+                <span class="text-xs text-neutral-500">2025-06-16 10:23</span>
+              </div>
+              <p class="text-neutral-700 mb-2">非常实用的话术模板！特别是对客户类型的分类很精准，我上周用了其中针对疑虑型客户的话术，成功促成了一笔大单，感谢分享！</p>
+              <!-- 已完全删除回复内容 -->
+              <div class="mt-4 ml-4 pl-4 border-l-2 border-neutral-200">
+                <!-- 已删除回复内容 -->
+              </div>
+              
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 评论 2 -->
+        <div class="border-b border-neutral-100 pb-6">
+          <div class="flex gap-3 mt-3">
+            <img class="h-10 w-10 rounded-full object-cover mr-2" src="https://picsum.photos/200/200?random=4" alt="评论用户头像">
+            <div class="flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h4 class="font-medium text-neutral-800 mt-1">赵主管</h4>
+                <span class="text-xs text-neutral-500">2025-06-16 09:15</span>
+              </div>
+              <p class="text-neutral-700 mb-2">话术很全面，但感觉在实际应用中还需要根据客户的具体反应进行调整。想问一下，对于那种已经明确表示不需要的客户，你们有什么好的应对策略吗？</p>
+              <!-- 已完全删除点赞和回复相关元素 -->
+              
+              
+              
+            </div>
+          </div>
+        </div>
+        
+        <!-- 评论 3 -->
+        <div class="border-b border-neutral-100 pb-6">
+          <div class="flex gap-3 mt-3">
+            <img class="h-10 w-10 rounded-full object-cover mr-2" src="https://picsum.photos/200/200?random=5" alt="评论用户头像">
+            <div class="flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h4 class="font-medium text-neutral-800 mt-1">陈销售</h4>
+                <span class="text-xs text-neutral-500">2025-06-15 18:32</span>
+              </div>
+              <p class="text-neutral-700 mb-2">感谢分享！我想知道这些话术模板有没有经过A/B测试验证过效果？另外，对于新入职的销售，有没有简化版的话术推荐？</p>
+              <!-- 已完全删除点赞和回复相关元素 -->
+              
+              
+              
+            </div>
+          </div>
+        </div>
+        
+        <!-- 评论 4 -->
+        <div>
+          <div class="flex gap-3 mt-3">
+            <img class="h-10 w-10 rounded-full object-cover mr-2" src="https://picsum.photos/200/200?random=6" alt="评论用户头像">
+            <div class="flex-1">
+              <div class="flex justify-between items-start mb-2">
+                <h4 class="font-medium text-neutral-800 mt-1">刘顾问</h4>
+                <span class="text-xs text-neutral-500">2025-06-15 16:48</span>
+              </div>
+              <p class="text-neutral-700 mb-2">模板很详细，实用性很强。建议可以增加一些针对高端客户的话术，这类客户往往更关注服务的质量和品牌，而不是价格。</p>
+              <!-- 已完全删除作者的回复内容 -->
+              
+              
+              
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 加载更多评论 -->
+      <div class="text-center mt-8">
+        <button class="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-colors">
+          加载更多评论
+        </button>
+      </div>
+    </div>
+    
+
+  </main>
+
+  <!-- 返回顶部按钮 -->
+  <button id="back-to-top" class="fixed bottom-6 right-4 w-10 h-10 rounded-full bg-primary text-white shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-primary/90">
+    <i class="fa fa-arrow-up"></i>
+  </button>
+
+  <!-- JavaScript -->
+  <script>
+    // 投票功能
+    const voteOptions = document.querySelectorAll('.vote-option');
+    const voteResults = document.getElementById('vote-results');
+    const voteBars = document.querySelectorAll('.vote-bar');
+    const votePercents = document.querySelectorAll('.vote-percent');
+    
+    // 模拟初始投票数据
+    let voteData = {
+      '1': 65,
+      '2': 25,
+      '3': 10
+    };
+    
+    // 检查是否已投票
+    const hasVoted = localStorage.getItem('hasVoted');
+    
+    if (hasVoted) {
+      showVoteResults();
+      highlightSelectedOption(hasVoted);
+    }
+    
+    // 投票选项点击事件
+    voteOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        const value = this.getAttribute('data-value');
+        
+        // 更新投票数据（实际应用中应发送到服务器）
+        voteData[value] += 1;
+        
+        // 标记已投票
+        localStorage.setItem('hasVoted', value);
+        
+        // 高亮所选选项
+        highlightSelectedOption(value);
+        
+        // 显示投票结果
+        showVoteResults();
+      });
+    });
+    
+    function highlightSelectedOption(value) {
+      voteOptions.forEach(option => {
+        option.classList.remove('bg-primary/10', 'border-primary');
+        option.classList.add('border-neutral-200');
+        
+        if (option.getAttribute('data-value') === value) {
+          option.classList.add('bg-primary/10', 'border-primary');
+          option.classList.remove('border-neutral-200');
+        }
+      });
+    }
+    
+    function showVoteResults() {
+      // 计算总票数
+      const totalVotes = Object.values(voteData).reduce((a, b) => a + b, 0);
+      
+      // 更新投票结果
+      voteBars.forEach(bar => {
+        const value = bar.getAttribute('data-value');
+        const percent = Math.round((voteData[value] / totalVotes) * 100);
+        bar.style.width = `${percent}%`;
+      });
+      
+      votePercents.forEach(percent => {
+        const value = percent.getAttribute('data-value');
+        const percentValue = Math.round((voteData[value] / totalVotes) * 100);
+        percent.textContent = `${percentValue}%`;
+      });
+      
+      // 显示结果区域
+      voteResults.classList.remove('hidden');
+      
+      // 禁用所有投票选项
+      voteOptions.forEach(option => {
+        option.disabled = true;
+        option.classList.remove('hover:bg-neutral-50');
+      });
+    }
+    // 移动端菜单切换
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // 滚动时导航栏样式变化
+    const navbar = document.getElementById('navbar');
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 10) {
+        navbar.classList.add('shadow-md');
+      } else {
+        navbar.classList.remove('shadow-md');
+      }
+    });
+    
+    // 返回顶部按钮
+    const backToTopButton = document.getElementById('back-to-top');
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTopButton.classList.remove('opacity-0', 'invisible');
+        backToTopButton.classList.add('opacity-100', 'visible');
+      } else {
+        backToTopButton.classList.add('opacity-0', 'invisible');
+        backToTopButton.classList.remove('opacity-100', 'visible');
+      }
+    });
+    
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+    
+    // 点赞功能
+    const likeBtn = document.getElementById('like-btn');
+    const likeCount = document.getElementById('like-count');
+    let isLiked = false;
+    
+    likeBtn.addEventListener('click', () => {
+      if (isLiked) {
+        likeCount.textContent = parseInt(likeCount.textContent) - 1;
+        likeBtn.classList.remove('bg-primary', 'text-white');
+        likeBtn.classList.add('bg-neutral-100', 'text-neutral-700');
+      } else {
+        likeCount.textContent = parseInt(likeCount.textContent) + 1;
+        likeBtn.classList.remove('bg-neutral-100', 'text-neutral-700');
+        likeBtn.classList.add('bg-primary', 'text-white');
+      }
+      isLiked = !isLiked;
+    });
+    
+    // 评论回复功能
+    // 已删除评论回复功能相关代码
+  </script>
+</body>
+</html>

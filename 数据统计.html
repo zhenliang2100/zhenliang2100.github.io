@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>展业助手 - 后台管理 - 数据统计</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            accent: '#FF9F1C',
+            neutral: {
+              100: '#F9FAFB',
+              200: '#F3F4F6',
+              300: '#E5E7EB',
+              400: '#D1D5DB',
+              500: '#9CA3AF',
+              600: '#6B7280',
+              700: '#4B5563',
+              800: '#1F2937',
+              900: '#111827'
+            },
+            danger: '#FF5252',
+            warning: '#FFAB00',
+            success: '#00B42A'
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+            'card-hover': '0 10px 30px rgba(0, 0, 0, 0.08)',
+          }
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .transition-custom {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .table-shadow {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-neutral-100 text-neutral-800 min-h-screen flex flex-col">
+  <!-- 顶部导航栏 -->
+  <header class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center">
+            <i class="fa fa-bar-chart text-primary text-2xl mr-2"></i>
+            <span class="font-bold text-lg text-neutral-800">展业助手 - 数据统计</span>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="ml-4 flex items-center md:ml-6">
+            <button type="button" class="p-1 rounded-full text-neutral-500 hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-custom">
+              <i class="fa fa-bell-o text-xl"></i>
+            </button>
+            <div class="ml-3 relative">
+              <div class="flex items-center">
+                <img class="h-8 w-8 rounded-full object-cover" src="https://picsum.photos/200/200?random=admin" alt="管理员头像">
+                <span class="ml-2 text-sm font-medium text-neutral-700">管理员</span>
+                <i class="fa fa-angle-down ml-1 text-neutral-500"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- 侧边栏 -->
+    <aside class="bg-white w-64 shadow-sm z-20 hidden md:block">
+      <div class="h-full flex flex-col">
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          <a href="帖子管理.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-500 hover:text-primary hover:bg-primary/10 transition-custom">
+  <i class="fa fa-file-text-o w-5 h-5 mr-3"></i>
+  帖子管理
+</a>
+          <a href="评论管理.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-500 hover:text-primary hover:bg-primary/10 transition-custom">
+  <i class="fa fa-comments-o w-5 h-5 mr-3"></i>
+  评论管理
+</a>
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-primary/10 text-primary transition-custom">
+            <i class="fa fa-bar-chart w-5 h-5 mr-3"></i>
+            数据统计
+          </a>
+        </nav>
+      </div>
+    </aside>
+
+    <!-- 主要内容 -->
+    <main class="flex-1 overflow-y-auto bg-neutral-100 p-4 sm:p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-neutral-800">数据统计</h2>
+      </div>
+      
+      <!-- 页面内容将在这里添加 -->
+    
+    <!-- 时间筛选器 -->
+    <div class="bg-white rounded-lg shadow-card p-4 mb-6">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="flex items-center space-x-2">
+          <button class="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium">今日</button>
+          <button class="px-4 py-2 bg-white text-neutral-600 rounded-md text-sm font-medium hover:bg-neutral-100 transition-custom">昨日</button>
+          <button class="px-4 py-2 bg-white text-neutral-600 rounded-md text-sm font-medium hover:bg-neutral-100 transition-custom">近7天</button>
+          <button class="px-4 py-2 bg-white text-neutral-600 rounded-md text-sm font-medium hover:bg-neutral-100 transition-custom">近30天</button>
+          <button class="px-4 py-2 bg-white text-neutral-600 rounded-md text-sm font-medium hover:bg-neutral-100 transition-custom">
+            <i class="fa fa-calendar-o mr-1"></i> 自定义
+          </button>
+        </div>
+        <div class="flex items-center space-x-3">
+          
+        </div>
+      </div>
+    </div>
+
+    <!-- 核心概览区 -->
+    <section class="mb-8">
+      <h3 class="text-lg font-semibold text-neutral-800 mb-4">核心概览</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <!-- 内容规模卡片 -->
+        <div class="bg-white rounded-lg shadow-card p-5 hover:shadow-card-hover transition-custom">
+          <div class="flex justify-between items-start mb-4">
+            <h4 class="text-neutral-600 font-medium">内容规模</h4>
+            <button class="text-primary hover:text-primary/80 transition-custom">
+              <i class="fa fa-ellipsis-v"></i>
+            </button>
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">总帖子数（累计）</span>
+              <span class="text-neutral-800 font-semibold">12,846</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">今日新增帖子数</span>
+              <span class="text-success font-semibold">+248</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">本周新增帖子数</span>
+              <span class="text-success font-semibold">+1,356</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">待处理帖子数</span>
+              <span class="text-warning font-semibold">42 <span class="text-xs text-neutral-500 font-normal">(待审核/需优化)</span></span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 互动总量卡片 -->
+        <div class="bg-white rounded-lg shadow-card p-5 hover:shadow-card-hover transition-custom">
+          <div class="flex justify-between items-start mb-4">
+            <h4 class="text-neutral-600 font-medium">互动总量</h4>
+            <button class="text-primary hover:text-primary/80 transition-custom">
+              <i class="fa fa-ellipsis-v"></i>
+            </button>
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">今日总互动量</span>
+              <span class="text-neutral-800 font-semibold">15,628</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">本周总互动量</span>
+              <span class="text-neutral-800 font-semibold">89,342</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">平均单帖互动量</span>
+              <span class="text-neutral-800 font-semibold">6.95</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">环比增长率</span>
+              <span class="text-success font-semibold">+8.2%</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 重点提醒卡片 -->
+        <div class="bg-white rounded-lg shadow-card p-5 hover:shadow-card-hover transition-custom">
+          <div class="flex justify-between items-start mb-4">
+            <h4 class="text-neutral-600 font-medium">重点提醒</h4>
+            <button class="text-primary hover:text-primary/80 transition-custom">
+              <i class="fa fa-ellipsis-v"></i>
+            </button>
+          </div>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">高互动帖子数</span>
+              <span class="text-accent font-semibold">18 <span class="text-xs text-neutral-500 font-normal">(今日互动超阈值)</span></span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-neutral-500 text-sm">零互动帖子数</span>
+              <span class="text-danger font-semibold">32 <span class="text-xs text-neutral-500 font-normal">(发布后无互动)</span></span>
+            </div>
+           
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 帖子发送量分析 -->
+    <section class="mb-8">
+      <h3 class="text-lg font-semibold text-neutral-800 mb-4">帖子发送量分析</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- 发送趋势追踪 -->
+        <div class="bg-white rounded-lg shadow-card p-5">
+          <div class="flex justify-between items-center mb-6">
+            <h4 class="text-neutral-700 font-medium">发送趋势追踪</h4>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-md">日</button>
+              <button class="px-3 py-1 bg-white text-neutral-600 text-xs rounded-md hover:bg-neutral-100">周</button>
+              <button class="px-3 py-1 bg-white text-neutral-600 text-xs rounded-md hover:bg-neutral-100">月</button>
+            </div>
+          </div>
+          <div class="h-64">
+            <canvas id="postTrendChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 时段分布 -->
+        <div class="bg-white rounded-lg shadow-card p-5">
+          <h4 class="text-neutral-700 font-medium mb-6">时段分布</h4>
+          <div class="h-64">
+            <canvas id="postHourlyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- 类型占比 -->
+        <div class="bg-white rounded-lg shadow-card p-5">
+          <div class="flex justify-between items-center mb-6">
+            <h4 class="text-neutral-700 font-medium">类型占比</h4>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 bg-primary/10 text-primary text-xs rounded-md">发帖量</button>
+              <button class="px-3 py-1 bg-white text-neutral-600 text-xs rounded-md hover:bg-neutral-100">互动量</button>
+            </div>
+          </div>
+          <div class="h-64 flex justify-center items-center">
+            <canvas id="postTypeChart"></canvas>
+          </div>
+        </div>
+
+        <!-- 状态分布 -->
+        <div class="bg-white rounded-lg shadow-card p-5">
+          <h4 class="text-neutral-700 font-medium mb-4">状态分布</h4>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-neutral-200">
+              <thead>
+                <tr>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">状态</th>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">数量</th>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">占比</th>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">主要原因</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-neutral-200">
+                <tr>
+                  <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-700">已发布</td>
+                  <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-700">11,248</td>
+                  <td class="px-3 py-4 whitespace-nowrap">
+                    <div class="w-full bg-neutral-200 rounded-full h-2">
+                      <div class="bg-success h-2 rounded-full" style="width: 87%"></div>
+                    </div>
+                    <span class="text-xs text-neutral-500 mt-1 block">87.5%</span>
+                  </td>
+                  <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-500">-</td>
+                </tr>
+                <tr>
+                  <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-700">待审核</td>
+                  <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-700">1,256</td>
+                  <td class="px-3 py-4 whitespace-nowrap">
+                    <div class="w-full bg-neutral-200 rounded-full h-2">
+                      <div class="bg-warning h-2 rounded-full" style="width: 9.8%"></div>
+                    </div>
+                    <span class="text-xs text-neutral-500 mt-1 block">9.8%</span>
+                  </td>
+                  <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-500">内容审核中</td>
+                </tr>
+                <tr>
+                  <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-700">已下架</td>
+                  <td class="px-3 py-4 whitespace-nowrap text-sm text-neutral-700">342</td>
+                  <td class="px-3 py-4 whitespace-nowrap">
+                    <div class="w-full bg-neutral-200 rounded-full h-2">
+                      <div class="bg-danger h-2 rounded-full" style="width: 2.7%"></div>
+                    </div>
+                    <span class="text-xs text-neutral-500 mt-1 block">2.7%</span>
+                  </td>
+              
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 互动与效果分析 -->
+    <section>
+      <h3 class="text-lg font-semibold text-neutral-800 mb-4">互动与效果分析</h3>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- 互动核心指标 -->
+        <div class="bg-white rounded-lg shadow-card p-5">
+          <h4 class="text-neutral-700 font-medium mb-6">互动核心指标</h4>
+          <div class="h-64">
+            <canvas id="interactionTrendChart"></canvas>
+          </div>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+            <div class="text-center p-3 bg-neutral-50 rounded-lg">
+              <p class="text-neutral-500 text-xs mb-1">单帖平均互动率</p>
+              <p class="text-neutral-800 font-semibold">3.8%</p>
+            </div>
+            <div class="text-center p-3 bg-neutral-50 rounded-lg">
+              <p class="text-neutral-500 text-xs mb-1">评论率</p>
+              <p class="text-neutral-800 font-semibold">1.2%</p>
+            </div>
+            <div class="text-center p-3 bg-neutral-50 rounded-lg">
+              <p class="text-neutral-500 text-xs mb-1">点赞率</p>
+              <p class="text-neutral-800 font-semibold">2.1%</p>
+            </div>
+            <div class="text-center p-3 bg-neutral-50 rounded-lg">
+              <p class="text-neutral-500 text-xs mb-1">平均阅读量</p>
+              <p class="text-neutral-800 font-semibold">246</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 热门帖子排行 -->
+        <div class="bg-white rounded-lg shadow-card p-5">
+          <div class="flex justify-between items-center mb-4">
+            <h4 class="text-neutral-700 font-medium">完成的帖子榜单</h4>
+            <div class="relative">
+              <select class="appearance-none bg-neutral-50 border border-neutral-200 text-neutral-700 text-sm rounded-md py-2 pl-3 pr-8 focus:outline-none focus:ring-primary focus:border-primary">
+                <option>按查看数排序</option>
+                <option>按评论数排序</option>
+                <option>按点赞数排序</option>
+                <option>按发布时间排序</option>
+              </select>
+              <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-neutral-500">
+                <i class="fa fa-chevron-down text-xs"></i>
+              </div>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-neutral-200">
+              <thead>
+                <tr>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">排名</th>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">标题</th>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">发布时间</th>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">查看数</th>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">评论数</th>
+                  <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">点赞数</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-neutral-200">
+                <tr class="hover:bg-neutral-50 transition-custom">
+                  <td class="px-3 py-3 whitespace-nowrap text-sm">
+                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary text-white text-xs font-bold">1</span>
+                  </td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700 max-w-xs truncate">2023年第三季度产品更新公告及功能说明</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-500">2023-09-01 09:30</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">8,542</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">328</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">928</td>
+                </tr>
+                <tr class="hover:bg-neutral-50 transition-custom">
+                  <td class="px-3 py-3 whitespace-nowrap text-sm">
+                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary/80 text-white text-xs font-bold">2</span>
+                  </td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700 max-w-xs truncate">员工福利政策调整通知</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-500">2023-09-02 14:15</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">6,231</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">256</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">728</td>
+                </tr>
+                <tr class="hover:bg-neutral-50 transition-custom">
+                  <td class="px-3 py-3 whitespace-nowrap text-sm">
+                    <span class="flex items-center justify-center w-6 h-6 rounded-full bg-primary/60 text-white text-xs font-bold">3</span>
+                  </td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700 max-w-xs truncate">10月团建活动报名开始</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-500">2023-09-05 10:00</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">4,892</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">189</td>
+                  <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">563</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- 低互动帖子预警 -->
+      <div class="bg-white rounded-lg shadow-card p-5">
+        <h4 class="text-neutral-700 font-medium mb-4">低互动帖子预警</h4>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-neutral-200">
+            <thead>
+              <tr>
+                <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">标题</th>
+                <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">发布时间</th>
+                <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">类型</th>
+                <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">互动量</th>
+                <th class="px-3 py-3 bg-neutral-50 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">操作</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-neutral-200">
+              <tr class="hover:bg-neutral-50 transition-custom">
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700 max-w-xs truncate">关于办公室卫生管理的通知</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-500">2023-09-01 16:45</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">公告</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-danger font-medium">0</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm">
+                  <button class="text-primary hover:text-primary/80 mr-3">编辑</button>
+                  <button class="text-danger hover:text-danger/80">下架</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-neutral-50 transition-custom">
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700 max-w-xs truncate">IT设备借用流程更新</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-500">2023-09-03 11:20</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">流程</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-danger font-medium">3</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm">
+                  <button class="text-primary hover:text-primary/80 mr-3">编辑</button>
+                  <button class="text-danger hover:text-danger/80">下架</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-neutral-50 transition-custom">
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700 max-w-xs truncate">会议室预订系统使用指南</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-500">2023-09-04 09:15</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-neutral-700">指南</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm text-danger font-medium">5</td>
+                <td class="px-3 py-3 whitespace-nowrap text-sm">
+                  <button class="text-primary hover:text-primary/80 mr-3">编辑</button>
+                  <button class="text-danger hover:text-danger/80">下架</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-4 text-center">
+          <button class="text-primary text-sm hover:underline">查看全部预警帖子</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  </div>
+
+  <!-- 移动端侧边栏切换按钮 -->
+  <button id="sidebar-toggle" class="fixed bottom-4 right-4 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-20 md:hidden">
+    <i class="fa fa-bars"></i>
+  </button>
+
+  <script>
+    // 图表初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 帖子趋势图表
+      const postTrendCtx = document.getElementById('postTrendChart').getContext('2d');
+      const postTrendChart = new Chart(postTrendCtx, {
+        type: 'line',
+        data: {
+          labels: ['1日', '2日', '3日', '4日', '5日', '6日', '7日'],
+          datasets: [{
+            label: '发帖量',
+            data: [185, 210, 195, 230, 280, 260, 248],
+            borderColor: '#165DFF',
+            backgroundColor: 'rgba(22, 93, 255, 0.1)',
+            tension: 0.4,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { mode: 'index', intersect: false }
+          },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+
+      // 时段分布图表
+      const postHourlyCtx = document.getElementById('postHourlyChart').getContext('2d');
+      const postHourlyChart = new Chart(postHourlyCtx, {
+        type: 'bar',
+        data: {
+          labels: ['0-3', '3-6', '6-9', '9-12', '12-15', '15-18', '18-21', '21-24'],
+          datasets: [{
+            label: '发帖量',
+            data: [25, 15, 45, 180, 120, 160, 210, 130],
+            backgroundColor: '#36D399',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+
+      // 帖子类型占比图表
+      const postTypeCtx = document.getElementById('postTypeChart').getContext('2d');
+      const postTypeChart = new Chart(postTypeCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['图文', '视频', '活动帖', '公告', '其他'],
+          datasets: [{
+            data: [45, 25, 15, 10, 5],
+            backgroundColor: ['#165DFF', '#36D399', '#FF9F1C', '#9CA3AF', '#6B7280'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '70%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { padding: 20, boxWidth: 12 }
+            }
+          }
+        }
+      });
+
+      // 互动趋势图表
+      const interactionTrendCtx = document.getElementById('interactionTrendChart').getContext('2d');
+      const interactionTrendChart = new Chart(interactionTrendCtx, {
+        type: 'line',
+        data: {
+          labels: ['1日', '2日', '3日', '4日', '5日', '6日', '7日'],
+          datasets: [
+            {
+              label: '评论数',
+              data: [120, 150, 130, 180, 210, 190, 170],
+              borderColor: '#165DFF',
+              backgroundColor: 'transparent',
+              tension: 0.4
+            },
+            {
+              label: '点赞数',
+              data: [320, 380, 350, 420, 480, 450, 410],
+              borderColor: '#36D399',
+              backgroundColor: 'transparent',
+              tension: 0.4
+            },
+            {
+              label: '阅读数',
+              data: [5200, 5800, 5500, 6200, 6800, 6500, 6100],
+              borderColor: '#FF9F1C',
+              backgroundColor: 'transparent',
+              tension: 0.4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'top', align: 'end' } },
+          scales: {
+            y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } },
+            x: { grid: { display: false } }
+          }
+        }
+      });
+    });
+
+    // 移动端侧边栏切换功能
+    document.getElementById('sidebar-toggle').addEventListener('click', function() {
+      const sidebar = document.querySelector('aside');
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+    // 响应式处理
+    function handleResize() {
+      const sidebar = document.querySelector('aside');
+      if (window.innerWidth >= 768) {
+        sidebar.classList.remove('-translate-x-full');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+      }
+    }
+
+    // 初始调用
+    handleResize();
+    window.addEventListener('resize', handleResize);
+  </script>
+</body>
+</html>

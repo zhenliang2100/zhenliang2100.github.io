@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>展业助手 - 后台管理 - 帖子管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            accent: '#FF9F1C',
+            neutral: {
+              100: '#F9FAFB',
+              200: '#F3F4F6',
+              300: '#E5E7EB',
+              400: '#D1D5DB',
+              500: '#9CA3AF',
+              600: '#6B7280',
+              700: '#4B5563',
+              800: '#1F2937',
+              900: '#111827'
+            },
+            danger: '#FF5252',
+            warning: '#FFAB00',
+            success: '#00B42A'
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+            'card-hover': '0 10px 30px rgba(0, 0, 0, 0.08)',
+          }
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .transition-custom {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .table-shadow {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-neutral-100 text-neutral-800 min-h-screen flex flex-col">
+  <!-- 顶部导航栏 -->
+  <header class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center">
+            <i class="fa fa-comments text-primary text-2xl mr-2"></i>
+            <span class="font-bold text-lg text-neutral-800">展业助手 - 帖子管理</span>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="ml-4 flex items-center md:ml-6">
+            <button type="button" class="p-1 rounded-full text-neutral-500 hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-custom">
+              <i class="fa fa-bell-o text-xl"></i>
+            </button>
+            <div class="ml-3 relative">
+              <div class="flex items-center">
+                <img class="h-8 w-8 rounded-full object-cover" src="https://picsum.photos/200/200?random=admin" alt="管理员头像">
+                <span class="ml-2 text-xs font-medium text-neutral-700">管理员</span>
+                <i class="fa fa-angle-down ml-1 text-neutral-500"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- 侧边栏 -->
+    <aside class="bg-white w-64 shadow-sm z-20 hidden md:block">
+      <div class="h-full flex flex-col">
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+    
+          <a href="帖子管理.html"
+            class="flex items-center px-3 py-1.5 text-xs font-medium rounded-md bg-primary/10 text-primary transition-custom">
+            <i class="fa fa-file-text-o w-5 h-5 mr-3"></i>
+            帖子管理
+          </a>
+          <a href="#"
+            class="flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-neutral-500 hover:text-primary hover:bg-primary/10 transition-custom">
+            <i class="fa fa-comments-o w-5 h-5 mr-3"></i>
+            评论管理
+          </a>
+    
+          <a href="数据统计.html"
+            class="flex items-center px-3 py-1.5 text-xs font-medium rounded-md text-neutral-500 hover:text-primary hover:bg-primary/10 transition-custom">
+            <i class="fa fa-bar-chart w-5 h-5 mr-3"></i>
+            数据统计
+          </a>
+    
+        </nav>
+      </div>
+    </aside>
+
+  <!-- 主内容区 -->
+  <main class="flex-1 overflow-y-auto bg-neutral-100 p-4 sm:p-6">
+    <div class="max-w-4xl mx-auto bg-white rounded-md shadow-sm p-6">
+      <h2 class="text-xl font-semibold text-neutral-800 mb-4">发布新帖子</h2>
+      
+      <!-- 帖子标题 -->
+      <div class="mb-3">
+        <label class="block text-xs font-medium text-neutral-700 mb-0.25">帖子标题</label>
+        <input type="text" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入帖子标题">
+      </div>
+      
+      <!-- 帖子封面 -->
+      <div class="mb-3">
+        <label class="block text-xs font-medium text-neutral-700 mb-0.25">帖子封面</label>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="flex-1">
+            <div class="border-2 border-dashed border-neutral-300 rounded-md p-4 text-center cursor-pointer hover:border-primary transition-custom">
+              <i class="fa fa-cloud-upload text-3xl text-neutral-400 mb-2"></i>
+              <p class="text-sm text-neutral-500 mb-1">点击上传封面图片</p>
+              <p class="text-xs text-neutral-400">支持JPG/PNG格式，建议尺寸1200×630px</p>
+              <input type="file" class="hidden" accept="image/jpeg,image/png">
+            </div>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm text-neutral-700 mb-2">或选择默认封面</p>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="aspect-video bg-neutral-200 rounded cursor-pointer hover:ring-2 hover:ring-primary transition-custom"></div>
+              <div class="aspect-video bg-neutral-200 rounded cursor-pointer hover:ring-2 hover:ring-primary transition-custom"></div>
+              <div class="aspect-video bg-neutral-200 rounded cursor-pointer hover:ring-2 hover:ring-primary transition-custom"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      
+
+      <!-- 帖子内容 -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-neutral-700 mb-1">帖子内容</label>
+        <textarea class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent min-h-[200px]" placeholder="请输入帖子详细内容"></textarea>
+      </div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          const enableBidCheckbox = document.getElementById('enableBid');
+          const bidSection = document.getElementById('bidSection');
+          
+          // 初始隐藏投标区域
+          bidSection.style.display = 'none';
+          
+          // 监听复选框变化
+          enableBidCheckbox.addEventListener('change', function() {
+            bidSection.style.display = this.checked ? 'block' : 'none';
+          });
+          
+          // 添加投标选项
+          document.getElementById('addOption').addEventListener('click', function() {
+            const newOption = document.createElement('div');
+            newOption.className = 'flex items-center gap-2 mb-2 bid-option-item';
+            newOption.innerHTML = `
+              <input type="text" class="flex-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入选项内容">
+              <button type="button" class="text-neutral-500 hover:text-red-500 delete-option">
+                <i class="fa fa-times"></i>
+              </button>
+            `;
+            document.getElementById('bidOptions').appendChild(newOption);
+          });
+          
+          // 删除投标选项
+          document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-option') || 
+                e.target.parentElement.classList.contains('delete-option')) {
+              const optionItem = e.target.closest('.bid-option-item');
+              if (optionItem) optionItem.remove();
+            }
+          });
+        });
+      </script>
+      
+      <!-- 选择标签 -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-neutral-700 mb-1">选择标签</label>
+        <div class="flex flex-wrap gap-3">
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="rounded border-neutral-300 text-primary focus:ring-primary">
+            <span class="ml-2 text-sm text-neutral-700">公告</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="rounded border-neutral-300 text-primary focus:ring-primary">
+            <span class="ml-2 text-sm text-neutral-700">讨论</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="checkbox" class="rounded border-neutral-300 text-primary focus:ring-primary">
+            <span class="ml-2 text-sm text-neutral-700">问答</span>
+          </label>
+        </div>
+      </div>
+      
+      <!-- 业务类型 Combobox -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-neutral-700 mb-1">业务类型</label>
+        <div class="relative" x-data="{ open: false, selected: '', selectedValue: '', searchTerm: '' }" @click.away="open = false">
+          <button
+            type="button"
+            class="w-full px-3 py-2 text-sm leading-tight text-left bg-white border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-150 ease-in-out hover:border-neutral-400 flex justify-between items-center"
+            @click="open = !open"
+          >
+            <span x-text="selected || '请选择业务类型'"></span>
+            <i class="fa fa-chevron-down text-xs w-4 h-4 text-neutral-500 transition-transform duration-200" :class="open ? 'transform rotate-180' : ''"></i>
+          </button>
+          <div
+            class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-neutral-200 max-h-60 overflow-y-auto focus:outline-none" :class="open ? 'block' : 'hidden'"
+            role="menu"
+            aria-orientation="vertical"
+          >
+            <div class="p-1">
+              <input type="text" placeholder="搜索业务类型..." class="w-full px-3 py-2 text-sm border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent mb-1"
+                x-model="searchTerm">
+              <input type="hidden" name="business_type" x-model="selectedValue">
+              <div class="space-y-1" x-data="{ items: [
+                { label: '保险业务', value: 'insurance' },
+                { label: '投资业务', value: 'investment' },
+                { label: '贷款业务', value: 'loan' }
+              ]}">
+                <template x-for="item in items.filter(i => i.label.toLowerCase().includes(searchTerm.toLowerCase()))" :key="item.value">
+                  <button
+                    type="button"
+                    class="w-full text-left px-3 py-2 rounded-md text-sm leading-tight hover:bg-primary/10 hover:text-primary focus:outline-none focus:bg-primary/10 focus:text-primary"
+                    role="menuitem"
+                    @click="selected = item.label; selectedValue = item.value; open = false"
+                  >
+                    <span x-text="item.label"></span>
+                  </button>
+                </template>
+                <div x-show="items.filter(i => i.label.toLowerCase().includes(searchTerm.toLowerCase())).length === 0" class="text-center py-1 text-xs text-gray-500">
+                  没有找到匹配项
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 所属大区 Combobox -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-neutral-700 mb-1">所属大区</label>
+        <div class="relative" x-data="{ open: false, selected: '', selectedValue: '', searchTerm: '' }" @click.away="open = false">
+          <button
+            type="button"
+            class="w-full px-3 py-2 text-sm leading-tight text-left bg-white border border-neutral-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition duration-150 ease-in-out hover:border-neutral-400 flex justify-between items-center"
+            @click="open = !open"
+          >
+            <span x-text="selected || '请选择大区'"></span>
+            <i class="fa fa-chevron-down text-xs w-4 h-4 text-neutral-500 transition-transform duration-200" :class="open ? 'transform rotate-180' : ''"></i>
+          </button>
+          <div
+            class="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md border border-neutral-200 max-h-60 overflow-y-auto focus:outline-none" :class="open ? 'block' : 'hidden'"
+            role="menu"
+            aria-orientation="vertical"
+          >
+            <div class="p-1">
+              <input type="text" placeholder="搜索大区..." class="w-full px-3 py-2 text-sm border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent mb-1"
+                x-model="searchTerm">
+              <input type="hidden" name="region" x-model="selectedValue">
+              <div class="space-y-1" x-data="{ items: [
+                { label: '北方大区', value: 'north' },
+                { label: '南方大区', value: 'south' },
+                { label: '东方大区', value: 'east' },
+                { label: '西方大区', value: 'west' }
+              ]}">
+                <template x-for="item in items.filter(i => i.label.toLowerCase().includes(searchTerm.toLowerCase()))" :key="item.value">
+                  <button
+                    type="button"
+                    class="w-full px-3 py-2 rounded-md text-sm leading-tight hover:bg-primary/10 hover:text-primary focus:outline-none focus:bg-primary/10 focus:text-primary"
+                    role="menuitem"
+                    @click="selected = item.label; selectedValue = item.value; open = false"
+                  >
+                    <span x-text="item.label"></span>
+                  </button>
+                </template>
+                <div x-show="items.filter(i => i.label.toLowerCase().includes(searchTerm.toLowerCase())).length === 0" class="text-center py-2 text-xs text-neutral-500">
+                  没有找到匹配项
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 投标功能 -->
+      <div class="mb-6 border-t pt-6 mt-6">
+        <div class="flex items-center mb-4">
+          <input type="checkbox" id="enableBid" class="w-4 h-4 text-primary focus:ring-primary border-neutral-300 rounded">
+          <label for="enableBid" class="ml-2 block text-sm font-medium text-neutral-700">启用投标功能</label>
+        </div>
+
+        <div id="bidSection" class="pl-6 border-l-2 border-neutral-200 mt-2">
+          <!-- 投标标题 -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-neutral-700 mb-1">投标标题</label>
+            <input type="text" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入投标标题">
+          </div>
+
+          <!-- 投标选项 -->
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-neutral-700 mb-2">投标选项</label>
+            <div id="bidOptions">
+              <!-- 选项1 -->
+              <div class="flex items-center gap-2 mb-2 bid-option-item">
+                <input type="text" class="flex-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入选项内容">
+                <button type="button" class="text-neutral-500 hover:text-red-500 delete-option">
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+
+              <!-- 选项2 -->
+              <div class="flex items-center gap-2 mb-2 bid-option-item">
+                <input type="text" class="flex-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入选项内容">
+                <button type="button" class="text-neutral-500 hover:text-red-500 delete-option">
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- 添加选项按钮 -->
+            <button type="button" id="addOption" class="mt-2 inline-flex items-center px-3 py-1 border border-neutral-300 shadow-sm text-sm leading-4 font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+              <i class="fa fa-plus mr-1"></i> 添加选项
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 置顶设置 -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-neutral-700 mb-1">置顶设置</label>
+        <div class="flex gap-4">
+          <label class="inline-flex items-center">
+            <input type="radio" name="sticky" class="text-primary focus:ring-primary" checked>
+            <span class="ml-2 text-sm text-neutral-700">不置顶</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="radio" name="sticky" class="text-primary focus:ring-primary">
+            <span class="ml-2 text-sm text-neutral-700">置顶</span>
+          </label>
+        </div>
+      </div>
+      
+      
+      
+      <!-- 发送时间 -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-neutral-700 mb-1">发送时间</label>
+        <div class="flex gap-4">
+          <label class="inline-flex items-center">
+            <input type="radio" name="send_time" class="text-primary focus:ring-primary" checked>
+            <span class="ml-2 text-sm text-neutral-700">立即发送</span>
+          </label>
+          <label class="inline-flex items-center">
+            <input type="radio" name="send_time" class="text-primary focus:ring-primary" id="scheduleRadio">
+            <span class="ml-2 text-sm text-neutral-700">定时发送</span>
+          </label>
+        </div>
+        <div id="schedulePicker" class="mt-4 hidden">
+          <div class="flex items-center gap-4">
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-neutral-700 mb-1">日期</label>
+              <input type="date" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+            </div>
+            <div class="flex-1">
+              <label class="block text-sm font-medium text-neutral-700 mb-1">时间</label>
+              <input type="time" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" step="60">
+            </div>
+          </div>
+          <p class="mt-2 text-xs text-neutral-500"><i class="fa fa-info-circle mr-1"></i>定时发送将在指定时间自动发布帖子</p>
+        </div>
+      </div>
+      <script>
+        document.getElementById('scheduleRadio').addEventListener('change', function() {
+          const picker = document.getElementById('schedulePicker');
+          picker.style.display = this.checked ? 'block' : 'none';
+        });
+      </script>
+      
+      <!-- 操作按钮 -->
+      <div class="flex justify-end gap-3 pt-4 border-t border-neutral-200">
+        <button type="button" class="px-4 py-2 border border-neutral-300 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom">
+          取消
+        </button>
+        <button id="publishBtn" type="button" class="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-custom">
+          发布帖子
+        </button>
+
+        <!-- 成功提示框 -->
+        <div id="successToast" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+          <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"></div>
+          <div class="relative bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 transform transition-all animate-in fade-in zoom-in-95 duration-300">
+            <div class="text-center">
+              <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-success/10 text-success mb-4">
+                <i class="fa fa-check text-2xl"></i>
+              </div>
+              <h3 class="text-lg font-medium text-neutral-900">发布成功</h3>
+              <p class="mt-2 text-neutral-600">您的帖子已成功发布，即将返回帖子管理页面。</p>
+            </div>
+          </div>
+        </div>
+
+        <script>
+          // 发布按钮点击事件
+          document.getElementById('publishBtn').addEventListener('click', function() {
+            // 显示成功提示框
+            const toast = document.getElementById('successToast');
+            toast.classList.remove('hidden');
+
+            // 2秒后跳转到帖子管理页面
+            setTimeout(() => {
+              window.location.href = '帖子管理.html';
+            }, 2000);
+          });
+        </script>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

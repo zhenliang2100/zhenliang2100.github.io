@@ -1,0 +1,661 @@
+<!-- 评论管理后台页面 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>展业助手 - 后台管理 - 评论管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 - 保持与帖子详情页一致 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            accent: '#FF9F1C',
+            neutral: {
+              100: '#F9FAFB',
+              200: '#F3F4F6',
+              300: '#E5E7EB',
+              400: '#D1D5DB',
+              500: '#9CA3AF',
+              600: '#6B7280',
+              700: '#4B5563',
+              800: '#1F2937',
+              900: '#111827'
+            },
+            danger: '#FF5252',
+            warning: '#FFAB00',
+            success: '#00B42A'
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+            'card-hover': '0 10px 30px rgba(0, 0, 0, 0.08)',
+          }
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .transition-custom {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .table-shadow {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-neutral-100 text-neutral-800 min-h-screen flex flex-col">
+
+  <!-- 顶部导航栏 -->
+  <header class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center">
+            <i class="fa fa-comments text-primary text-2xl mr-2"></i>
+            <span class="font-bold text-lg text-neutral-800">展业助手 - 评论管理</span>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="ml-4 flex items-center md:ml-6">
+            <button type="button" class="p-1 rounded-full text-neutral-500 hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-custom">
+              <i class="fa fa-bell-o text-xl"></i>
+            </button>
+            <div class="ml-3 relative">
+              <div class="flex items-center">
+                <img class="h-8 w-8 rounded-full object-cover" src="https://picsum.photos/200/200?random=admin" alt="管理员头像">
+                <span class="ml-2 text-sm font-medium text-neutral-700">管理员</span>
+                <i class="fa fa-angle-down ml-1 text-neutral-500"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- 侧边栏 -->
+    <aside class="bg-white w-64 shadow-sm z-20 hidden md:block">
+      <div class="h-full flex flex-col">
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          
+          <a href="帖子管理.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-500 hover:text-primary hover:bg-primary/10 transition-custom">
+  <i class="fa fa-file-text-o w-5 h-5 mr-3"></i>
+  帖子管理
+</a>
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-primary/10 text-primary transition-custom">
+            <i class="fa fa-comments-o w-5 h-5 mr-3"></i>
+            评论管理
+          </a>
+          
+          <a href="数据统计.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-500 hover:text-primary hover:bg-primary/10 transition-custom">
+  <i class="fa fa-bar-chart w-5 h-5 mr-3"></i>
+  数据统计
+</a>
+          
+        </nav>
+      </div>
+    </aside>
+
+    <!-- 主要内容 -->
+    <main class="flex-1 overflow-y-auto bg-neutral-100 p-4 sm:p-6">
+      <div class="max-w-full mx-auto">
+        <!-- 页面标题 -->
+        <div class="mb-6">
+          <h1 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-neutral-800">评论管理</h1>
+        </div>
+
+        <!-- 搜索和筛选区 -->
+        <div class="bg-white rounded-xl shadow-card p-4 mb-6">
+          <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div class="flex flex-1 max-w-md">
+              <div class="relative flex-1">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <i class="fa fa-search text-neutral-400"></i>
+                </div>
+                <input type="text" id="search-comments" class="block w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" placeholder="搜索评论内容、用户或帖子ID...">
+              </div>
+              <button type="button" class="ml-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">
+                <i class="fa fa-search mr-1"></i> 搜索
+              </button>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <div class="relative">
+                <select class="block w-full pl-3 pr-10 py-2 text-base border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none bg-white">
+                  <option>所有状态</option>
+                  <option>已置顶</option>
+                  <option>已屏蔽</option>
+                  <option>未审核</option>
+             
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <i class="fa fa-chevron-down text-neutral-400"></i>
+                </div>
+              </div>
+              <div class="relative">
+                <select class="block w-full pl-3 pr-10 py-2 text-base border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none bg-white">
+                  <option>所有时间</option>
+                  <option>今天</option>
+                  <option>本周</option>
+                  <option>本月</option>
+                  <option>自定义...</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                  <i class="fa fa-chevron-down text-neutral-400"></i>
+                </div>
+              </div>
+              <button type="button" class="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-colors">
+                <i class="fa fa-filter mr-1"></i> 重置筛选
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 评论列表 -->
+        <div class="bg-white rounded-xl shadow-card overflow-hidden mb-6">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-neutral-200">
+              <thead class="bg-neutral-50">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">评论ID</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">帖子信息</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">用户</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">评论内容</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">时间</th>
+                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">状态</th>
+                  <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">操作</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-neutral-200">
+                <!-- 置顶评论 -->
+                <tr class="bg-primary/5 hover:bg-neutral-50 transition-custom">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">#C10086</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-neutral-900">最新延保话术模板</div>
+                    <div class="text-xs text-neutral-500">帖子ID: #P202306</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-8 w-8">
+                        <img class="h-8 w-8 rounded-full object-cover" src="https://picsum.photos/200/200?random=3" alt="">
+                      </div>
+                      <div class="ml-3">
+                        <div class="text-sm font-medium text-neutral-900">李经理</div>
+                        <div class="text-xs text-neutral-500">销售一部</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm text-neutral-700 max-w-xs truncate">非常实用的话术模板！特别是对客户类型的分类很精准，我上周用了其中针对疑虑型客户的话术，成功促成了一笔大单，感谢分享！</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">2025-06-16 10:23</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-primary/10 text-primary">已置顶</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button type="button" class="text-neutral-500 hover:text-primary mr-3 transition-custom" title="取消置顶">
+                      <i class="fa fa-arrow-down"></i>
+                    </button>
+                    <button type="button" class="text-neutral-500 hover:text-danger mr-3 transition-custom" title="屏蔽">
+                      <i class="fa fa-ban"></i>
+                    </button>
+                    <button type="button" class="text-neutral-500 hover:text-neutral-700 transition-custom" title="查看详情">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- 正常评论 -->
+                <tr class="hover:bg-neutral-50 transition-custom">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">#C10087</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-neutral-900">最新延保话术模板</div>
+                    <div class="text-xs text-neutral-500">帖子ID: #P202306</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-8 w-8">
+                        <img class="h-8 w-8 rounded-full object-cover" src="https://picsum.photos/200/200?random=4" alt="">
+                      </div>
+                      <div class="ml-3">
+                        <div class="text-sm font-medium text-neutral-900">赵主管</div>
+                        <div class="text-xs text-neutral-500">销售二部</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm text-neutral-700 max-w-xs truncate">话术很全面，但感觉在实际应用中还需要根据客户的具体反应进行调整。想问一下，对于那种已经明确表示不需要的客户，你们有什么好的应对策略吗？</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">2025-06-16 09:15</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-warning/10 text-warning">未审核</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button type="button" class="text-neutral-500 hover:text-primary mr-3 transition-custom" title="置顶">
+                      <i class="fa fa-arrow-up"></i>
+                    </button>
+                    <button type="button" class="text-neutral-500 hover:text-danger mr-3 transition-custom" title="屏蔽">
+                      <i class="fa fa-ban"></i>
+                    </button>
+                    <button type="button" class="text-neutral-500 hover:text-neutral-700 transition-custom" title="查看详情">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- 已屏蔽评论 -->
+                <tr class="hover:bg-neutral-50 transition-custom opacity-60">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">#C10088</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-neutral-900">最新延保话术模板</div>
+                    <div class="text-xs text-neutral-500">帖子ID: #P202306</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-8 w-8">
+                        <img class="h-8 w-8 rounded-full object-cover" src="https://picsum.photos/200/200?random=7" alt="">
+                      </div>
+                      <div class="ml-3">
+                        <div class="text-sm font-medium text-neutral-900">匿名用户</div>
+                        <div class="text-xs text-neutral-500">未知部门</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm text-neutral-700 max-w-xs line-through">这是什么垃圾话术，完全不实用，浪费时间！</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">2025-06-15 22:47</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-danger/10 text-danger">已屏蔽</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button type="button" class="text-neutral-500 hover:text-primary mr-3 transition-custom" title="取消屏蔽">
+                      <i class="fa fa-check-circle"></i>
+                    </button>
+                    <button type="button" class="text-neutral-500 hover:text-neutral-700 transition-custom" title="查看详情">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- 更多评论... -->
+                <tr class="hover:bg-neutral-50 transition-custom">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">#C10089</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-neutral-900">最新延保话术模板</div>
+                    <div class="text-xs text-neutral-500">帖子ID: #P202306</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-8 w-8">
+                        <img class="h-8 w-8 rounded-full object-cover" src="https://picsum.photos/200/200?random=5" alt="">
+                      </div>
+                      <div class="ml-3">
+                        <div class="text-sm font-medium text-neutral-900">陈销售</div>
+                        <div class="text-xs text-neutral-500">销售三部</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm text-neutral-700 max-w-xs truncate">感谢分享！我想知道这些话术模板有没有经过A/B测试验证过效果？另外，对于新入职的销售，有没有简化版的话术推荐？</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">2025-06-15 18:32</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-success/10 text-success">正常</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button type="button" class="text-neutral-500 hover:text-primary mr-3 transition-custom" title="置顶">
+                      <i class="fa fa-arrow-up"></i>
+                    </button>
+                    <button type="button" class="text-neutral-500 hover:text-danger mr-3 transition-custom" title="屏蔽">
+                      <i class="fa fa-ban"></i>
+                    </button>
+                    <button type="button" class="text-neutral-500 hover:text-neutral-700 transition-custom" title="查看详情">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <tr class="hover:bg-neutral-50 transition-custom">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-900">#C10090</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-neutral-900">最新延保话术模板</div>
+                    <div class="text-xs text-neutral-500">帖子ID: #P202306</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <div class="flex-shrink-0 h-8 w-8">
+                        <img class="h-8 w-8 rounded-full object-cover" src="https://picsum.photos/200/200?random=6" alt="">
+                      </div>
+                      <div class="ml-3">
+                        <div class="text-sm font-medium text-neutral-900">刘顾问</div>
+                        <div class="text-xs text-neutral-500">销售支持部</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4">
+                    <div class="text-sm text-neutral-700 max-w-xs truncate">模板很详细，实用性很强。建议可以增加一些针对高端客户的话术，这类客户往往更关注服务的质量和品牌，而不是价格。</div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">2025-06-15 16:48</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-success/10 text-success">正常</span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <button type="button" class="text-neutral-500 hover:text-primary mr-3 transition-custom" title="置顶">
+                      <i class="fa fa-arrow-up"></i>
+                    </button>
+                    <button type="button" class="text-neutral-500 hover:text-danger mr-3 transition-custom" title="屏蔽">
+                      <i class="fa fa-ban"></i>
+                    </button>
+                    <button type="button" class="text-neutral-500 hover:text-neutral-700 transition-custom" title="查看详情">
+                      <i class="fa fa-eye"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 分页 -->
+          <div class="px-6 py-4 bg-white border-t border-neutral-200 sm:px-6 flex flex-col sm:flex-row items-center justify-between">
+            <div class="hidden sm:block">
+              <p class="text-sm text-neutral-700">
+                显示第 <span class="font-medium">1</span> 到 <span class="font-medium">5</span> 条，共 <span class="font-medium">24</span> 条结果
+              </p>
+            </div>
+            <div class="mt-4 sm:mt-0 flex-1 sm:flex sm:items-center sm:justify-between">
+              <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                  <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50">
+                    <i class="fa fa-chevron-left"></i>
+                  </a>
+                  <a href="#" aria-current="page" class="z-10 bg-primary text-white relative inline-flex items-center px-4 py-2 border border-primary text-sm font-medium">1</a>
+                  <a href="#" class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
+                  <a href="#" class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">3</a>
+                  <span class="relative inline-flex items-center px-4 py-2 border border-neutral-300 bg-white text-sm font-medium text-neutral-700">...</span>
+                  <a href="#" class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">5</a>
+                  <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50">
+                    <i class="fa fa-chevron-right"></i>
+                  </a>
+                </nav>
+              </div>
+              <div class="flex items-center mt-4 sm:mt-0">
+                <span class="text-sm text-neutral-700 mr-2">每页显示:</span>
+                <select class="block pl-3 pr-10 py-2 text-base border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none bg-white text-sm">
+                  <option>10条/页</option>
+                  <option selected>20条/页</option>
+                  <option>50条/页</option>
+                  <option>100条/页</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 确认对话框 -->
+  <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4">
+      <div class="p-6">
+        <h3 class="text-lg font-medium text-neutral-900 mb-2" id="modal-title">确认操作</h3>
+        <p class="text-neutral-600 mb-6" id="modal-message">您确定要执行此操作吗？</p>
+        <div class="flex justify-end space-x-3">
+          <button id="cancel-btn" class="px-4 py-2 border border-neutral-300 rounded-lg text-neutral-700 hover:bg-neutral-50 transition-colors">取消</button>
+          <button id="confirm-btn" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors">确认</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // 模态框控制
+    const confirmModal = document.getElementById('confirm-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const confirmBtn = document.getElementById('confirm-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    let currentAction = null;
+    let currentRow = null;
+
+    // 打开确认模态框
+    function openConfirmModal(title, message, action, row) {
+      modalTitle.textContent = title;
+      modalMessage.textContent = message;
+      currentAction = action;
+      currentRow = row;
+      confirmModal.classList.remove('hidden');
+    }
+
+    // 关闭确认模态框
+    function closeConfirmModal() {
+      confirmModal.classList.add('hidden');
+      currentAction = null;
+      currentRow = null;
+    }
+
+    // 确认按钮点击事件
+    confirmBtn.addEventListener('click', function() {
+      if (currentAction && currentRow) {
+        switch(currentAction) {
+          case 'pin':
+            pinComment(currentRow);
+            break;
+          case 'unpin':
+            unpinComment(currentRow);
+            break;
+          case 'block':
+            blockComment(currentRow);
+            break;
+          case 'unblock':
+            unblockComment(currentRow);
+            break;
+        }
+      }
+      closeConfirmModal();
+    });
+
+    // 取消按钮点击事件
+    cancelBtn.addEventListener('click', closeConfirmModal);
+
+    // 点击模态框外部关闭
+    confirmModal.addEventListener('click', function(e) {
+      if (e.target === confirmModal) {
+        closeConfirmModal();
+      }
+    });
+
+    // 置顶评论
+    function pinComment(row) {
+      // 更改状态标签
+      const statusCell = row.querySelector('td:nth-child(6) span');
+      statusCell.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-primary/10 text-primary';
+      statusCell.textContent = '已置顶';
+
+      // 更改操作按钮
+      const actionCell = row.querySelector('td:last-child');
+      actionCell.innerHTML = `
+        <button type="button" class="text-neutral-500 hover:text-primary mr-3 transition-custom" title="取消置顶">
+          <i class="fa fa-arrow-down"></i>
+        </button>
+        <button type="button" class="text-neutral-500 hover:text-danger mr-3 transition-custom" title="屏蔽">
+          <i class="fa fa-ban"></i>
+        </button>
+        <button type="button" class="text-neutral-500 hover:text-neutral-700 transition-custom" title="查看详情">
+          <i class="fa fa-eye"></i>
+        </button>
+      `;
+
+      // 添加背景色
+      row.classList.add('bg-primary/5');
+
+      // 将行移到表格顶部
+      const tbody = document.querySelector('tbody');
+      tbody.insertBefore(row, tbody.firstChild);
+
+      // 重新绑定事件
+      bindActionEvents();
+    }
+
+    // 取消置顶评论
+    function unpinComment(row) {
+      // 更改状态标签
+      const statusCell = row.querySelector('td:nth-child(6) span');
+      statusCell.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-success/10 text-success';
+      statusCell.textContent = '正常';
+
+      // 更改操作按钮
+      const actionCell = row.querySelector('td:last-child');
+      actionCell.innerHTML = `
+        <button type="button" class="text-neutral-500 hover:text-primary mr-3 transition-custom" title="置顶">
+          <i class="fa fa-arrow-up"></i>
+        </button>
+        <button type="button" class="text-neutral-500 hover:text-danger mr-3 transition-custom" title="屏蔽">
+          <i class="fa fa-ban"></i>
+        </button>
+        <button type="button" class="text-neutral-500 hover:text-neutral-700 transition-custom" title="查看详情">
+          <i class="fa fa-eye"></i>
+        </button>
+      `;
+
+      // 移除背景色
+      row.classList.remove('bg-primary/5');
+
+      // 重新绑定事件
+      bindActionEvents();
+    }
+
+    // 屏蔽评论
+    function blockComment(row) {
+      // 更改状态标签
+      const statusCell = row.querySelector('td:nth-child(6) span');
+      statusCell.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-danger/10 text-danger';
+      statusCell.textContent = '已屏蔽';
+
+      // 更改操作按钮
+      const actionCell = row.querySelector('td:last-child');
+      actionCell.innerHTML = `
+        <button type="button" class="text-neutral-500 hover:text-primary mr-3 transition-custom" title="取消屏蔽">
+          <i class="fa fa-check-circle"></i>
+        </button>
+        <button type="button" class="text-neutral-500 hover:text-neutral-700 transition-custom" title="查看详情">
+          <i class="fa fa-eye"></i>
+        </button>
+      `;
+
+      // 添加删除线和透明度
+      const commentContent = row.querySelector('td:nth-child(4) div');
+      commentContent.classList.add('line-through');
+      row.classList.add('opacity-60');
+
+      // 重新绑定事件
+      bindActionEvents();
+    }
+
+    // 取消屏蔽评论
+    function unblockComment(row) {
+      // 更改状态标签
+      const statusCell = row.querySelector('td:nth-child(6) span');
+      statusCell.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-success/10 text-success';
+      statusCell.textContent = '正常';
+
+      // 更改操作按钮
+      const actionCell = row.querySelector('td:last-child');
+      actionCell.innerHTML = `
+        <button type="button" class="text-neutral-500 hover:text-primary mr-3 transition-custom" title="置顶">
+          <i class="fa fa-arrow-up"></i>
+        </button>
+        <button type="button" class="text-neutral-500 hover:text-danger mr-3 transition-custom" title="屏蔽">
+          <i class="fa fa-ban"></i>
+        </button>
+        <button type="button" class="text-neutral-500 hover:text-neutral-700 transition-custom" title="查看详情">
+          <i class="fa fa-eye"></i>
+        </button>
+      `;
+
+      // 移除删除线和透明度
+      const commentContent = row.querySelector('td:nth-child(4) div');
+      commentContent.classList.remove('line-through');
+      row.classList.remove('opacity-60');
+
+      // 重新绑定事件
+      bindActionEvents();
+    }
+
+    // 绑定操作按钮事件
+    function bindActionEvents() {
+      // 置顶按钮
+      document.querySelectorAll('button[title="置顶"]').forEach(button => {
+        button.addEventListener('click', function() {
+          const row = this.closest('tr');
+          openConfirmModal('置顶评论', '确定要将此评论置顶吗？置顶后将显示在评论列表的最上方。', 'pin', row);
+        });
+      });
+
+      // 取消置顶按钮
+      document.querySelectorAll('button[title="取消置顶"]').forEach(button => {
+        button.addEventListener('click', function() {
+          const row = this.closest('tr');
+          openConfirmModal('取消置顶', '确定要取消此评论的置顶状态吗？', 'unpin', row);
+        });
+      });
+
+      // 屏蔽按钮
+      document.querySelectorAll('button[title="屏蔽"]').forEach(button => {
+        button.addEventListener('click', function() {
+          const row = this.closest('tr');
+          openConfirmModal('屏蔽评论', '确定要屏蔽此评论吗？屏蔽后评论将被隐藏并不再显示给其他用户。', 'block', row);
+        });
+      });
+
+      // 取消屏蔽按钮
+      document.querySelectorAll('button[title="取消屏蔽"]').forEach(button => {
+        button.addEventListener('click', function() {
+          const row = this.closest('tr');
+          openConfirmModal('取消屏蔽', '确定要取消屏蔽此评论吗？取消后评论将恢复显示。', 'unblock', row);
+        });
+      });
+
+      // 查看详情按钮
+      document.querySelectorAll('button[title="查看详情"]').forEach(button => {
+        button.addEventListener('click', function() {
+          const row = this.closest('tr');
+          const commentId = row.querySelector('td:first-child').textContent;
+          alert(`查看评论 ${commentId} 的详细信息`);
+          // 在实际应用中，这里可以跳转到评论详情页或打开详情模态框
+        });
+      });
+    }
+
+    // 搜索功能
+    const searchInput = document.getElementById('search-comments');
+    searchInput.addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') {
+        alert(`搜索评论: ${this.value}`);
+        // 在实际应用中，这里可以发送搜索请求到服务器
+      }
+    });
+
+    // 页面加载完成后绑定事件
+    document.addEventListener('DOMContentLoaded', bindActionEvents);
+  </script>
+</body>
+</html>

@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>展业助手 - 员工论坛</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            accent: '#FF9F1C',
+            neutral: {
+              100: '#F9FAFB',
+              200: '#F3F4F6',
+              300: '#E5E7EB',
+              400: '#D1D5DB',
+              500: '#9CA3AF',
+              600: '#6B7280',
+              700: '#4B5563',
+              800: '#1F2937',
+              900: '#111827'
+            }
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+            'card-hover': '0 10px 30px rgba(0, 0, 0, 0.08)',
+          }
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .transition-custom {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+      }
+      @keyframes skeleton-loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-neutral-100 text-neutral-800 min-h-screen flex flex-col">
+  <!-- 标题栏 -->
+  <header class="bg-white shadow-sm sticky top-0 z-50 py-4">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-2xl font-bold text-primary">员工论坛</h1>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- 顶部筛选区 -->
+    <div class="bg-white rounded-xl shadow-card p-4 mb-6 sticky top-16 z-40">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="font-medium text-neutral-700">筛选条件</h2>
+        <button id="filter-toggle" class="text-neutral-500 hover:text-primary transition-colors">
+          <i class="fa fa-angle-down" id="filter-icon"></i>
+        </button>
+      </div>
+      <!-- 默认显示的话题筛选 -->
+        <div id="default-filter">
+          <h3 class="text-sm font-medium text-neutral-500 mb-2">话题筛选</h3>
+          <div class="flex flex-wrap gap-2">
+            <button class="whitespace-nowrap px-3 py-1.5 bg-primary text-white text-sm rounded-full flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-th-large mr-1"></i> 全部话题
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-bullhorn mr-1"></i> 优秀话术
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-trophy mr-1"></i> 成交案例
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-exclamation-triangle mr-1"></i> 战败分析
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-handshake-o mr-1"></i> 服务技巧
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-user mr-1"></i> 客户需求
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-shield mr-1"></i> 延保话术
+            </button>
+          </div>
+        </div>
+        
+        <!-- 可展开的其他筛选条件 -->
+        <div class="space-y-4" id="filter-content" style="display: none;">
+        <!-- 业务类型 -->
+        <div>
+          <h3 class="text-sm font-medium text-neutral-500 mt-4 mb-2">业务类型</h3>
+          <div class="flex flex-wrap gap-2">
+            <button class="whitespace-nowrap px-3 py-1.5 bg-primary text-white text-sm rounded-full flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-th-large mr-1"></i> 全部业务
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-shield mr-1"></i> 延保
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-wrench mr-1"></i> 轻改
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-gift mr-1"></i> 权益
+            </button>
+          </div>
+        </div>
+        
+        <!-- 大区筛选 -->
+        <div>
+          <h3 class="text-sm font-medium text-neutral-500 mb-2">大区筛选</h3>
+          <div class="flex flex-wrap gap-2">
+            <button class="whitespace-nowrap px-3 py-1.5 bg-primary text-white text-sm rounded-full flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-map-marker mr-1"></i> 全部区域
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-map-marker mr-1"></i> 华北大区
+            </button>
+            <button class="whitespace-nowrap px-3 py-1.5 bg-neutral-100 text-neutral-600 text-sm rounded-full hover:bg-neutral-200 transition-colors flex items-center shadow-sm hover:shadow transition-shadow">
+              <i class="fa fa-map-marker mr-1"></i> 东北大区
+            </button>
+          </div>
+        </div>
+        
+        
+      </div>
+    </div>
+    
+    <script>
+    // 默认只显示话题筛选
+    document.getElementById('default-filter').style.display = 'block';
+    document.getElementById('filter-content').style.display = 'none';
+    
+    document.getElementById('filter-toggle').addEventListener('click', function() {
+      const content = document.getElementById('filter-content');
+      const icon = document.getElementById('filter-icon');
+      
+      if (content.style.display === 'none') {
+        content.style.display = 'block';
+        icon.classList.remove('fa-angle-up');
+        icon.classList.add('fa-angle-down');
+      } else {
+        content.style.display = 'none';
+        icon.classList.remove('fa-angle-down');
+        icon.classList.add('fa-angle-up');
+      }
+    });
+  </script>
+  
+  <!-- 内容瀑布流 -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="masonry-container">
+      <!-- 内容卡片 1 -->
+      <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1">
+        <div class="relative overflow-hidden rounded-t-xl">
+          <img src="https://picsum.photos/600/400?random=1" alt="优秀话术案例图片" class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+          <div class="absolute top-3 left-3">
+            <span class="px-2 py-1 bg-primary/90 text-white text-xs rounded-full">置顶</span>
+          </div>
+        </div>
+        <div class="p-4">
+          <a href="帖子详情.html"><h3 class="font-bold text-lg text-neutral-800 mb-2 line-clamp-2">最新延保话术模板，提升30%转化率！</h3></a>
+          <p class="text-neutral-600 text-sm mb-3 line-clamp-3">经过团队反复测试和优化，整理出一套针对不同客户类型的延保销售话术模板，包含初次接触、需求挖掘...</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">#优秀话术</span>
+            <span class="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-xs rounded-full">#转化率提升</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img class="h-7 w-7 rounded-full object-cover" src="https://picsum.photos/200/200?random=2" alt="用户头像">
+              <span class="ml-2 text-sm text-neutral-700">王总监</span>
+              <span class="ml-2 text-xs text-neutral-500">09-11</span>
+            </div>
+            <div class="flex items-center text-xs text-neutral-500">
+              <span class="flex items-center mr-3">
+                <i class="fa fa-eye mr-1"></i> 128
+              </span>
+              <span class="flex items-center">
+                <i class="fa fa-thumbs-up mr-1"></i> 56
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 内容卡片 2 -->
+      <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1">
+        <div class="relative overflow-hidden rounded-t-xl">
+          <img src="https://picsum.photos/600/400?random=2" alt="精品销售案例图片" class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-lg text-neutral-800 mb-2 line-clamp-2">精品销售案例：客户主动升级套餐</h3>
+          <p class="text-neutral-600 text-sm mb-3 line-clamp-3">分享一个成功说服客户从基础套餐升级到豪华套餐的案例，关键在于挖掘客户的潜在需求和价值感知...</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">#成交案例</span>
+            <span class="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-xs rounded-full">#精品销售</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img class="h-7 w-7 rounded-full object-cover" src="https://picsum.photos/200/200?random=3" alt="用户头像">
+              <span class="ml-2 text-sm text-neutral-700">李经理</span>
+              <span class="ml-2 text-xs text-neutral-500">09-10</span>
+            </div>
+            <div class="flex items-center text-xs text-neutral-500">
+              <span class="flex items-center mr-3">
+                <i class="fa fa-eye mr-1"></i> 95
+              </span>
+              <span class="flex items-center">
+                <i class="fa fa-thumbs-up mr-1"></i> 32
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 内容卡片 3 -->
+      <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1">
+        <div class="relative overflow-hidden rounded-t-xl">
+          <img src="https://picsum.photos/600/400?random=3" alt="续保话术演示图片" class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-lg text-neutral-800 mb-2 line-clamp-2">续保话术实战演示：应对价格异议</h3>
+          <p class="text-neutral-600 text-sm mb-3 line-clamp-3">录制一段与客户沟通续保的真实场景，展示如何巧妙应对客户提出的价格异议，最终成功促成续约...</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">#战败分析</span>
+            <span class="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-xs rounded-full">#续保技巧</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img class="h-7 w-7 rounded-full object-cover" src="https://picsum.photos/200/200?random=4" alt="用户头像">
+              <span class="ml-2 text-sm text-neutral-700">赵主管</span>
+              <span class="ml-2 text-xs text-neutral-500">09-09</span>
+            </div>
+            <div class="flex items-center text-xs text-neutral-500">
+              <span class="flex items-center mr-3">
+                <i class="fa fa-eye mr-1"></i> 87
+              </span>
+              <span class="flex items-center">
+                <i class="fa fa-thumbs-up mr-1"></i> 41
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 内容卡片 4 -->
+      <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1">
+        <div class="relative overflow-hidden rounded-t-xl">
+          <img src="https://picsum.photos/600/400?random=4" alt="客户权益介绍图片" class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-lg text-neutral-800 mb-2 line-clamp-2">客户权益介绍录音：3分钟清晰讲解</h3>
+          <p class="text-neutral-600 text-sm mb-3 line-clamp-3">整理一段完整的客户权益介绍录音，包含我们的核心服务内容、优势对比和客户常见问题解答...</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">#服务技巧</span>
+            <span class="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-xs rounded-full">#权益介绍</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img class="h-7 w-7 rounded-full object-cover" src="https://picsum.photos/200/200?random=5" alt="用户头像">
+              <span class="ml-2 text-sm text-neutral-700">陈销售</span>
+              <span class="ml-2 text-xs text-neutral-500">09-08</span>
+            </div>
+            <div class="flex items-center text-xs text-neutral-500">
+              <span class="flex items-center mr-3">
+                <i class="fa fa-eye mr-1"></i> 76
+              </span>
+              <span class="flex items-center">
+                <i class="fa fa-thumbs-up mr-1"></i> 28
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 内容卡片 5 -->
+      <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1">
+        <div class="relative overflow-hidden rounded-t-xl">
+          <img src="https://picsum.photos/600/400?random=5" alt="团队管理技巧图片" class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-lg text-neutral-800 mb-2 line-clamp-2">团队晨会高效沟通技巧，提升40%效率</h3>
+          <p class="text-neutral-600 text-sm mb-3 line-clamp-3">分享几个团队晨会的高效沟通技巧，包括明确目标、控制时间、结构化发言等方法，提升团队工作效率...</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">#团队协作</span>
+            <span class="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-xs rounded-full">#管理技巧</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img class="h-7 w-7 rounded-full object-cover" src="https://picsum.photos/200/200?random=6" alt="用户头像">
+              <span class="ml-2 text-sm text-neutral-700">刘顾问</span>
+              <span class="ml-2 text-xs text-neutral-500">09-07</span>
+            </div>
+            <div class="flex items-center text-xs text-neutral-500">
+              <span class="flex items-center mr-3">
+                <i class="fa fa-eye mr-1"></i> 68
+              </span>
+              <span class="flex items-center">
+                <i class="fa fa-thumbs-up mr-1"></i> 35
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 内容卡片 6 -->
+      <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1">
+        <div class="relative overflow-hidden rounded-t-xl">
+          <img src="https://picsum.photos/600/400?random=6" alt="客户异议处理图片" class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-lg text-neutral-800 mb-2 line-clamp-2">【求助】遇到非常挑剔的客户怎么办？</h3>
+          <p class="text-neutral-600 text-sm mb-3 line-clamp-3">最近遇到一个客户，对产品的各个方面都非常挑剔，已经沟通了三次还是没有达成共识。大家有什么好的应对策略？</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">#客户异议</span>
+            <span class="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-xs rounded-full">#求助</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img class="h-7 w-7 rounded-full object-cover" src="https://picsum.photos/200/200?random=7" alt="用户头像">
+              <span class="ml-2 text-sm text-neutral-700">孙销售</span>
+              <span class="ml-2 text-xs text-neutral-500">09-06</span>
+            </div>
+            <div class="flex items-center text-xs text-neutral-500">
+              <span class="flex items-center mr-3">
+                <i class="fa fa-eye mr-1"></i> 52
+              </span>
+              <span class="flex items-center">
+                <i class="fa fa-thumbs-up mr-1"></i> 23
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 内容卡片 7 -->
+      <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1">
+        <div class="relative overflow-hidden rounded-t-xl">
+          <img src="https://picsum.photos/600/400?random=7" alt="客户需求分析图片" class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-lg text-neutral-800 mb-2 line-clamp-2">客户需求深度分析方法与案例</h3>
+          <p class="text-neutral-600 text-sm mb-3 line-clamp-3">详细介绍如何通过提问技巧和观察能力，深度分析客户真实需求，提高销售成功率，包含多个实际案例...</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">#客户需求</span>
+            <span class="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-xs rounded-full">#销售技巧</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img class="h-7 w-7 rounded-full object-cover" src="https://picsum.photos/200/200?random=8" alt="用户头像">
+              <span class="ml-2 text-sm text-neutral-700">周主管</span>
+              <span class="ml-2 text-xs text-neutral-500">09-05</span>
+            </div>
+            <div class="flex items-center text-xs text-neutral-500">
+              <span class="flex items-center mr-3">
+                <i class="fa fa-eye mr-1"></i> 49
+              </span>
+              <span class="flex items-center">
+                <i class="fa fa-thumbs-up mr-1"></i> 18
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 内容卡片 8 -->
+      <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1">
+        <div class="relative overflow-hidden rounded-t-xl">
+          <img src="https://picsum.photos/600/400?random=8" alt="续保营销方案图片" class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-lg text-neutral-800 mb-2 line-clamp-2">续保客户精准营销方案，提升续约率</h3>
+          <p class="text-neutral-600 text-sm mb-3 line-clamp-3">分享一套完整的续保客户精准营销方案，包括客户分类、触达时机、营销话术和跟进策略，有效提升续约率...</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">#续保类</span>
+            <span class="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-xs rounded-full">#营销方案</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img class="h-7 w-7 rounded-full object-cover" src="https://picsum.photos/200/200?random=9" alt="用户头像">
+              <span class="ml-2 text-sm text-neutral-700">吴经理</span>
+              <span class="ml-2 text-xs text-neutral-500">09-04</span>
+            </div>
+            <div class="flex items-center text-xs text-neutral-500">
+              <span class="flex items-center mr-3">
+                <i class="fa fa-eye mr-1"></i> 42
+              </span>
+              <span class="flex items-center">
+                <i class="fa fa-thumbs-up mr-1"></i> 15
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 内容卡片 9 -->
+      <div class="bg-white rounded-xl shadow-card hover:shadow-card-hover transition-custom transform hover:-translate-y-1">
+        <div class="relative overflow-hidden rounded-t-xl">
+          <img src="https://picsum.photos/600/400?random=9" alt="客户服务技巧图片" class="w-full h-48 object-cover transition-transform duration-500 hover:scale-105">
+        </div>
+        <div class="p-4">
+          <h3 class="font-bold text-lg text-neutral-800 mb-2 line-clamp-2">客户服务技巧：如何提高客户满意度</h3>
+          <p class="text-neutral-600 text-sm mb-3 line-clamp-3">从客户接待、需求理解、问题解决到后续跟进，全方位介绍提高客户满意度的关键技巧和实用方法...</p>
+          <div class="flex flex-wrap gap-1 mb-3">
+            <span class="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">#服务技巧</span>
+            <span class="px-2 py-0.5 bg-neutral-100 text-neutral-600 text-xs rounded-full">#客户满意度</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <img class="h-7 w-7 rounded-full object-cover" src="https://picsum.photos/200/200?random=10" alt="用户头像">
+              <span class="ml-2 text-sm text-neutral-700">郑顾问</span>
+            </div>
+            <div class="flex items-center text-xs text-neutral-500">
+              <span class="flex items-center mr-3">
+                <i class="fa fa-eye mr-1"></i> 38
+              </span>
+              <span class="flex items-center">
+                <i class="fa fa-thumbs-up mr-1"></i> 12
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 加载更多 -->
+      <div class="col-span-full text-center py-8" id="loading-more">
+        <div class="inline-flex items-center">
+          <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-primary"></div>
+          <span class="ml-2 text-neutral-600">加载更多内容...</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 返回顶部按钮 -->
+  <button id="back-to-top" class="fixed bottom-6 right-4 w-10 h-10 rounded-full bg-primary text-white shadow-lg flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-primary/90">
+    <i class="fa fa-arrow-up"></i>
+  </button>
+
+  <!-- JavaScript -->
+  <script>
+    // 移动端菜单切换
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // 滚动时导航栏样式变化
+    const navbar = document.getElementById('navbar');
+    const topFilter = document.querySelector('.sticky.top-16');
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 10) {
+        navbar.classList.add('shadow-md');
+      } else {
+        navbar.classList.remove('shadow-md');
+      }
+      
+      if (window.scrollY > 100) {
+        topFilter.classList.add('shadow-md');
+      } else {
+        topFilter.classList.remove('shadow-md');
+      }
+    });
+    
+    // 返回顶部按钮
+    const backToTopButton = document.getElementById('back-to-top');
+    
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTopButton.classList.remove('opacity-0', 'invisible');
+        backToTopButton.classList.add('opacity-100', 'visible');
+      } else {
+        backToTopButton.classList.add('opacity-0', 'invisible');
+        backToTopButton.classList.remove('opacity-100', 'visible');
+      }
+    });
+    
+    backToTopButton.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+    
+    // 图片懒加载
+    document.addEventListener('DOMContentLoaded', () => {
+      const images = document.querySelectorAll('img');
+      
+      const lazyLoad = (target) => {
+        const io = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              img.classList.add('opacity-100');
+              img.classList.remove('opacity-0');
+              observer.disconnect();
+            }
+          });
+        });
+        
+        io.observe(target);
+      };
+      
+      images.forEach(image => {
+        lazyLoad(image);
+      });
+    });

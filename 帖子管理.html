@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>展业助手 - 后台管理 - 帖子管理</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36D399',
+            accent: '#FF9F1C',
+            neutral: {
+              100: '#F9FAFB',
+              200: '#F3F4F6',
+              300: '#E5E7EB',
+              400: '#D1D5DB',
+              500: '#9CA3AF',
+              600: '#6B7280',
+              700: '#4B5563',
+              800: '#1F2937',
+              900: '#111827'
+            },
+            danger: '#FF5252',
+            warning: '#FFAB00',
+            success: '#00B42A'
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+          boxShadow: {
+            'card': '0 4px 20px rgba(0, 0, 0, 0.05)',
+            'card-hover': '0 10px 30px rgba(0, 0, 0, 0.08)',
+          }
+        },
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .transition-custom {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .table-shadow {
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-neutral-100 text-neutral-800 min-h-screen flex flex-col">
+  <!-- 顶部导航栏 -->
+  <header class="bg-white shadow-sm sticky top-0 z-30">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0 flex items-center">
+            <i class="fa fa-comments text-primary text-2xl mr-2"></i>
+            <span class="font-bold text-lg text-neutral-800">展业助手 - 帖子管理</span>
+          </div>
+        </div>
+        <div class="flex items-center">
+          <div class="ml-4 flex items-center md:ml-6">
+            <button type="button" class="p-1 rounded-full text-neutral-500 hover:text-primary hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-custom">
+              <i class="fa fa-bell-o text-xl"></i>
+            </button>
+            <div class="ml-3 relative">
+              <div class="flex items-center">
+                <img class="h-8 w-8 rounded-full object-cover" src="https://picsum.photos/200/200?random=admin" alt="管理员头像">
+                <span class="ml-2 text-sm font-medium text-neutral-700">管理员</span>
+                <i class="fa fa-angle-down ml-1 text-neutral-500"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <div class="flex flex-1 overflow-hidden">
+    <!-- 侧边栏 -->
+    <aside class="bg-white w-64 shadow-sm z-20 hidden md:block">
+      <div class="h-full flex flex-col">
+        <nav class="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
+          
+          <a href="/Users/yangzhenliang/Documents/doubao/employee-forum-ui/帖子管理.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-primary/10 text-primary transition-custom">
+            <i class="fa fa-file-text-o w-5 h-5 mr-3"></i>
+            帖子管理
+          </a>
+          <a href="/Users/yangzhenliang/Documents/doubao/employee-forum-ui/评论管理.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-500 hover:text-primary hover:bg-primary/10 transition-custom">
+  <i class="fa fa-comments-o w-5 h-5 mr-3"></i>
+  评论管理
+</a>
+          <a href="/Users/yangzhenliang/Documents/doubao/employee-forum-ui/数据统计.html" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-500 hover:text-primary hover:bg-primary/10 transition-custom">
+  <i class="fa fa-bar-chart w-5 h-5 mr-3"></i>
+  数据统计
+</a>
+          
+        </nav>
+      </div>
+    </aside>
+
+    <!-- 主要内容 -->
+    <main class="flex-1 overflow-y-auto bg-neutral-100 p-4 sm:p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-neutral-800">帖子管理</h2>
+      <div class="flex items-center space-x-4">
+        
+        <a href="发帖后台.html" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-custom flex items-center">
+          <i class="fa fa-plus mr-2"></i>新建帖子
+        </a>
+      </div>
+    </div>
+
+    <!-- 筛选区域 -->
+    <div class="bg-white rounded-xl shadow-card p-5 mb-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-medium text-neutral-600 mb-1">搜索标题</label>
+          <div class="relative">
+            <input type="text" placeholder="输入标题关键词" class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom pl-10">
+            <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400"></i>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-neutral-600 mb-1">标签筛选</label>
+          <select class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+            <option>所有标签</option>
+            <option>技术</option>
+            <option>产品</option>
+            <option>销售</option>
+            <option>人力资源</option>
+            <option>财务</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-neutral-600 mb-1">业务类型</label>
+          <select class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+            <option>所有业务类型</option>
+            <option>轻改</option>
+            <option>延保</option>
+            <option>权益</option>
+            <option>会员</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-neutral-600 mb-1">所属大区</label>
+          <select class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+            <option>所有大区</option>
+            <option>华北大区</option>
+            <option>东北大区</option>
+            <option>华东大区</option>
+            <option>华南大区</option>
+            <option>西部大区</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-neutral-600 mb-1">日期筛选</label>
+          <input type="date" value="2025-07-14" class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-neutral-600 mb-1">状态筛选</label>
+          <select class="w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-custom appearance-none bg-white">
+            <option>所有状态</option>
+            <option>已发布</option>
+            <option>待发布</option>
+            <option>已删除</option>
+          </select>
+        </div>
+        <div class="flex items-end">
+          <button class="w-full bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-custom flex items-center justify-center">
+            <i class="fa fa-search mr-2"></i>搜索
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 帖子列表 -->
+    <div class="bg-white rounded-xl shadow-card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-neutral-200">
+          <thead class="bg-neutral-50">
+            <tr>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">ID</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">标题</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">作者</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">标签</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">业务类型</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">所属大区</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">发布时间</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">状态</th>
+              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">操作</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-neutral-200">
+            <tr class="hover:bg-neutral-50 transition-custom">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">1</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-800">如何提高团队协作效率</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">张三</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full bg-primary/10 text-primary">技术</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">轻改</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">华北大区</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">2025-07-01</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full status-published">已发布</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button class="text-primary hover:text-primary/80 mr-3 transition-custom"><i class="fa fa-pencil"></i></button>
+                <button class="text-danger hover:text-danger/80 transition-custom"><i class="fa fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr class="hover:bg-neutral-50 transition-custom">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">2</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-800">新产品上线计划讨论</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">李四</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full bg-secondary/10 text-secondary">产品</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">权益</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">华东大区</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">2025-07-03</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full status-published">已发布</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button class="text-primary hover:text-primary/80 mr-3 transition-custom"><i class="fa fa-pencil"></i></button>
+                <button class="text-danger hover:text-danger/80 transition-custom"><i class="fa fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr class="hover:bg-neutral-50 transition-custom">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">3</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-800">第三季度销售目标分解</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">王五</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full bg-accent/10 text-accent">销售</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">延保</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">华南大区</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">2025-07-05</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full status-pending">待发布</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button class="text-primary hover:text-primary/80 mr-3 transition-custom"><i class="fa fa-pencil"></i></button>
+                <button class="text-danger hover:text-danger/80 transition-custom"><i class="fa fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr class="hover:bg-neutral-50 transition-custom">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">4</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-800">员工培训计划建议</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">赵六</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full bg-neutral-200 text-neutral-700">人力资源</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">会员</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">西部大区</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">2025-07-07</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full status-deleted">已删除</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button class="text-primary hover:text-primary/80 mr-3 transition-custom"><i class="fa fa-pencil"></i></button>
+                <button class="text-danger hover:text-danger/80 transition-custom"><i class="fa fa-trash"></i></button>
+              </td>
+            </tr>
+            <tr class="hover:bg-neutral-50 transition-custom">
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">5</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-neutral-800">财务报销流程优化建议</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">钱七</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full bg-neutral-200 text-neutral-700">财务</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">轻改</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">东北大区</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-600">2025-07-10</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full status-published">已发布</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button class="text-primary hover:text-primary/80 mr-3 transition-custom"><i class="fa fa-pencil"></i></button>
+                <button class="text-danger hover:text-danger/80 transition-custom"><i class="fa fa-trash"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 分页 -->
+      <div class="px-6 py-4 bg-white border-t border-neutral-200 flex items-center justify-between">
+        <div class="flex-1 flex justify-between sm:hidden">
+          <a href="#" class="relative inline-flex items-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 transition-custom">上一页</a>
+          <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 transition-custom">下一页</a>
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p class="text-sm text-neutral-700">
+              显示第 <span class="font-medium">1</span> 到 <span class="font-medium">5</span> 条，共 <span class="font-medium">24</span> 条结果
+            </p>
+          </div>
+          <div>
+            <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+              <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50 transition-custom">
+                <span class="sr-only">上一页</span>
+                <i class="fa fa-chevron-left"></i>
+              </a>
+              <a href="#" aria-current="page" class="z-10 bg-primary text-white relative inline-flex items-center px-4 py-2 border border-primary text-sm font-medium">1</a>
+              <a href="#" class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-custom">2</a>
+              <a href="#" class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-custom">3</a>
+              <span class="relative inline-flex items-center px-4 py-2 border border-neutral-300 bg-white text-sm font-medium text-neutral-700">...</span>
+              <a href="#" class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-custom">5</a>
+              <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50 transition-custom">
+                <span class="sr-only">下一页</span>
+                <i class="fa fa-chevron-right"></i>
+              </a>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 移动端侧边栏切换按钮 -->
+  <button id="sidebar-toggle" class="fixed bottom-4 right-4 bg-primary text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center z-20 md:hidden">
+    <i class="fa fa-bars"></i>
+  </button>
+
+  <script>
+    // 移动端侧边栏切换功能
+    document.getElementById('sidebar-toggle').addEventListener('click', function() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+    // 响应式处理
+    function handleResize() {
+      const sidebar = document.getElementById('sidebar');
+      if (window.innerWidth >= 768) {
+        sidebar.classList.remove('-translate-x-full');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+      }
+    }
+
+    // 初始调用
+    handleResize();
+    window.addEventListener('resize', handleResize);
+  </script>
+</body>
+</html>
