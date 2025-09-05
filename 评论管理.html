@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>展业助手 - 后台管理 - 评论管理</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="css/font-awesome.min.css" rel="stylesheet">
   
   <!-- Tailwind 配置 - 保持与帖子详情页一致 -->
   <script>
@@ -373,36 +373,44 @@
           </div>
 
           <!-- 分页 -->
-          <div class="px-6 py-4 bg-white border-t border-neutral-200 sm:px-6 flex flex-col sm:flex-row items-center justify-between">
-            <div class="hidden sm:block">
-              <p class="text-sm text-neutral-700">
-                显示第 <span class="font-medium">1</span> 到 <span class="font-medium">5</span> 条，共 <span class="font-medium">24</span> 条结果
-              </p>
-            </div>
-            <div class="mt-4 sm:mt-0 flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                  <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50">
-                    <i class="fa fa-chevron-left"></i>
-                  </a>
-                  <a href="#" aria-current="page" class="z-10 bg-primary text-white relative inline-flex items-center px-4 py-2 border border-primary text-sm font-medium">1</a>
-                  <a href="#" class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">2</a>
-                  <a href="#" class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">3</a>
-                  <span class="relative inline-flex items-center px-4 py-2 border border-neutral-300 bg-white text-sm font-medium text-neutral-700">...</span>
-                  <a href="#" class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">5</a>
-                  <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50">
-                    <i class="fa fa-chevron-right"></i>
-                  </a>
-                </nav>
+            <div class="px-6 py-4 bg-white border-t border-neutral-200 flex items-center justify-between">
+              <div class="flex-1 flex justify-between sm:hidden">
+                <a href="#"
+                  class="relative inline-flex items-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 transition-custom">上一页</a>
+                <a href="#"
+                  class="ml-3 relative inline-flex items-center px-4 py-2 border border-neutral-300 text-sm font-medium rounded-md text-neutral-700 bg-white hover:bg-neutral-50 transition-custom">下一页</a>
               </div>
-              <div class="flex items-center mt-4 sm:mt-0">
-                <span class="text-sm text-neutral-700 mr-2">每页显示:</span>
-                <select class="block pl-3 pr-10 py-2 text-base border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all appearance-none bg-white text-sm">
-                  <option>10条/页</option>
-                  <option selected>20条/页</option>
-                  <option>50条/页</option>
-                  <option>100条/页</option>
-                </select>
+              <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                <div>
+                  <p class="text-sm text-neutral-700">
+                    显示第 <span class="font-medium">1</span> 到 <span class="font-medium">5</span> 条，共 <span
+                      class="font-medium">24</span> 条结果
+                  </p>
+                </div>
+                <div>
+                  <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <a href="#"
+                      class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50 transition-custom">
+                      <span class="sr-only">上一页</span>
+                      <i class="fa fa-chevron-left"></i>
+                    </a>
+                    <a href="#" aria-current="page"
+                      class="z-10 bg-primary text-white relative inline-flex items-center px-4 py-2 border border-primary text-sm font-medium">1</a>
+                    <a href="#"
+                      class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-custom">2</a>
+                    <a href="#"
+                      class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-custom">3</a>
+                    <span
+                      class="relative inline-flex items-center px-4 py-2 border border-neutral-300 bg-white text-sm font-medium text-neutral-700">...</span>
+                    <a href="#"
+                      class="bg-white border-neutral-300 text-neutral-500 hover:bg-neutral-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium transition-custom">5</a>
+                    <a href="#"
+                      class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50 transition-custom">
+                      <span class="sr-only">下一页</span>
+                      <i class="fa fa-chevron-right"></i>
+                    </a>
+                  </nav>
+                </div>
               </div>
             </div>
           </div>

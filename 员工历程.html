@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>零售人员成长中心</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#0FC6C2',
+                        success: '#00B42A',
+                        warning: '#FF7D00',
+                        danger: '#F53F3F',
+                        gold: '#FFB800',
+                        silver: '#C9CDD4',
+                        bronze: '#CD7F32',
+                        dark: '#1D2129',
+                        'gray-medium': '#4E5969',
+                        'gray-light': '#C9CDD4',
+                        'gray-bg': '#F2F3F5'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .card-hover {
+                transition: all 0.3s ease;
+            }
+            .card-hover:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            }
+            .badge-glow {
+                box-shadow: 0 0 15px currentColor;
+            }
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-bg text-dark">
+    <div class="container mx-auto py-4 px-2">
+        <!-- 上部模块 (2/7) -->
+        <div class="bg-white rounded-lg shadow-md m-4 p-6 flex items-center justify-between">
+            <!-- 左侧：基础信息 -->
+            <div class="flex items-center space-x-6">
+                <div class="relative">
+                    <img src="https://picsum.photos/seed/employee1/200/200" alt="员工头像" class="w-28 h-28 rounded-full object-cover border-4 border-primary shadow-lg">
+                    <div class="absolute -bottom-2 -right-2 bg-silver text-white rounded-full w-12 h-12 flex items-center justify-center text-sm font-bold border-4 border-white badge-glow">
+                        白银
+                    </div>
+                </div>
+                
+                <div>
+                    <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-dark">张明 <span class="text-primary"><i class="fa fa-mars"></i></span></h2>
+                    <p class="text-gray-medium text-lg mt-1">32岁 · 入职28个月</p>
+                    <div class="flex items-center mt-3">
+                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                            北京朝阳店
+                        </span>
+                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium ml-3">
+                            公司排名：前8%
+                        </span>
+                        <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium ml-3">
+                            负责业务：轻改升级
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧：业绩概览 -->
+            <div class="grid grid-cols-2 gap-6">
+                <div class="text-center">
+                    <p class="text-gray-medium text-lg">累计完成订单</p>
+                    <p class="text-3xl font-bold mt-1 flex items-center justify-center">
+                        <i class="fa fa-shopping-cart text-primary mr-2"></i>
+                        1,286
+                    </p>
+                    <p class="text-success text-sm mt-1"><i class="fa fa-arrow-up"></i> 较上月+5.2%</p>
+                </div>
+                
+                <div class="text-center">
+                    <p class="text-gray-medium text-lg">累计产值</p>
+                    <p class="text-3xl font-bold mt-1 flex items-center justify-center">
+                        <i class="fa fa-line-chart text-primary mr-2"></i>
+                        ¥3.2M
+                    </p>
+                    <p class="text-success text-sm mt-1"><i class="fa fa-arrow-up"></i> 较上月+8.7%</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 中部模块 (4/7) -->
+        <div class="flex flex-col md:flex-row m-4 gap-4" style="align-items: stretch;">
+            <!-- 左侧：核心指标与晋升差距 -->
+            <div class="w-full md:w-1/2 bg-white rounded-lg shadow-md p-6 flex flex-col justify-between">
+                <h3 class="text-xl font-bold mb-6 flex items-center">
+                    <i class="fa fa-tachometer text-primary mr-2"></i>
+                    核心指标与晋升差距
+                </h3>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <!-- 触客率 -->
+                    <div class="bg-gray-bg rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold">触客率</h4>
+                                <p class="text-sm text-gray-medium">当前: 68%</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                <i class="fa fa-user-plus"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-light rounded-full h-2.5 mb-1">
+                            <div class="bg-primary h-2.5 rounded-full" style="width: 68%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-medium">
+                            <span>目标: 75%</span>
+                            <span class="text-warning">差距: 7%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 渗透率 -->
+                    <div class="bg-gray-bg rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold">渗透率</h4>
+                                <p class="text-sm text-gray-medium">当前: 32%</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                <i class="fa fa-filter"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-light rounded-full h-2.5 mb-1">
+                            <div class="bg-primary h-2.5 rounded-full" style="width: 32%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-medium">
+                            <span>目标: 40%</span>
+                            <span class="text-warning">差距: 8%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 月度产值完成率 -->
+                    <div class="bg-gray-bg rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold">月度产值完成率</h4>
+                                <p class="text-sm text-gray-medium">当前: 92%</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                <i class="fa fa-bar-chart"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-light rounded-full h-2.5 mb-1">
+                            <div class="bg-primary h-2.5 rounded-full" style="width: 92%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-medium">
+                            <span>目标: 100%</span>
+                            <span class="text-warning">差距: 8%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 学习达标率 -->
+                    <div class="bg-gray-bg rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold">学习达标率</h4>
+                                <p class="text-sm text-gray-medium">当前: 85%</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                <i class="fa fa-graduation-cap"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-light rounded-full h-2.5 mb-1">
+                            <div class="bg-primary h-2.5 rounded-full" style="width: 85%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-medium">
+                            <span>目标: 90%</span>
+                            <span class="text-warning">差距: 5%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 日报填写率 -->
+                    <div class="bg-gray-bg rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold">日报填写率</h4>
+                                <p class="text-sm text-gray-medium">当前: 95%</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                <i class="fa fa-file-text"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-light rounded-full h-2.5 mb-1">
+                            <div class="bg-success h-2.5 rounded-full" style="width: 95%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-medium">
+                            <span>目标: 100%</span>
+                            <span class="text-warning">差距: 5%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- 话术质检平均分 -->
+                    <div class="bg-gray-bg rounded-xl p-4 card-hover">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="font-semibold">话术质检平均分</h4>
+                                <p class="text-sm text-gray-medium">当前: 4.2/5</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                <i class="fa fa-comments"></i>
+                            </div>
+                        </div>
+                        <div class="w-full bg-gray-light rounded-full h-2.5 mb-1">
+                            <div class="bg-primary h-2.5 rounded-full" style="width: 84%"></div>
+                        </div>
+                        <div class="flex justify-between text-xs text-gray-medium">
+                            <span>目标: 4.5/5</span>
+                            <span class="text-warning">差距: 0.3</span>
+                        </div>
+                    </div>
+                </div>
+                
+
+            </div>
+            
+            <!-- 右侧：晋升激励 -->
+            <div class="w-full md:w-1/2 bg-white rounded-lg shadow-md p-6 flex flex-col justify-between">
+                <h3 class="text-xl font-bold mb-6 flex items-center">
+                    <i class="fa fa-trophy text-gold mr-2"></i>
+                    晋升至黄金级的专属福利
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+                    <!-- 提成系数 -->
+                    <div class="bg-gradient-to-r from-primary/5 to-primary/10 rounded-xl p-4 border-l-4 border-primary h-full flex flex-col">
+                        <h4 class="font-semibold text-xl mb-2">提成系数提升</h4>
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 flex-grow">
+                            <div class="flex items-center w-full sm:w-auto">
+                                <span class="text-gray-medium text-base whitespace-nowrap">当前: </span>
+                                <span class="text-xl font-bold ml-2 whitespace-nowrap">1.2%</span>
+                            </div>
+                            <i class="fa fa-long-arrow-right text-gray-light hidden sm:block"></i>
+                            <i class="fa fa-long-arrow-down text-gray-light block sm:hidden"></i>
+                            <div class="flex items-center w-full sm:w-auto">
+                                <span class="text-gray-medium text-base whitespace-nowrap">晋升后: </span>
+                                <span class="text-xl font-bold text-success ml-2 whitespace-nowrap">1.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 薪资提升 -->
+                    <div class="bg-gradient-to-r from-success/5 to-success/10 rounded-xl p-4 border-l-4 border-success h-full flex flex-col">
+                        <h4 class="font-semibold text-xl mb-2 flex items-center">预计月收入增长
+                            <button class="ml-2 text-primary hover:text-primary-dark" onclick="this.nextElementSibling.classList.toggle('hidden')">
+                                <i class="fa fa-question-circle"></i>
+                            </button>
+                            <span class="hidden text-xs text-gray-medium ml-2 bg-gray-bg p-1 rounded">基于您过去6个月平均业绩计算</span>
+                        </h4>
+                        <div class="flex-grow flex items-center">
+                            <p class="text-2xl font-bold text-success">¥2,850</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 其他福利 -->
+                    <div class="bg-gray-bg rounded-xl p-5 md:col-span-2">
+                        <h4 class="font-semibold text-lg mb-4">额外专属权益</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-success mt-1 mr-3 text-lg"></i>
+                                <span class="text-base">优先参与高端产品培训资格</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-success mt-1 mr-3 text-lg"></i>
+                                <span class="text-base">门店排班优先选择权</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-success mt-1 mr-3 text-lg"></i>
+                                <span class="text-base">季度优秀员工评选资格</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check-circle text-success mt-1 mr-3 text-lg"></i>
+                                <span class="text-base">晋升主管的必备条件</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+
+            </div>
+        </div>
+        
+        <!-- 下部模块 (1/7) -->
+        <div class="bg-white rounded-lg shadow-md m-4 p-4">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-lg font-bold flex items-center">
+                    <i class="fa fa-star text-gold mr-2"></i>
+                    我的荣誉墙
+                </h3>
+            </div>
+            
+            <!-- 荣誉勋章滚动区 -->
+            <div class="relative">
+                <div class="overflow-x-auto scrollbar-hide pb-2">
+                    <div class="flex space-x-6" style="width: 100%;">
+                        <!-- 首单破冰 -->
+                        <div class="flex flex-col items-center card-hover cursor-pointer">
+                            <div class="w-20 h-20 rounded-full bg-primary text-white flex items-center justify-center text-2xl mb-1">
+                                <i class="fa fa-flag"></i>
+                            </div>
+                            <p class="text-sm font-medium text-center">首单破冰</p>
+                            <p class="text-xs text-gray-medium">2022.08.15</p>
+                        </div>
+                        
+                        <!-- 破百单 -->
+                        <div class="flex flex-col items-center card-hover cursor-pointer">
+                            <div class="w-20 h-20 rounded-full bg-silver text-dark flex items-center justify-center text-2xl mb-1">
+                                <span>100</span>
+                            </div>
+                            <p class="text-sm font-medium text-center">破百单</p>
+                            <p class="text-xs text-gray-medium">2022.11.23</p>
+                        </div>
+                        
+                        <!-- 当日销冠 -->
+                        <div class="flex flex-col items-center card-hover cursor-pointer">
+                            <div class="w-20 h-20 rounded-full bg-gold text-dark flex items-center justify-center text-xl mb-1">
+                                <i class="fa fa-trophy"></i>
+                            </div>
+                            <p class="text-sm font-medium text-center">当日销冠</p>
+                            <p class="text-xs text-gray-medium">2023.02.18</p>
+                        </div>
+                        
+                        <!-- 月度销冠 -->
+                        <div class="flex flex-col items-center card-hover cursor-pointer">
+                            <div class="w-20 h-20 rounded-full bg-gold text-dark flex items-center justify-center text-xl mb-1 relative">
+                                <i class="fa fa-calendar"></i>
+                                <div class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                    1
+                                </div>
+                            </div>
+                            <p class="text-sm font-medium text-center">月度销冠</p>
+                            <p class="text-xs text-gray-medium">2023.06</p>
+                        </div>
+                        
+                        <!-- 破五百单 -->
+                        <div class="flex flex-col items-center card-hover cursor-pointer">
+                            <div class="w-20 h-20 rounded-full bg-silver text-dark flex items-center justify-center text-2xl mb-1">
+                                <span>500</span>
+                            </div>
+                            <p class="text-sm font-medium text-center">破五百单</p>
+                            <p class="text-xs text-gray-medium">2023.09.05</p>
+                        </div>
+                        
+                        <!-- 服务之星 -->
+                        <div class="flex flex-col items-center card-hover cursor-pointer">
+                            <div class="w-20 h-20 rounded-full bg-primary text-white flex items-center justify-center text-2xl mb-1">
+                                <i class="fa fa-heart"></i>
+                            </div>
+                            <p class="text-sm font-medium text-center">服务之星</p>
+                            <p class="text-xs text-gray-medium">2023.12</p>
+                        </div>
+                        
+                        <!-- 破千单 -->
+                        <div class="flex flex-col items-center card-hover cursor-pointer">
+                            <div class="w-20 h-20 rounded-full bg-gold text-dark flex items-center justify-center text-2xl mb-1">
+                                <span>1000</span>
+                            </div>
+                            <p class="text-sm font-medium text-center">破千单</p>
+                            <p class="text-xs text-gray-medium">2024.03.18</p>
+                        </div>
+                        
+                        <!-- 当日销冠 -->
+                        <div class="flex flex-col items-center card-hover cursor-pointer">
+                            <div class="w-20 h-20 rounded-full bg-gold text-dark flex items-center justify-center text-xl mb-1">
+                                <i class="fa fa-trophy"></i>
+                            </div>
+                            <p class="text-sm font-medium text-center">当日销冠</p>
+                            <p class="text-xs text-gray-medium">2024.05.28</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 滚动提示 -->
+                <div class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 text-gray-medium px-2 py-1 rounded-l-lg shadow-md">
+                    <i class="fa fa-angle-right"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 为数字添加动画效果
+        document.addEventListener('DOMContentLoaded', () => {
+            // 勋章轻微摇摆动画
+            const badges = document.querySelectorAll('.card-hover');
+            badges.forEach(badge => {
+                badge.addEventListener('mouseenter', () => {
+                    badge.classList.add('animate-pulse');
+                });
+                badge.addEventListener('mouseleave', () => {
+                    badge.classList.remove('animate-pulse');
+                });
+            });
+            
+            // 模拟数据加载动画
+            setTimeout(() => {
+                document.querySelectorAll('.text-3xl.font-bold').forEach(el => {
+                    el.style.opacity = '0';
+                    el.style.transform = 'translateY(10px)';
+                    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    
+                    setTimeout(() => {
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, 300);
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>
