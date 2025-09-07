@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>新增评估单 - iPad应用</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <script src="../js/back-button.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        info: '#6366F1',
+                        light: '#F3F4F6',
+                        dark: '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .tab-active {
+                @apply bg-primary text-white border-b-2 border-primary;
+            }
+            .tab-inactive {
+                @apply bg-gray-100 text-gray-600 border-b-2 border-transparent hover:bg-gray-200;
+            }
+            .form-label {
+                @apply block text-sm font-medium text-gray-700 mb-1;
+            }
+            .form-input {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200;
+            }
+            .form-select {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200;
+            }
+            .form-textarea {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 resize-y min-h-[100px];
+            }
+            .form-required {
+                @apply text-danger;
+            }
+            .upload-area {
+                @apply border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary transition-colors duration-200 cursor-pointer;
+            }
+            .image-preview {
+                @apply relative w-full h-40 bg-gray-100 rounded-lg overflow-hidden;
+            }
+            .image-preview img {
+                @apply w-full h-full object-cover;
+            }
+            .image-remove {
+                @apply absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <button class="text-primary text-xl px-2" id="back-button">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+                <i class="fa fa-file-text text-primary text-2xl"></i>
+                <h1 class="text-xl font-bold text-gray-800">新增评估单</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200" id="cancel-button">
+                    取消
+                </button>
+                <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors duration-200" id="submit-button">
+                    提交
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-28 pb-12">
+        <!-- 表单步骤Tab -->
+        <div class="bg-white rounded-t-xl shadow-md mb-0">
+            <div class="flex overflow-x-auto scrollbar-hide border-b border-gray-200">
+                <button id="tab-vehicle" class="tab-active whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    车辆信息
+                </button>
+                <button id="tab-document" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    牌证信息
+                </button>
+                <button id="tab-image" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    图像信息
+                </button>
+            </div>
+        </div>
+
+        <!-- 表单内容区域 -->
+        <div class="bg-white rounded-b-xl shadow-md p-6">
+            <!-- 车辆信息表单 -->
+            <div id="form-vehicle" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 销售顾问 -->
+                    <div>
+                        <label class="form-label">
+                            销售顾问 <span class="form-required">*</span>
+                        </label>
+                        <select class="form-select" required>
+                            <option value="">请选择</option>
+                            <option value="black">黑色</option>
+                            <option value="white">白色</option>
+                            <option value="silver">银色</option>
+                            <option value="red">红色</option>
+                            <option value="blue">蓝色</option>
+                            <option value="gray">灰色</option>
+                            <option value="green">绿色</option>
+                            <option value="brown">棕色</option>
+                            <option value="purple">紫色</option>
+                            <option value="champagne">香槟色</option>
+                            <option value="yellow">黄色</option>
+                            <option value="beige">米色</option>
+                            <option value="gold">金色</option>
+                            <option value="orange">橙色</option>
+                            <option value="pink">粉色</option>
+                            <option value="dual">双色</option>
+                            <option value="silver-gray">银灰色</option>
+                            <option value="pink">粉红色</option>
+                            <option value="dark-gray">深灰色</option>
+                            <option value="coffee">咖啡色</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+
+                    <!-- 车辆名称 -->
+                    <div>
+                        <label class="form-label">
+                            车辆名称 <span class="form-required">*</span>
+                        </label>
+                        <select class="form-select" id="car-model">
+                            <option value="">请选择</option>
+                            <option value="audi-a6l">奥迪 A6L</option>
+                            <option value="audi-a4l">奥迪 A4L</option>
+                            <option value="bmw-530li">宝马 530Li</option>
+                            <option value="bmw-320li">宝马 320Li</option>
+                            <option value="toyota-camry">丰田 凯美瑞</option>
+                            <option value="toyota-corolla">丰田 卡罗拉</option>
+                            <option value="honda-accord">本田 雅阁</option>
+                            <option value="honda-civic">本田 思域</option>
+                        </select>
+                    </div>
+
+                    <!-- 车架号 -->
+                    <div>
+                        <label class="form-label">
+                            车架号 <span class="form-required">*</span>
+                        </label>
+                        <input type="text" class="form-input" placeholder="请输入" required>
+                    </div>
+
+                    <!-- 车牌号 -->
+                    <div>
+                        <label class="form-label">
+                            车牌号 <span class="form-required">*</span>
+                        </label>
+                        <input type="text" class="form-input" placeholder="请输入" required>
+                    </div>
+
+                    <!-- 发动机号 -->
+                    <div>
+                        <label class="form-label">
+                            发动机号 <span class="form-required">*</span>
+                        </label>
+                        <input type="text" class="form-input" placeholder="请输入" required>
+                    </div>
+
+                    <!-- 上牌时间 -->
+                    <div>
+                        <label class="form-label">
+                            上牌时间 <span class="form-required">*</span>
+                        </label>
+                        <input type="date" class="form-input" required>
+                    </div>
+
+                    <!-- 上牌城市 (省市级联) -->
+                    <div>
+                        <label class="form-label">
+                            上牌城市 <span class="form-required">*</span>
+                        </label>
+                        <select class="form-select" id="plate-city">
+                            <option value="">请选择</option>
+                            <option value="gd-gz">广东省-广州市</option>
+                            <option value="gd-sz">广东省-深圳市</option>
+                            <option value="gd-dg">广东省-东莞市</option>
+                            <option value="bj-bj">北京市</option>
+                            <option value="sh-sh">上海市</option>
+                            <option value="zj-hz">浙江省-杭州市</option>
+                            <option value="zj-nb">浙江省-宁波市</option>
+                        </select>
+                    </div>
+
+                    <!-- 车辆所在地 -->
+                    <div>
+                        <label class="form-label">
+                            车辆所在地 <span class="form-required">*</span>
+                        </label>
+                        <select class="form-select" id="vehicle-location">
+                            <option value="">请选择</option>
+                            <option value="gd-gz">广东省-广州市</option>
+                            <option value="gd-sz">广东省-深圳市</option>
+                            <option value="gd-dg">广东省-东莞市</option>
+                            <option value="bj-bj">北京市</option>
+                            <option value="sh-sh">上海市</option>
+                            <option value="zj-hz">浙江省-杭州市</option>
+                            <option value="zj-nb">浙江省-宁波市</option>
+                        </select>
+                    </div>
+
+                    <!-- 表显里程 -->
+                    <div>
+                        <label class="form-label">
+                            表显里程 <span class="form-required">*</span>
+                        </label>
+                        <input type="number" class="form-input" placeholder="请输入" required>
+                    </div>
+
+                    <!-- 使用性质 -->
+                    <div>
+                        <label class="form-label">
+                            使用性质 <span class="form-required">*</span>
+                        </label>
+                        <select class="form-select" required>
+                            <option value="">请选择</option>
+                            <option value="non-operating">非营运</option>
+                            <option value="operating">营运</option>
+                            <option value="rental">租赁</option>
+                            <option value="converted">营转非</option>
+                            <option value="official">公务车</option>
+                        </select>
+                    </div>
+
+                    <!-- 所有人性质 -->
+                    <div>
+                        <label class="form-label">
+                            所有人性质 <span class="form-required">*</span>
+                        </label>
+                        <select class="form-select" required>
+                            <option value="">请选择</option>
+                            <option value="personal">个人</option>
+                            <option value="company">公司</option>
+                        </select>
+                    </div>
+
+                    <!-- 天窗 -->
+                    <div>
+                        <label class="form-label">
+                            天窗 <span class="form-required">*</span>
+                        </label>
+                        <select class="form-select" required>
+                            <option value="">请选择</option>
+                            <option value="panoramic">全景天窗</option>
+                            <option value="small">小天窗</option>
+                            <option value="none">无天窗</option>
+                        </select>
+                    </div>
+
+                    <!-- 车辆类别 -->
+                    <div>
+                        <label class="form-label">
+                            车辆类别 <span class="form-required">*</span>
+                        </label>
+                        <select class="form-select" required>
+                            <option value="">请选择</option>
+                            <option value="replacement">置换车</option>
+                            <option value="scrap">报废车</option>
+                        </select>
+                    </div>
+
+                    <!-- 排放标准 -->
+                    <div>
+                        <label class="form-label">
+                            排放标准
+                        </label>
+                        <select class="form-select">
+                            <option value="">请选择</option>
+                            <option value="national6">国6</option>
+                            <option value="national5">国5</option>
+                            <option value="national4">国4</option>
+                            <option value="national3">国3</option>
+                            <option value="national2">国2</option>
+                            <option value="national1">国1</option>
+                        </select>
+                    </div>
+
+                    <!-- 内饰颜色 -->
+                    <div>
+                        <label class="form-label">
+                            内饰颜色
+                        </label>
+                        <select class="form-select">
+                            <option value="">请选择</option>
+                            <option value="black">黑色</option>
+                            <option value="white">白色</option>
+                            <option value="silver">银色</option>
+                            <option value="red">红色</option>
+                            <option value="blue">蓝色</option>
+                            <option value="gray">灰色</option>
+                            <option value="green">绿色</option>
+                            <option value="brown">棕色</option>
+                            <option value="purple">紫色</option>
+                            <option value="champagne">香槟色</option>
+                            <option value="yellow">黄色</option>
+                            <option value="beige">米色</option>
+                            <option value="gold">金色</option>
+                            <option value="orange">橙色</option>
+                            <option value="pink">粉色</option>
+                            <option value="dual">双色</option>
+                            <option value="silver-gray">银灰色</option>
+                            <option value="pink">粉红色</option>
+                            <option value="dark-gray">深灰色</option>
+                            <option value="coffee">咖啡色</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+
+                    <!-- 外观颜色 -->
+                    <div>
+                        <label class="form-label">
+                            外观颜色
+                        </label>
+                        <select class="form-select">
+                            <option value="">请选择</option>
+                            <option value="black">黑色</option>
+                            <option value="white">白色</option>
+                            <option value="silver">银色</option>
+                            <option value="red">红色</option>
+                            <option value="blue">蓝色</option>
+                            <option value="gray">灰色</option>
+                            <option value="green">绿色</option>
+                            <option value="brown">棕色</option>
+                            <option value="purple">紫色</option>
+                            <option value="champagne">香槟色</option>
+                            <option value="yellow">黄色</option>
+                            <option value="beige">米色</option>
+                            <option value="gold">金色</option>
+                            <option value="orange">橙色</option>
+                            <option value="pink">粉色</option>
+                            <option value="dual">双色</option>
+                            <option value="silver-gray">银灰色</option>
+                            <option value="pink">粉红色</option>
+                            <option value="dark-gray">深灰色</option>
+                            <option value="coffee">咖啡色</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+
+                    <!-- 生产日期 -->
+                    <div>
+                        <label class="form-label">
+                            生产日期
+                        </label>
+                        <input type="date" class="form-input">
+                    </div>
+
+                    <!-- 指导价 -->
+                    <div>
+                        <label class="form-label">
+                            指导价
+                        </label>
+                        <input type="text" class="form-input" placeholder="请输入">
+                    </div>
+
+                    <!-- 是否购买新车 -->
+                    <div>
+                        <label class="form-label">
+                            是否购买新车
+                        </label>
+                        <div class="flex items-center space-x-4">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="buy-new-car" value="yes" class="form-radio text-primary">
+                                <span class="ml-2">是</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="buy-new-car" value="no" class="form-radio text-primary">
+                                <span class="ml-2">否</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 是否事故 -->
+                    <div>
+                        <label class="form-label">
+                            是否事故 <span class="form-required">*</span>
+                        </label>
+                        <div class="flex items-center space-x-4">
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="is-accident" value="yes" class="form-radio text-primary" checked>
+                                <span class="ml-2">是</span>
+                            </label>
+                            <label class="inline-flex items-center">
+                                <input type="radio" name="is-accident" value="no" class="form-radio text-primary">
+                                <span class="ml-2">否</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- 综合评价 -->
+                    <div>
+                        <label class="form-label">
+                            综合评价 <span class="form-required">*</span>
+                        </label>
+                        <select class="form-select" required>
+                            <option value="">请选择</option>
+                            <option value="excellent">优</option>
+                            <option value="good">良</option>
+                            <option value="average">一般</option>
+                            <option value="poor">差</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 车况描述 (多行文本输入框) -->
+                <div>
+                    <label class="form-label">
+                        车况描述 <span class="form-required">*</span>
+                    </label>
+                    <textarea class="form-textarea" placeholder="请输入" required></textarea>
+                </div>
+            </div>
+
+            <!-- 牌证信息表单 (默认隐藏) -->
+            <div id="form-document" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 钥匙数 -->
+                    <div>
+                        <label class="form-label">
+                            钥匙数 <span class="form-required">*</span>
+                        </label>
+                        <input type="number" class="form-input" placeholder="请输入" required>
+                    </div>
+
+                    <!-- 过户次数 -->
+                    <div>
+                        <label class="form-label">
+                            过户次数 <span class="form-required">*</span>
+                        </label>
+                        <input type="number" class="form-input" placeholder="请输入" required>
+                    </div>
+
+                    <!-- 交强险到期 -->
+                    <div>
+                        <label class="form-label">
+                            交强险到期 <span class="form-required">*</span>
+                        </label>
+                        <input type="date" class="form-input" required>
+                    </div>
+
+                    <!-- 年审到期 -->
+                    <div>
+                        <label class="form-label">
+                            年审到期 <span class="form-required">*</span>
+                        </label>
+                        <input type="date" class="form-input" required>
+                    </div>
+
+                    <!-- 商业险到期 -->
+                    <div>
+                        <label class="form-label">
+                            商业险到期
+                        </label>
+                        <input type="date" class="form-input">
+                    </div>
+
+                    <!-- 入库时间 -->
+                    <div>
+                        <label class="form-label">
+                            入库时间 <span class="form-required">*</span>
+                        </label>
+                        <input type="date" class="form-input" required>
+                    </div>
+
+                    <!-- 采购金额 -->
+                    <div>
+                        <label class="form-label">
+                            采购金额 <span class="form-required">*</span>
+                        </label>
+                        <div class="relative">
+                            <input type="number" class="form-input" placeholder="请输入" required>
+                            <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">万元</span>
+                        </div>
+                    </div>
+
+                    <!-- 原车主名称 -->
+                    <div>
+                        <label class="form-label">
+                            原车主名称 <span class="form-required">*</span>
+                        </label>
+                        <input type="text" class="form-input" placeholder="请输入" required>
+                    </div>
+
+                    <!-- 原车主住址 -->
+                    <div>
+                        <label class="form-label">
+                            原车主住址 <span class="form-required">*</span>
+                        </label>
+                        <input type="text" class="form-input" placeholder="请输入" required>
+                    </div>
+
+                    <!-- 原车主电话 -->
+                    <div>
+                        <label class="form-label">
+                            原车主电话 <span class="form-required">*</span>
+                        </label>
+                        <input type="tel" class="form-input" placeholder="请输入" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图像信息表单 (默认隐藏) -->
+            <div id="form-image" class="space-y-6 hidden">
+                <!-- 车辆图片 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">车辆图片</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1071/400/300" alt="左前45度" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">左前45度</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1072/400/300" alt="主驾驶全景" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">主驾驶全景</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1073/400/300" alt="仪表盘" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">仪表盘</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1074/400/300" alt="后排座椅" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">后排座椅</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1075/400/300" alt="中控台全景" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">中控台全景</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1076/400/300" alt="右后45度" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">右后45度</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1077/400/300" alt="铭牌" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">铭牌</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 证件资料 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">证件资料 </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/20/400/300" alt="行驶证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">行驶证</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/21/400/300" alt="登记证1" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">登记证1</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/22/400/300" alt="登记证2" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">登记证2</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center">
+                                <i class="fa fa-cloud-upload text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-xs text-gray-500">上传图片</p>
+                                <input type="file" class="hidden" accept="image/*">
+                            </div>
+                            <p class="text-xs text-center text-gray-600">登记证3</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 车辆视频 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">车辆视频</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center">
+                                <i class="fa fa-cloud-upload text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-xs text-gray-500">上传视频</p>
+                                <input type="file" class="hidden" accept="video/*">
+                            </div>
+                            <p class="text-xs text-center text-gray-600">发动机工况</p>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center">
+                                <i class="fa fa-cloud-upload text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-xs text-gray-500">上传视频</p>
+                                <input type="file" class="hidden" accept="video/*">
+                            </div>
+                            <p class="text-xs text-center text-gray-600">车况解说</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 其他图片 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">其他图片</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center">
+                                <i class="fa fa-cloud-upload text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-xs text-gray-500">上传图片</p>
+                                <input type="file" class="hidden" accept="image/*" multiple>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab切换逻辑
+            const tabVehicle = document.getElementById('tab-vehicle');
+            const tabDocument = document.getElementById('tab-document');
+            const tabImage = document.getElementById('tab-image');
+            const formVehicle = document.getElementById('form-vehicle');
+            const formDocument = document.getElementById('form-document');
+            const formImage = document.getElementById('form-image');
+
+            tabVehicle.addEventListener('click', function() {
+                setActiveTab(tabVehicle);
+                showForm(formVehicle);
+            });
+
+            tabDocument.addEventListener('click', function() {
+                setActiveTab(tabDocument);
+                showForm(formDocument);
+            });
+
+            tabImage.addEventListener('click', function() {
+                setActiveTab(tabImage);
+                showForm(formImage);
+            });
+
+            function setActiveTab(activeTab) {
+                [tabVehicle, tabDocument, tabImage].forEach(tab => {
+                    if (tab === activeTab) {
+                        tab.classList.remove('tab-inactive');
+                        tab.classList.add('tab-active');
+                    } else {
+                        tab.classList.remove('tab-active');
+                        tab.classList.add('tab-inactive');
+                    }
+                });
+            }
+
+            function showForm(activeForm) {
+                [formVehicle, formDocument, formImage].forEach(form => {
+                    if (form === activeForm) {
+                        form.classList.remove('hidden');
+                    } else {
+                        form.classList.add('hidden');
+                    }
+                });
+            }
+
+
+
+            // 返回按钮逻辑
+            const backButton = document.getElementById('back-button');
+            backButton.addEventListener('click', function() {
+                // 返回工单列表页面
+                window.location.href = '工单列表.html';
+            });
+
+            // 取消按钮逻辑
+            const cancelButton = document.getElementById('cancel-button');
+            cancelButton.addEventListener('click', function() {
+                // 返回工单列表页面
+                window.location.href = '工单列表.html';
+            });
+
+            // 提交按钮逻辑
+            const submitButton = document.getElementById('submit-button');
+            submitButton.addEventListener('click', function() {
+                // 这里应该实现表单提交逻辑
+                alert('表单提交成功');
+                // 提交成功后跳转到工单列表页面
+                window.location.href = '工单列表.html';
+            });
+
+            // 文件上传逻辑
+            const uploadAreas = document.querySelectorAll('.upload-area');
+            uploadAreas.forEach(area => {
+                area.addEventListener('click', function(e) {
+                    // 如果点击的是删除按钮，不触发文件上传
+                    if (e.target.closest('.fa-times') || e.target.closest('.bg-danger')) {
+                        return;
+                    }
+                    const fileInput = this.parentElement.querySelector('input[type="file"]') || this.querySelector('input[type="file"]');
+                    if (fileInput) {
+                        fileInput.click();
+                    }
+                });
+            });
+
+            // 图片删除逻辑
+            const removeButtons = document.querySelectorAll('.bg-danger');
+            removeButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation(); // 阻止事件冒泡到上传区域
+                    const uploadArea = this.closest('.upload-area');
+                    if (uploadArea) {
+                        // 这里应该实现图片删除逻辑，这里仅做示例
+                        // 实际应用中应该从服务器删除图片并更新页面
+                        uploadArea.parentElement.remove();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

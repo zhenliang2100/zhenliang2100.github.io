@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>评估单详情 - iPad应用</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <script src="../js/back-button.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        info: '#6366F1',
+                        light: '#F3F4F6',
+                        dark: '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .tab-active {
+                @apply bg-primary text-white border-b-2 border-primary;
+            }
+            .tab-inactive {
+                @apply bg-gray-100 text-gray-600 border-b-2 border-transparent hover:bg-gray-200;
+            }
+            .form-label {
+                @apply block text-sm font-medium text-gray-700 mb-1;
+            }
+            .form-input {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200;
+            }
+            .form-input-readonly {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-gray-100;
+            }
+            .form-select {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200;
+            }
+            .form-select-readonly {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-gray-100;
+            }
+            .form-textarea {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary transition-colors duration-200 resize-y min-h-[100px];
+            }
+            .form-textarea-readonly {
+                @apply w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-gray-100 resize-y min-h-[100px];
+            }
+            .form-required {
+                @apply text-danger;
+            }
+            .upload-area {
+                @apply border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary transition-colors duration-200 cursor-pointer;
+            }
+            .image-preview {
+                @apply relative w-full h-40 bg-gray-100 rounded-lg overflow-hidden;
+            }
+            .image-preview img {
+                @apply w-full h-full object-cover;
+            }
+            .image-remove {
+                @apply absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer;
+            }
+            .status-badge {
+                @apply px-3 py-1 rounded-full text-xs font-medium;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <button class="text-primary text-xl px-2" id="back-button">
+                    <i class="fa fa-arrow-left"></i>
+                </button>
+                <i class="fa fa-file-text text-primary text-2xl"></i>
+                <h1 class="text-xl font-bold text-gray-800">评估单详情</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors duration-200 hidden" id="submit-button">
+                    保存
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-28 pb-12">
+        <!-- 工单状态 -->
+        <div class="bg-white rounded-xl p-4 shadow-md mb-6 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <span class="status-badge bg-yellow-100 text-yellow-800">评估中</span>
+                <span class="text-sm font-medium text-gray-600">工单编号: 250730160824930</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="text-xs text-gray-500">工单时间: 2025-07-30 16:08:24</span>
+            </div>
+        </div>
+
+        <!-- 表单步骤Tab -->
+        <div class="bg-white rounded-t-xl shadow-md mb-0">
+            <div class="flex overflow-x-auto scrollbar-hide border-b border-gray-200">
+                <button id="tab-vehicle" class="tab-active whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    车辆信息
+                </button>
+                <button id="tab-document" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    牌证信息
+                </button>
+                <button id="tab-image" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    图像信息
+                </button>
+                <button id="tab-evaluation" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    评估信息
+                </button>
+                <button id="tab-contract" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    签约信息
+                </button>
+                <button id="tab-payment" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    支付信息
+                </button>
+                <button id="tab-delivery" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    交车确认
+                </button>
+            </div>
+        </div>
+
+        <!-- 表单内容区域 -->
+        <div class="bg-white rounded-b-xl shadow-md p-6">
+            <!-- 车辆信息表单 -->
+            <div id="form-vehicle" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 销售顾问 -->
+                    <div>
+                        <label class="form-label">
+                            销售顾问
+                        </label>
+                        <input type="text" class="form-input-readonly" value="张三" readonly>
+                    </div>
+
+                    <!-- 车辆名称 -->
+                    <div>
+                        <label class="form-label">
+                            车辆名称
+                        </label>
+                        <input type="text" class="form-input-readonly" value="奥迪 A6L" readonly>
+                    </div>
+
+                    <!-- 车架号 -->
+                    <div>
+                        <label class="form-label">
+                            车架号
+                        </label>
+                        <input type="text" class="form-input-readonly" value="LFV3A28K0J3000001" readonly>
+                    </div>
+
+                    <!-- 车牌号 -->
+                    <div>
+                        <label class="form-label">
+                            车牌号
+                        </label>
+                        <input type="text" class="form-input-readonly" value="粤A12345" readonly>
+                    </div>
+
+                    <!-- 发动机号 -->
+                    <div>
+                        <label class="form-label">
+                            发动机号
+                        </label>
+                        <input type="text" class="form-input-readonly" value="12345678" readonly>
+                    </div>
+
+                    <!-- 上牌时间 -->
+                    <div>
+                        <label class="form-label">
+                            上牌时间
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2020-01-01" readonly>
+                    </div>
+
+                    <!-- 上牌城市 (省市级联) -->
+                    <div>
+                        <label class="form-label">
+                            上牌城市
+                        </label>
+                        <input type="text" class="form-input-readonly" value="广东省-广州市" readonly>
+                    </div>
+
+                    <!-- 车辆所在地 -->
+                    <div>
+                        <label class="form-label">
+                            车辆所在地
+                        </label>
+                        <input type="text" class="form-input-readonly" value="广东省-广州市" readonly>
+                    </div>
+
+                    <!-- 表显里程 -->
+                    <div>
+                        <label class="form-label">
+                            表显里程
+                        </label>
+                        <input type="text" class="form-input-readonly" value="50000公里" readonly>
+                    </div>
+
+                    <!-- 使用性质 -->
+                    <div>
+                        <label class="form-label">
+                            使用性质
+                        </label>
+                        <input type="text" class="form-input-readonly" value="非营运" readonly>
+                    </div>
+
+                    <!-- 所有人性质 -->
+                    <div>
+                        <label class="form-label">
+                            所有人性质
+                        </label>
+                        <input type="text" class="form-input-readonly" value="个人" readonly>
+                    </div>
+
+                    <!-- 天窗 -->
+                    <div>
+                        <label class="form-label">
+                            天窗
+                        </label>
+                        <input type="text" class="form-input-readonly" value="全景天窗" readonly>
+                    </div>
+
+                    <!-- 车辆类别 -->
+                    <div>
+                        <label class="form-label">
+                            车辆类别
+                        </label>
+                        <input type="text" class="form-input-readonly" value="置换车" readonly>
+                    </div>
+
+                    <!-- 排放标准 -->
+                    <div>
+                        <label class="form-label">
+                            排放标准
+                        </label>
+                        <input type="text" class="form-input-readonly" value="国6" readonly>
+                    </div>
+
+                    <!-- 内饰颜色 -->
+                    <div>
+                        <label class="form-label">
+                            内饰颜色
+                        </label>
+                        <input type="text" class="form-input-readonly" value="黑色" readonly>
+                    </div>
+
+                    <!-- 外观颜色 -->
+                    <div>
+                        <label class="form-label">
+                            外观颜色
+                        </label>
+                        <input type="text" class="form-input-readonly" value="白色" readonly>
+                    </div>
+
+                    <!-- 生产日期 -->
+                    <div>
+                        <label class="form-label">
+                            生产日期
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2019-05-01" readonly>
+                    </div>
+
+                    <!-- 指导价 -->
+                    <div>
+                        <label class="form-label">
+                            指导价
+                        </label>
+                        <input type="text" class="form-input-readonly" value="40万元" readonly>
+                    </div>
+
+                    <!-- 是否购买新车 -->
+                    <div>
+                        <label class="form-label">
+                            是否购买新车
+                        </label>
+                        <input type="text" class="form-input-readonly" value="是" readonly>
+                    </div>
+
+                    <!-- 是否事故 -->
+                    <div>
+                        <label class="form-label">
+                            是否事故
+                        </label>
+                        <input type="text" class="form-input-readonly" value="否" readonly>
+                    </div>
+
+                    <!-- 综合评价 -->
+                    <div>
+                        <label class="form-label">
+                            综合评价
+                        </label>
+                        <input type="text" class="form-input-readonly" value="优" readonly>
+                    </div>
+                </div>
+
+                <!-- 车况描述 (多行文本输入框) -->
+                <div>
+                    <label class="form-label">
+                        车况描述
+                    </label>
+                    <textarea class="form-textarea-readonly" readonly>车辆外观保持良好，无明显划痕。内饰干净整洁，功能正常。发动机运转平稳，无异响。变速箱换挡顺畅。制动系统工作正常。轮胎磨损正常，胎压合适。车辆保养记录完整。</textarea>
+                </div>
+            </div>
+
+            <!-- 牌证信息表单 (默认隐藏) -->
+            <div id="form-document" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 钥匙数 -->
+                    <div>
+                        <label class="form-label">
+                            钥匙数
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2" readonly>
+                    </div>
+
+                    <!-- 过户次数 -->
+                    <div>
+                        <label class="form-label">
+                            过户次数
+                        </label>
+                        <input type="text" class="form-input-readonly" value="1" readonly>
+                    </div>
+
+                    <!-- 交强险到期 -->
+                    <div>
+                        <label class="form-label">
+                            交强险到期
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2026-01-01" readonly>
+                    </div>
+
+                    <!-- 年审到期 -->
+                    <div>
+                        <label class="form-label">
+                            年审到期
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2026-01-01" readonly>
+                    </div>
+
+                    <!-- 商业险到期 -->
+                    <div>
+                        <label class="form-label">
+                            商业险到期
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2026-01-01" readonly>
+                    </div>
+
+                    <!-- 入库时间 -->
+                    <div>
+                        <label class="form-label">
+                            入库时间
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2025-07-30" readonly>
+                    </div>
+
+                    <!-- 采购金额 -->
+                    <div>
+                        <label class="form-label">
+                            采购金额
+                        </label>
+                        <input type="text" class="form-input-readonly" value="35万元" readonly>
+                    </div>
+
+                    <!-- 原车主名称 -->
+                    <div>
+                        <label class="form-label">
+                            原车主名称
+                        </label>
+                        <input type="text" class="form-input-readonly" value="李四" readonly>
+                    </div>
+
+                    <!-- 原车主住址 -->
+                    <div>
+                        <label class="form-label">
+                            原车主住址
+                        </label>
+                        <input type="text" class="form-input-readonly" value="广东省深圳市南山区" readonly>
+                    </div>
+
+                    <!-- 原车主电话 -->
+                    <div>
+                        <label class="form-label">
+                            原车主电话
+                        </label>
+                        <input type="text" class="form-input-readonly" value="13800138000" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图像信息表单 (默认隐藏) -->
+            <div id="form-image" class="space-y-6 hidden">
+                <!-- 车辆图片 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">车辆图片</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1071/400/300" alt="左前45度" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">左前45度</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1072/400/300" alt="主驾驶全景" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">主驾驶全景</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1073/400/300" alt="仪表盘" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">仪表盘</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1074/400/300" alt="后排座椅" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">后排座椅</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1075/400/300" alt="中控台全景" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">中控台全景</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1076/400/300" alt="右后45度" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">右后45度</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1077/400/300" alt="铭牌" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">铭牌</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 证件资料 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">证件资料</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/20/400/300" alt="行驶证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">行驶证</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/21/400/300" alt="登记证1" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">登记证1</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/22/400/300" alt="登记证2" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">登记证2</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/23/400/300" alt="车主身份证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">车主身份证</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 车辆视频 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">车辆视频</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <video src="#" class="absolute inset-0 w-full h-full object-cover rounded-lg" controls></video>
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">发动机工况</p>
+                            <input type="file" class="hidden" accept="video/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <video src="#" class="absolute inset-0 w-full h-full object-cover rounded-lg" controls></video>
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">车况解说</p>
+                            <input type="file" class="hidden" accept="video/*">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 其他图片 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">其他图片</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/30/400/300" alt="其他图片1" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/31/400/300" alt="其他图片2" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/32/400/300" alt="其他图片3" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 评估信息表单 (默认隐藏) -->
+            <div id="form-evaluation" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 评估价格 -->
+                    <div>
+                        <label class="form-label">
+                            评估价格
+                        </label>
+                        <input type="text" class="form-input-readonly" value="35万元" readonly>
+                    </div>
+
+                    <!-- 评估时间 -->
+                    <div>
+                        <label class="form-label">
+                            评估时间
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2025-07-30 10:00:00" readonly>
+                    </div>
+
+                    <!-- 评估人员 -->
+                    <div>
+                        <label class="form-label">
+                            评估人员
+                        </label>
+                        <input type="text" class="form-input-readonly" value="李四" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 签约信息表单 (默认隐藏) -->
+            <div id="form-contract" class="space-y-6 hidden">
+                <!-- 车辆买卖协议 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">车辆买卖协议</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 合同编号 -->
+                        <div>
+                            <label class="form-label">
+                                合同编号
+                            </label>
+                            <input type="text" class="form-input-readonly" value="HT20250730001" readonly>
+                        </div>
+
+                        <!-- 签约时间 -->
+                        <div>
+                            <label class="form-label">
+                                签约时间
+                            </label>
+                            <input type="text" class="form-input-readonly" value="2025-07-30 11:00:00" readonly>
+                        </div>
+
+                        <!-- 定金金额 -->
+                        <div>
+                            <label class="form-label">
+                                定金金额
+                            </label>
+                            <input type="text" class="form-input-readonly" value="5万元" readonly>
+                        </div>
+
+                        <!-- 尾款金额 -->
+                        <div>
+                            <label class="form-label">
+                                尾款金额
+                            </label>
+                            <input type="text" class="form-input-readonly" value="30万元" readonly>
+                        </div>
+                        
+                        <!-- 在线查阅合同 -->
+                        <div>
+                            <label class="form-label">
+                                在线查阅合同
+                            </label>
+                            <a href="#" class="text-primary hover:underline">查看车辆买卖协议</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 车辆托管协议 -->
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">车辆托管协议</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 合同编号 -->
+                        <div>
+                            <label class="form-label">
+                                合同编号
+                            </label>
+                            <input type="text" class="form-input-readonly" value="HT20250730002" readonly>
+                        </div>
+
+                        <!-- 签约时间 -->
+                        <div>
+                            <label class="form-label">
+                                签约时间
+                            </label>
+                            <input type="text" class="form-input-readonly" value="2025-07-30 11:30:00" readonly>
+                        </div>
+                        
+                        <!-- 在线查阅合同 -->
+                        <div>
+                            <label class="form-label">
+                                在线查阅合同
+                            </label>
+                            <a href="#" class="text-primary hover:underline">查看车辆托管协议</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 支付信息表单 (默认隐藏) -->
+            <div id="form-payment" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- 支付方式 -->
+                    <div>
+                        <label class="form-label">
+                            支付方式
+                        </label>
+                        <input type="text" class="form-input-readonly" value="定金支付" readonly>
+                    </div>
+
+                    <!-- 定金支付时间 -->
+                    <div>
+                        <label class="form-label">
+                            定金支付时间
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2025-07-30 11:30:00" readonly>
+                    </div>
+
+                    <!-- 定金支付状态 -->
+                    <div>
+                        <label class="form-label">
+                            定金支付状态
+                        </label>
+                        <input type="text" class="form-input-readonly" value="已支付" readonly>
+                    </div>
+
+                    <!-- 尾款支付时间 -->
+                    <div>
+                        <label class="form-label">
+                            尾款支付时间
+                        </label>
+                        <input type="text" class="form-input-readonly" value="" readonly>
+                    </div>
+
+                    <!-- 尾款支付状态 -->
+                    <div>
+                        <label class="form-label">
+                            尾款支付状态
+                        </label>
+                        <input type="text" class="form-input-readonly" value="未支付" readonly>
+                    </div>
+
+                    <!-- 全款支付时间 -->
+                    <div>
+                        <label class="form-label">
+                            全款支付时间
+                        </label>
+                        <input type="text" class="form-input-readonly" value="" readonly>
+                    </div>
+
+                    <!-- 全款支付状态 -->
+                    <div>
+                        <label class="form-label">
+                            全款支付状态
+                        </label>
+                        <input type="text" class="form-input-readonly" value="未支付" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 交车确认表单 (默认隐藏) -->
+            <div id="form-delivery" class="space-y-6 hidden">
+                <!-- 确认信息 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- 确认人 -->
+                    <div>
+                        <label class="form-label">
+                            确认人
+                        </label>
+                        <input type="text" class="form-input-readonly" value="张三" readonly>
+                    </div>
+
+                    <!-- 确认时间 -->
+                    <div>
+                        <label class="form-label">
+                            确认时间
+                        </label>
+                        <input type="text" class="form-input-readonly" value="2025-07-30 16:30:00" readonly>
+                    </div>
+                </div>
+
+                <!-- 车辆图片 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">车辆图片</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1071/400/300" alt="左前45度" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">左前45度</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1072/400/300" alt="主驾驶全景" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">主驾驶全景</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1073/400/300" alt="仪表盘" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">仪表盘</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 证件资料 -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">证件资料</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/20/400/300" alt="行驶证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">行驶证</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/21/400/300" alt="车钥匙" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">车钥匙</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/22/400/300" alt="车辆登记证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">车辆登记证</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/23/400/300" alt="车主身份证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">车主身份证</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 返回按钮逻辑
+        const backButton = document.getElementById('back-button');
+        backButton.addEventListener('click', function() {
+            // 返回工单列表页面
+            window.location.href = '工单列表.html';
+        });
+
+        // Tab切换功能
+        const tabs = document.querySelectorAll('[id^="tab-"]');
+        const forms = document.querySelectorAll('[id^="form-"]');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有tab的active状态
+                tabs.forEach(t => t.classList.remove('tab-active'));
+                tabs.forEach(t => t.classList.add('tab-inactive'));
+                
+                // 添加当前tab的active状态
+                tab.classList.remove('tab-inactive');
+                tab.classList.add('tab-active');
+                
+                // 隐藏所有表单
+                forms.forEach(form => form.classList.add('hidden'));
+                
+                // 显示对应表单
+                const formId = tab.id.replace('tab', 'form');
+                document.getElementById(formId).classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

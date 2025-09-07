@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>工单列表 - iPad应用</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="../css/font-awesome.min.css" rel="stylesheet">
+  <script src="../js/back-button.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#3B82F6',
+                        success: '#10B981',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        info: '#6366F1',
+                        light: '#F3F4F6',
+                        dark: '#1F2937'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .tab-active {
+                @apply bg-primary text-white border-b-2 border-primary;
+            }
+            .tab-inactive {
+                @apply bg-gray-100 text-gray-600 border-b-2 border-transparent hover:bg-gray-200;
+            }
+            .card-shadow {
+                @apply shadow-lg hover:shadow-xl transition-shadow duration-300;
+            }
+            .status-badge {
+                @apply px-3 py-1 rounded-full text-xs font-medium;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- 顶部导航栏 -->
+    <header class="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <button class="text-primary text-xl px-2" id="back-button" style="-webkit-appearance: none;">
+                <i class="fa fa-arrow-left" style="-webkit-font-smoothing: antialiased;"></i>
+            </button>
+                <i class="fa fa-ticket text-primary text-2xl"></i>
+                <h1 class="text-xl font-bold text-gray-800">工单管理系统</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <a href="新增评估单.html" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                    <i class="fa fa-plus"></i>
+                    <span>新增评估单</span>
+                </a>
+                <div class="relative">
+                    <button class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                        <img src="https://picsum.photos/id/1005/200/200" alt="用户头像" class="h-10 w-10 object-cover">
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 pt-28 pb-12">
+        <!-- 筛选和搜索区域 -->
+        <div class="bg-white rounded-xl p-4 shadow-md mb-6">
+            <div class="flex flex-wrap gap-4">
+
+                <div class="w-full md:w-64">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">工单状态</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary">
+                        <option value="all">全部工单</option>
+                        <option value="evaluating">评估中</option>
+                        <option value="quoted">已报价</option>
+                        <option value="signed">已签约</option>
+                        <option value="deposit">已支付-定金</option>
+                        <option value="paid">已支付-尾款</option>
+                        <option value="completed">已完成</option>
+                        <option value="rejected">已驳回</option>
+                    </select>
+                </div>
+                <div class="w-full md:w-64">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">车主姓名</label>
+                    <input type="text" placeholder="请输入车主姓名" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div class="w-full md:w-64">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">车主电话</label>
+                    <input type="tel" placeholder="请输入车主电话" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div class="w-full md:w-64">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">车架号</label>
+                    <input type="text" placeholder="请输入车架号" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div class="w-full md:w-64">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">评估单号</label>
+                    <input type="text" placeholder="请输入评估单号" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-gray-700 focus:ring-2 focus:ring-primary focus:border-primary">
+                </div>
+                <div class="w-full md:w-auto flex items-end">
+                    <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-colors duration-200 w-full md:w-auto">
+                        <i class="fa fa-search mr-1"></i> 搜索
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 状态Tab切换 -->
+        <div class="bg-white rounded-xl shadow-md mb-6">
+            <div class="flex overflow-x-auto scrollbar-hide border-b border-gray-200">
+                <button id="tab-all" class="tab-active whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    全部工单 (19)
+                </button>
+                <button id="tab-evaluating" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    评估中 (7)
+                </button>
+                <button id="tab-quoted" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    已报价 (3)
+                </button>
+                <button id="tab-signed" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    已签约 (2)
+                </button>
+                <button id="tab-deposit" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    已支付-定金 (2)
+                </button>
+                <button id="tab-paid" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    已支付-尾款 (3)
+                </button>
+                <button id="tab-completed" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    已完成 (1)
+                </button>
+                <button id="tab-rejected" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
+                    已驳回 (1)
+                </button>
+            </div>
+        </div>
+
+        <!-- 工单列表 -->
+        <div class="space-y-4" id="workorder-list">
+            <!-- 工单卡片 - 评估中状态 -->
+            <div class="bg-white rounded-xl overflow-hidden card-shadow">
+                <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-badge bg-yellow-100 text-yellow-800">评估中</span>
+                        <span class="text-sm font-medium text-gray-600">工单编号: 250730160824930</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">工单时间: 2025-07-30 16:08:24</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 左侧信息 -->
+                        <div class="space-y-3">
+                            <!-- 车主信息 -->
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-800">李女士 139****5678</h3>
+                            </div>
+                            
+                            <!-- 车辆信息 -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">捷途X70 X70 2020款 1.5T 双离合 悦行版6座</h3>
+                                <div class="flex items-center space-x-3 text-xs text-gray-500">
+                                    <span>粤B12345</span>
+                                    <span>2020年上牌</span>
+                                    <span>4.2万公里</span>
+                                    <span>一手车</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 评估价格 -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">评估价格:</span>
+                                <span class="text-sm text-gray-600">评估中</span>
+                            </div>
+                            
+                            <!-- 人员信息 -->
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">销售顾问:</span>
+                                    <span class="font-medium">轻改专家 | 熊正顺</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">转化人员:</span>
+                                    <span class="font-medium">深圳嘀嘀虎园区店 | 杨振亮</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧车辆图片和操作按钮 -->
+                        <div class="flex flex-col justify-between items-end">
+                            <div class="relative">
+                                <img src="../images/car.png" alt="车辆图片" class="w-64 h-32 object-cover rounded-lg">
+                                <span class="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded text-xs">置换车</span>
+                            </div>
+                            <div class="flex justify-end space-x-2 mt-4">
+                                <a href="评估单详情.html" class="px-4 py-2 border border-primary text-primary rounded-lg text-sm hover:bg-primary/5 transition-colors duration-200 inline-block text-center">
+                                    查看详情
+                                </a>
+                                <a href="编辑评估单.html" class="px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors duration-200 inline-block text-center">
+                                    工单编辑
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工单卡片 - 已报价状态 -->
+            <div class="bg-white rounded-xl overflow-hidden card-shadow">
+                <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-badge bg-purple-100 text-purple-800">已报价</span>
+                        <span class="text-sm font-medium text-gray-600">工单编号: 250730160824931</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">工单时间: 2025-07-30 15:30:18</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 左侧信息 -->
+                        <div class="space-y-3">
+                            <!-- 车主信息 -->
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-800">赵先生 135****9012</h3>
+                            </div>
+                            
+                            <!-- 车辆信息 -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">奥迪A4L A4L 2021款 40 TFSI 豪华动感型</h3>
+                                <div class="flex items-center space-x-3 text-xs text-gray-500">
+                                    <span>京A12345</span>
+                                    <span>2021年上牌</span>
+                                    <span>1.8万公里</span>
+                                    <span>二手车</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 评估价格 -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">评估价格:</span>
+                                <span class="text-lg font-bold text-green-600">18.60W</span>
+                            </div>
+                            
+                            <!-- 人员信息 -->
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">销售顾问:</span>
+                                    <span class="font-medium">豪华车专家 | 张经理</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">转化人员:</span>
+                                    <span class="font-medium">北京朝阳门店 | 李伟</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧车辆图片和操作按钮 -->
+                        <div class="flex flex-col justify-between items-end">
+                            <div class="relative">
+                                <img src="../images/car.png" alt="车辆图片" class="w-64 h-32 object-cover rounded-lg">
+                                <span class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs">报废车</span>
+                            </div>
+                            <div class="flex justify-end space-x-2 mt-4">
+                                <a href="评估单详情.html" class="px-4 py-2 border border-primary text-primary rounded-lg text-sm hover:bg-primary/5 transition-colors duration-200 inline-block text-center">
+                                    查看详情
+                                </a>
+                                <button class="px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors duration-200">
+                                    客户签约
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工单卡片 - 已签约状态 -->
+            <div class="bg-white rounded-xl overflow-hidden card-shadow">
+                <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-badge bg-green-100 text-green-800">已签约</span>
+                        <span class="text-sm font-medium text-gray-600">工单编号: 250730160824932</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">工单时间: 2025-07-30 14:25:36</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 左侧信息 -->
+                        <div class="space-y-3">
+                            <!-- 车主信息 -->
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-800">陈先生 137****3456</h3>
+                            </div>
+                            
+                            <!-- 车辆信息 -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">特斯拉Model 3 2022款 后轮驱动版</h3>
+                                <div class="flex items-center space-x-3 text-xs text-gray-500">
+                                    <span>沪A12345</span>
+                                    <span>2022年上牌</span>
+                                    <span>0.8万公里</span>
+                                    <span>一手车</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 评估价格 -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">评估价格:</span>
+                                <span class="text-lg font-bold text-green-600">23.80W</span>
+                                <span class="text-xs text-gray-500">(定金: 3.00W | 尾款: 20.80W)</span>
+                            </div>
+                            
+                            <!-- 人员信息 -->
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">销售顾问:</span>
+                                    <span class="font-medium">新能源专家 | 王经理</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">转化人员:</span>
+                                    <span class="font-medium">上海浦东门店 | 张明</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 签约时间 -->
+                            <div class="text-sm">
+                                <span class="text-gray-600">签约时间:</span>
+                                <span class="font-medium">2025-07-30 14:25:36</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧车辆图片和操作按钮 -->
+                        <div class="flex flex-col justify-between items-end">
+                            <div class="relative">
+                                <img src="../images/car.png" alt="车辆图片" class="w-64 h-32 object-cover rounded-lg">
+                                <span class="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded text-xs">置换车</span>
+                            </div>
+                            <div class="flex justify-end space-x-2 mt-4">
+                                <a href="评估单详情.html" class="px-4 py-2 border border-primary text-primary rounded-lg text-sm hover:bg-primary/5 transition-colors duration-200 inline-block text-center">
+                                    查看详情
+                                </a>
+                                <button class="px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors duration-200">
+                                    支付定金/尾款
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工单卡片 - 已支付-定金状态 -->
+            <div class="bg-white rounded-xl overflow-hidden card-shadow">
+                <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-badge bg-cyan-100 text-cyan-800">已支付-定金</span>
+                        <span class="text-sm font-medium text-gray-600">工单编号: 250730160824933</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">工单时间: 2025-07-30 13:15:42</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 左侧信息 -->
+                        <div class="space-y-3">
+                            <!-- 车主信息 -->
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-800">刘女士 13612347890</h3>
+                            </div>
+                            
+                            <!-- 车辆信息 -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">大众途观L 2020款 330TSI 自动两驱智享版</h3>
+                                <div class="flex items-center space-x-3 text-xs text-gray-500">
+                                    <span>粤B67890</span>
+                                    <span>2020年上牌</span>
+                                    <span>3.2万公里</span>
+                                    <span>二手车</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 评估价格 -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">评估价格:</span>
+                                <span class="text-lg font-bold text-green-600">14.00W</span>
+                                <span class="text-xs text-gray-500">(定金: 2.00W | 尾款: 12.00W)</span>
+                            </div>
+                            
+                            <!-- 人员信息 -->
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">销售顾问:</span>
+                                    <span class="font-medium">SUV专家 | 陈顾问</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">转化人员:</span>
+                                    <span class="font-medium">广州天河门店 | 黄明</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 签约时间 -->
+                            <div class="text-sm">
+                                <span class="text-gray-600">签约时间:</span>
+                                <span class="font-medium">2025-07-30 14:25:36</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧车辆图片和操作按钮 -->
+                        <div class="flex flex-col justify-between items-end">
+                            <div class="relative">
+                                <img src="../images/car.png" alt="车辆图片" class="w-64 h-32 object-cover rounded-lg">
+                                <span class="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded text-xs">置换车</span>
+                            </div>
+                            <div class="flex justify-end space-x-2 mt-4">
+                                <a href="评估单详情.html" class="px-4 py-2 border border-primary text-primary rounded-lg text-sm hover:bg-primary/5 transition-colors duration-200 inline-block text-center">
+                                    查看详情
+                                </a>
+                                <button class="px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors duration-200">
+                                    支付尾款
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工单卡片 - 已支付-尾款状态 -->
+            <div class="bg-white rounded-xl overflow-hidden card-shadow">
+                <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-badge bg-indigo-100 text-indigo-800">已支付-尾款</span>
+                        <span class="text-sm font-medium text-gray-600">工单编号: 250730160824934</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">工单时间: 2025-07-30 12:08:15</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 左侧信息 -->
+                        <div class="space-y-3">
+                            <!-- 车主信息 -->
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-800">王先生 13456782345</h3>
+                            </div>
+                            
+                            <!-- 车辆信息 -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">丰田凯美瑞 2021款 2.5G 豪华版</h3>
+                                <div class="flex items-center space-x-3 text-xs text-gray-500">
+                                    <span>京C56789</span>
+                                    <span>2021年上牌</span>
+                                    <span>1.5万公里</span>
+                                    <span>一手车</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 评估价格 -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">评估价格:</span>
+                                <span class="text-lg font-bold text-green-600">14.00W</span>
+                                <span class="text-xs text-gray-500">(定金: 2.00W | 尾款: 12.00W)</span>
+                            </div>
+                            
+                            <!-- 人员信息 -->
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">销售顾问:</span>
+                                    <span class="font-medium">日系车专家 | 林顾问</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">转化人员:</span>
+                                    <span class="font-medium">北京朝阳门店 | 赵强</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 签约时间 -->
+                            <div class="text-sm">
+                                <span class="text-gray-600">签约时间:</span>
+                                <span class="font-medium">2025-07-30 14:25:36</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧车辆图片和操作按钮 -->
+                        <div class="flex flex-col justify-between items-end">
+                            <div class="relative">
+                                <img src="../images/car.png" alt="车辆图片" class="w-64 h-32 object-cover rounded-lg">
+                                <span class="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded text-xs">置换车</span>
+                            </div>
+                            <div class="flex justify-end space-x-2 mt-4">
+                                <a href="评估单详情.html" class="px-4 py-2 border border-primary text-primary rounded-lg text-sm hover:bg-primary/5 transition-colors duration-200 inline-block text-center">
+                                    查看详情
+                                </a>
+                                <button class="px-4 py-2 bg-primary text-white rounded-lg text-sm hover:bg-primary/90 transition-colors duration-200">
+                                    确认交车
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工单卡片 - 已完成状态 -->
+            <div class="bg-white rounded-xl overflow-hidden card-shadow">
+                <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-badge bg-green-100 text-green-800">已完成</span>
+                        <span class="text-sm font-medium text-gray-600">工单编号: 250730160824935</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">工单时间: 2025-07-30 11:30:22</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 左侧信息 -->
+                        <div class="space-y-3">
+                            <!-- 车主信息 -->
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-800">孙女士 133****6789</h3>
+                            </div>
+                            
+                            <!-- 车辆信息 -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">本田思域 2019款 220TURBO CVT燃动版</h3>
+                                <div class="flex items-center space-x-3 text-xs text-gray-500">
+                                    <span>粤C12345</span>
+                                    <span>2019年上牌</span>
+                                    <span>5.2万公里</span>
+                                    <span>二手车</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 评估价格 -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">评估价格:</span>
+                                <span class="text-lg font-bold text-green-600">11.20W</span>
+                                <span class="text-xs text-gray-500">(定金: 1.60W | 尾款: 9.60W)</span>
+                            </div>
+                            
+                            <!-- 人员信息 -->
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">销售顾问:</span>
+                                    <span class="font-medium">运动轿车专家 | 刘顾问</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">转化人员:</span>
+                                    <span class="font-medium">深圳嘀嘀虎园区店 | 杨振亮</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 签约时间 -->
+                            <div class="text-sm">
+                                <span class="text-gray-600">签约时间:</span>
+                                <span class="font-medium">2025-07-30 14:25:36</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧车辆图片和操作按钮 -->
+                        <div class="flex flex-col justify-between items-end">
+                            <div class="relative">
+                                <img src="../images/car.png" alt="车辆图片" class="w-64 h-32 object-cover rounded-lg">
+                                <span class="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-xs">报废车</span>
+                            </div>
+                            <div class="flex justify-end space-x-2 mt-4">
+                                <a href="评估单详情.html" class="px-4 py-2 border border-primary text-primary rounded-lg text-sm hover:bg-primary/5 transition-colors duration-200 inline-block text-center">
+                                    查看详情
+                                </a>
+                                <button class="px-4 py-2 bg-gray-200 text-gray-600 rounded-lg text-sm cursor-not-allowed">
+                                    已完成
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工单卡片 - 已驳回状态 -->
+            <div class="bg-white rounded-xl overflow-hidden card-shadow">
+                <div class="p-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <span class="status-badge bg-red-100 text-red-800">已驳回</span>
+                        <span class="text-sm font-medium text-gray-600">工单编号: 250730160824936</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs text-gray-500">工单时间: 2025-07-30 10:15:18</span>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- 左侧信息 -->
+                        <div class="space-y-3">
+                            <!-- 车主信息 -->
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-800">周先生 132****0123</h3>
+                            </div>
+                            
+                            <!-- 车辆信息 -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-900 mb-1">别克英朗 2018款 15T 双离合精英型</h3>
+                                <div class="flex items-center space-x-3 text-xs text-gray-500">
+                                    <span>粤D67890</span>
+                                    <span>2018年上牌</span>
+                                    <span>7.5万公里</span>
+                                    <span>二手车</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 评估价格 -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-sm font-medium text-gray-700">评估价格:</span>
+                                <span class="text-lg font-bold text-gray-600">评估中</span>
+                            </div>
+                            
+                            <!-- 人员信息 -->
+                            <div class="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span class="text-gray-600">销售顾问:</span>
+                                    <span class="font-medium">家用轿车专家 | 张顾问</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-600">转化人员:</span>
+                                    <span class="font-medium">深圳嘀嘀虎园区店 | 杨振亮</span>
+                                </div>
+                            </div>
+                            
+                            <!-- 驳回原因 -->
+                            <div class="text-sm text-red-600">
+                                <span class="font-medium">驳回原因:</span>
+                                <span>车况不符合收车标准</span>
+                            </div>
+                        </div>
+                        
+                        <!-- 右侧车辆图片和操作按钮 -->
+                        <div class="flex flex-col justify-between items-end">
+                            <div class="relative">
+                                <img src="../images/car.png" alt="车辆图片" class="w-64 h-32 object-cover rounded-lg">
+                                <span class="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs">置换车</span>
+                            </div>
+                            <div class="flex justify-end space-x-2 mt-4">
+                                <a href="评估单详情.html" class="px-4 py-2 border border-primary text-primary rounded-lg text-sm hover:bg-primary/5 transition-colors duration-200 inline-block text-center">
+                                    查看详情
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分页 -->
+
+    </main>
+
+    <script>
+        // Tab切换逻辑
+        document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // 移除所有tab的active状态
+                document.querySelectorAll('[id^="tab-"]').forEach(t => {
+                    t.classList.remove('tab-active');
+                    t.classList.add('tab-inactive');
+                });
+                // 添加当前tab的active状态
+                tab.classList.remove('tab-inactive');
+                tab.classList.add('tab-active');
+                
+                // 这里可以添加根据tab切换工单列表的逻辑
+                // 实际应用中，应该根据不同的状态过滤显示对应的工单
+                
+                // 模拟加载效果
+                const workorderList = document.getElementById('workorder-list');
+                workorderList.innerHTML = '<div class="flex justify-center items-center h-32"><i class="fa fa-spinner fa-spin text-2xl text-primary"></i></div>';
+                
+                setTimeout(() => {
+                    // 恢复原始列表（实际应用中应该根据状态过滤）
+                    // 这里为了演示，我们只是简单地恢复原始内容
+                    // 在实际应用中，应该根据所选的tab过滤工单
+                    location.reload();
+                }, 500);
+            });
+        });
+    </script>
+</body>
+</html>
