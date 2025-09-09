@@ -54,6 +54,9 @@
             .form-required {
                 @apply text-danger;
             }
+            .form-button {
+                @apply bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-lg transition-colors duration-200;
+            }
             .upload-area {
                 @apply border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary transition-colors duration-200 cursor-pointer;
             }
@@ -112,6 +115,14 @@
         <div class="bg-white rounded-b-xl shadow-md p-6">
             <!-- 车辆信息表单 -->
             <div id="form-vehicle" class="space-y-6">
+                <!-- 行驶证识别按钮 -->
+                <div class="mb-6 flex items-center">
+                    <button id="ocr-license-button" class="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center">
+                        <i class="fa fa-camera mr-2"></i>
+                        拍摄行驶证自动识别
+                    </button>
+                    <button type="button" class="form-button ml-2" onclick="recognizeVIN()">车架号自动识别</button>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- 销售顾问 -->
                     <div>
@@ -120,45 +131,75 @@
                         </label>
                         <select class="form-select" required>
                             <option value="">请选择</option>
-                            <option value="black">黑色</option>
-                            <option value="white">白色</option>
-                            <option value="silver">银色</option>
-                            <option value="red">红色</option>
-                            <option value="blue">蓝色</option>
-                            <option value="gray">灰色</option>
-                            <option value="green">绿色</option>
-                            <option value="brown">棕色</option>
-                            <option value="purple">紫色</option>
-                            <option value="champagne">香槟色</option>
-                            <option value="yellow">黄色</option>
-                            <option value="beige">米色</option>
-                            <option value="gold">金色</option>
-                            <option value="orange">橙色</option>
-                            <option value="pink">粉色</option>
-                            <option value="dual">双色</option>
-                            <option value="silver-gray">银灰色</option>
-                            <option value="pink">粉红色</option>
-                            <option value="dark-gray">深灰色</option>
-                            <option value="coffee">咖啡色</option>
-                            <option value="other">其他</option>
+                            <!-- 门店1 -->
+                            <optgroup label="深圳嘀嘀虎园区店">
+                                <option value="didi-shenzhen-yuanqu-zhangsan">张三</option>
+                                <option value="didi-shenzhen-yuanqu-lisi">李四</option>
+                                <option value="didi-shenzhen-yuanqu-wangwu">王五</option>
+                            </optgroup>
+                            <!-- 门店2 -->
+                            <optgroup label="广州嘀嘀虎中心店">
+                                <option value="didi-guangzhou-zhongxin-zhaoliu">赵六</option>
+                                <option value="didi-guangzhou-zhongxin-qianqi">钱七</option>
+                            </optgroup>
+                            <!-- 门店3 -->
+                            <optgroup label="北京嘀嘀虎旗舰店">
+                                <option value="didi-beijing-qijian-wangba">王八</option>
+                                <option value="didi-beijing-qijian-lijiu">李九</option>
+                            </optgroup>
                         </select>
                     </div>
 
                     <!-- 车辆名称 -->
                     <div>
                         <label class="form-label">
-                            车辆名称 <span class="form-required">*</span>
+                            品牌车型 <span class="form-required">*</span>
                         </label>
                         <select class="form-select" id="car-model">
                             <option value="">请选择</option>
-                            <option value="audi-a6l">奥迪 A6L</option>
-                            <option value="audi-a4l">奥迪 A4L</option>
-                            <option value="bmw-530li">宝马 530Li</option>
-                            <option value="bmw-320li">宝马 320Li</option>
-                            <option value="toyota-camry">丰田 凯美瑞</option>
-                            <option value="toyota-corolla">丰田 卡罗拉</option>
-                            <option value="honda-accord">本田 雅阁</option>
-                            <option value="honda-civic">本田 思域</option>
+                            <!-- 奥迪 -->
+                            <optgroup label="奥迪">
+                                <!-- A系列 -->
+                                <optgroup label="A系列">
+                                    <option value="audi-a4l">A4L</option>
+                                    <option value="audi-a6l">A6L</option>
+                                    <option value="audi-a8l">A8L</option>
+                                </optgroup>
+                                <!-- Q系列 -->
+                                <optgroup label="Q系列">
+                                    <option value="audi-q3">Q3</option>
+                                    <option value="audi-q5l">Q5L</option>
+                                    <option value="audi-q7">Q7</option>
+                                </optgroup>
+                            </optgroup>
+                            <!-- 宝马 -->
+                            <optgroup label="宝马">
+                                <!-- 3系 -->
+                                <optgroup label="3系">
+                                    <option value="bmw-318i">318i</option>
+                                    <option value="bmw-320i">320i</option>
+                                    <option value="bmw-320li">320Li</option>
+                                    <option value="bmw-330i">330i</option>
+                                </optgroup>
+                                <!-- 5系 -->
+                                <optgroup label="5系">
+                                    <option value="bmw-520i">520i</option>
+                                    <option value="bmw-525li">525Li</option>
+                                    <option value="bmw-530li">530Li</option>
+                                </optgroup>
+                            </optgroup>
+                            <!-- 丰田 -->
+                            <optgroup label="丰田">
+                                <option value="toyota-corolla">卡罗拉</option>
+                                <option value="toyota-camry">凯美瑞</option>
+                                <option value="toyota-highlander">汉兰达</option>
+                            </optgroup>
+                            <!-- 本田 -->
+                            <optgroup label="本田">
+                                <option value="honda-civic">思域</option>
+                                <option value="honda-accord">雅阁</option>
+                                <option value="honda-cr-v">CR-V</option>
+                            </optgroup>
                         </select>
                     </div>
 
@@ -483,25 +524,6 @@
                         <input type="date" class="form-input">
                     </div>
 
-                    <!-- 入库时间 -->
-                    <div>
-                        <label class="form-label">
-                            入库时间 <span class="form-required">*</span>
-                        </label>
-                        <input type="date" class="form-input" required>
-                    </div>
-
-                    <!-- 采购金额 -->
-                    <div>
-                        <label class="form-label">
-                            采购金额 <span class="form-required">*</span>
-                        </label>
-                        <div class="relative">
-                            <input type="number" class="form-input" placeholder="请输入" required>
-                            <span class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">万元</span>
-                        </div>
-                    </div>
-
                     <!-- 原车主名称 -->
                     <div>
                         <label class="form-label">
@@ -513,9 +535,9 @@
                     <!-- 原车主住址 -->
                     <div>
                         <label class="form-label">
-                            原车主住址 <span class="form-required">*</span>
+                            原车主住址
                         </label>
-                        <input type="text" class="form-input" placeholder="请输入" required>
+                        <input type="text" class="form-input" placeholder="请输入">
                     </div>
 
                     <!-- 原车主电话 -->
@@ -794,6 +816,178 @@
                     }
                 });
             });
+
+            // 行驶证识别按钮逻辑
+            const ocrLicenseButton = document.getElementById('ocr-license-button');
+            ocrLicenseButton.addEventListener('click', function() {
+                // 检查是否支持MediaDevices API
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert('您的设备不支持摄像头功能或未授权访问');
+                    return;
+                }
+
+                // 调用设备摄像头进行拍照
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                    .then(function(stream) {
+                        // 创建视频元素用于显示摄像头预览
+                        const video = document.createElement('video');
+                        video.srcObject = stream;
+                        video.play();
+
+                        // 创建画布用于捕获图像
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+
+                        // 等待视频加载完成后捕获图像
+                        video.addEventListener('loadedmetadata', function() {
+                            // 设置画布尺寸与视频相同
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+
+                            // 捕获图像
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                            // 停止视频流
+                            stream.getTracks().forEach(track => track.stop());
+
+                            // 将图像转换为Base64编码
+                            const imageData = canvas.toDataURL('image/jpeg');
+
+                            // 模拟OCR识别过程
+                            simulateOCRRecognition(imageData);
+                        });
+                    })
+                    .catch(function(err) {
+                        console.error('摄像头访问错误: ', err);
+                        alert('无法访问摄像头，请检查权限设置');
+                    });
+            });
+
+            // 模拟OCR识别过程
+            function simulateOCRRecognition(imageData) {
+                // 显示处理中的提示
+                alert('正在识别行驶证信息，请稍候...');
+
+                // 模拟异步处理
+                setTimeout(function() {
+                    // 模拟识别结果
+                    const ocrResult = {
+                        plateNumber: '粤B12345',
+                        vin: 'LVSFDFAL9AN000001',
+                        engineNumber: '12345678',
+                        brand: '丰田凯美瑞',
+                        registerDate: '2020-01-01',
+                        vehicleType: '小型轿车'
+                    };
+
+                    // 填充表单字段
+                    fillFormFields(ocrResult);
+
+                    // 显示成功提示
+                    alert('行驶证信息识别完成并已自动填写到表单中');
+                }, 2000);
+            }
+
+            // 填充表单字段
+            function fillFormFields(data) {
+                // 车牌号
+                const plateNumberInput = document.querySelector('input[placeholder="请输入"][required]');
+                if (plateNumberInput) plateNumberInput.value = data.plateNumber;
+
+                // 车架号
+                const vinInputs = document.querySelectorAll('input[placeholder="请输入"][required]');
+                if (vinInputs.length > 1) vinInputs[1].value = data.vin;
+
+                // 发动机号
+                if (vinInputs.length > 2) vinInputs[2].value = data.engineNumber;
+
+                // 车辆名称
+                const carModelSelect = document.getElementById('car-model');
+                if (carModelSelect) {
+                    // 根据识别的品牌选择对应的选项
+                    const options = carModelSelect.options;
+                    for (let i = 0; i < options.length; i++) {
+                        if (options[i].text.includes(data.brand)) {
+                            carModelSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+
+                // 上牌时间（这里使用注册日期作为示例）
+                const registerDateInput = document.querySelector('input[type="date"][required]');
+                if (registerDateInput) registerDateInput.value = data.registerDate;
+            }
+
+            // 车架号自动识别函数
+            function recognizeVIN() {
+                // 检查是否支持MediaDevices API
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    alert('您的设备不支持摄像头功能或未授权访问');
+                    return;
+                }
+
+                // 调用设备摄像头进行拍照
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                    .then(function(stream) {
+                        // 创建视频元素用于显示摄像头预览
+                        const video = document.createElement('video');
+                        video.srcObject = stream;
+                        video.play();
+
+                        // 创建画布用于捕获图像
+                        const canvas = document.createElement('canvas');
+                        const context = canvas.getContext('2d');
+
+                        // 等待视频加载完成后捕获图像
+                        video.addEventListener('loadedmetadata', function() {
+                            // 设置画布尺寸与视频相同
+                            canvas.width = video.videoWidth;
+                            canvas.height = video.videoHeight;
+
+                            // 捕获图像
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                            // 停止视频流
+                            stream.getTracks().forEach(track => track.stop());
+
+                            // 将图像转换为Base64编码
+                            const imageData = canvas.toDataURL('image/jpeg');
+
+                            // 模拟VIN识别过程
+                            simulateVINRecognition(imageData);
+                        });
+                    })
+                    .catch(function(err) {
+                        console.error('摄像头访问错误: ', err);
+                        alert('无法访问摄像头，请检查权限设置');
+                    });
+            }
+
+            // 模拟VIN识别过程
+            function simulateVINRecognition(imageData) {
+                // 显示处理中的提示
+                alert('正在识别车架号，请稍候...');
+
+                // 模拟异步处理
+                setTimeout(function() {
+                    // 模拟识别结果
+                    const vinResult = 'LVSFDFAL9AN000001';
+
+                    // 填充车架号字段
+                    fillVINField(vinResult);
+
+                    // 显示成功提示
+                    alert('车架号识别完成并已自动填写到表单中');
+                }, 2000);
+            }
+
+            // 填充车架号字段
+            function fillVINField(vin) {
+                // 车架号
+                const vinInputs = document.querySelectorAll('input[placeholder="请输入"][required]');
+                if (vinInputs.length > 1) vinInputs[1].value = vin;
+            }
         });
     </script>
 </body>

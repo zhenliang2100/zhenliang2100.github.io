@@ -63,6 +63,9 @@
             .form-required {
                 @apply text-danger;
             }
+            .form-button {
+                @apply bg-secondary hover:bg-secondary/90 text-white px-3 py-2 rounded-lg transition-colors duration-200;
+            }
             .upload-area {
                 @apply border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-primary transition-colors duration-200 cursor-pointer;
             }
@@ -138,6 +141,14 @@
         <div class="bg-white rounded-b-xl shadow-md p-6">
             <!-- 车辆信息表单 -->
             <div id="form-vehicle" class="space-y-6">
+                <!-- 行驶证识别按钮 -->
+                <div class="mb-6 flex items-center">
+                    <button id="ocr-license-button" class="bg-secondary hover:bg-secondary/90 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center">
+                        <i class="fa fa-camera mr-2"></i>
+                        拍摄行驶证自动识别
+                    </button>
+                    <button type="button" class="form-button ml-2" onclick="recognizeVIN()">车架号自动识别</button>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- 销售顾问 -->
                     <div>
@@ -150,7 +161,7 @@
                     <!-- 车辆名称 -->
                     <div>
                         <label class="form-label">
-                            车辆名称
+                            品牌车型
                         </label>
                         <input type="text" class="form-input" value="奥迪 A6L">
                     </div>
@@ -391,22 +402,6 @@
                         <input type="date" class="form-input" value="2026-01-01">
                     </div>
 
-                    <!-- 入库时间 -->
-                    <div>
-                        <label class="form-label">
-                            入库时间
-                        </label>
-                        <input type="date" class="form-input" value="2025-07-30">
-                    </div>
-
-                    <!-- 采购金额 -->
-                    <div>
-                        <label class="form-label">
-                            采购金额
-                        </label>
-                        <input type="text" class="form-input" value="35万元">
-                    </div>
-
                     <!-- 原车主名称 -->
                     <div>
                         <label class="form-label">
@@ -441,62 +436,62 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="space-y-2">
                             <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1071/400/300" alt="左前45度" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <img src="https://picsum.photos/id/1071/400/300" alt="正面45°" class="absolute inset-0 w-full h-full object-cover rounded-lg">
                                 <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-center text-gray-600">左前45度</p>
+                            <p class="text-xs text-center text-gray-600">正面45°</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                         <div class="space-y-2">
                             <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1072/400/300" alt="主驾驶全景" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <img src="https://picsum.photos/id/1072/400/300" alt="右侧面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
                                 <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-center text-gray-600">主驾驶全景</p>
+                            <p class="text-xs text-center text-gray-600">右侧面</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                         <div class="space-y-2">
                             <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1073/400/300" alt="仪表盘" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <img src="https://picsum.photos/id/1073/400/300" alt="正面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
                                 <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-center text-gray-600">仪表盘</p>
+                            <p class="text-xs text-center text-gray-600">正面</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                         <div class="space-y-2">
                             <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1074/400/300" alt="后排座椅" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <img src="https://picsum.photos/id/1074/400/300" alt="后面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
                                 <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-center text-gray-600">后排座椅</p>
+                            <p class="text-xs text-center text-gray-600">后面</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                         <div class="space-y-2">
                             <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1075/400/300" alt="中控台全景" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <img src="https://picsum.photos/id/1075/400/300" alt="右侧面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
                                 <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-center text-gray-600">中控台全景</p>
+                            <p class="text-xs text-center text-gray-600">右侧面</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                         <div class="space-y-2">
                             <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1076/400/300" alt="右后45度" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <img src="https://picsum.photos/id/1076/400/300" alt="更多" class="absolute inset-0 w-full h-full object-cover rounded-lg">
                                 <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-center text-gray-600">右后45度</p>
+                            <p class="text-xs text-center text-gray-600">更多</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                         <div class="space-y-2">
@@ -544,16 +539,6 @@
                                 </div>
                             </div>
                             <p class="text-xs text-center text-gray-600">登记证2</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/23/400/300" alt="车主身份证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">车主身份证</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                     </div>
@@ -619,6 +604,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
 
             <!-- 交车确认表单 (默认隐藏) -->
@@ -648,32 +634,72 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="space-y-2">
                             <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1071/400/300" alt="左前45度" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <img src="https://picsum.photos/id/1071/400/300" alt="正面45°" class="absolute inset-0 w-full h-full object-cover rounded-lg">
                                 <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-center text-gray-600">左前45度</p>
+                            <p class="text-xs text-center text-gray-600">正面45°</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                         <div class="space-y-2">
                             <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1072/400/300" alt="主驾驶全景" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <img src="https://picsum.photos/id/1072/400/300" alt="右侧面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
                                 <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-center text-gray-600">主驾驶全景</p>
+                            <p class="text-xs text-center text-gray-600">右侧面</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                         <div class="space-y-2">
                             <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1073/400/300" alt="仪表盘" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <img src="https://picsum.photos/id/1073/400/300" alt="正面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
                                 <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
                                     <i class="fa fa-times"></i>
                                 </div>
                             </div>
-                            <p class="text-xs text-center text-gray-600">仪表盘</p>
+                            <p class="text-xs text-center text-gray-600">正面</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1074/400/300" alt="后面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">后面</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1075/400/300" alt="右侧面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">右侧面</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1076/400/300" alt="更多" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">更多</p>
+                            <input type="file" class="hidden" accept="image/*">
+                        </div>
+                        <div class="space-y-2">
+                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
+                                <img src="https://picsum.photos/id/1077/400/300" alt="铭牌" class="absolute inset-0 w-full h-full object-cover rounded-lg">
+                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
+                                    <i class="fa fa-times"></i>
+                                </div>
+                            </div>
+                            <p class="text-xs text-center text-gray-600">铭牌</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                     </div>
@@ -711,16 +737,6 @@
                                 </div>
                             </div>
                             <p class="text-xs text-center text-gray-600">车辆登记证</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/23/400/300" alt="车主身份证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">车主身份证</p>
                             <input type="file" class="hidden" accept="image/*">
                         </div>
                     </div>
