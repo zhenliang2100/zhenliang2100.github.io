@@ -131,9 +131,6 @@
                 <button id="tab-image" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium">
                     图像信息
                 </button>
-                <button id="tab-delivery" class="tab-inactive whitespace-nowrap px-6 py-3 text-sm font-medium" data-payment-status="paid">
-                    交车确认
-                </button>
             </div>
         </div>
 
@@ -607,141 +604,6 @@
 
             </div>
 
-            <!-- 交车确认表单 (默认隐藏) -->
-            <div id="form-delivery" class="space-y-6 hidden">
-                <!-- 确认信息 -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <!-- 确认人 -->
-                    <div>
-                        <label class="form-label">
-                            确认人
-                        </label>
-                        <input type="text" class="form-input" value="张三">
-                    </div>
-
-                    <!-- 确认时间 -->
-                    <div>
-                        <label class="form-label">
-                            确认时间
-                        </label>
-                        <input type="datetime-local" class="form-input" value="2025-07-30T16:30">
-                    </div>
-                </div>
-
-                <!-- 车辆图片 -->
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">车辆图片</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1071/400/300" alt="正面45°" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">正面45°</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1072/400/300" alt="右侧面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">右侧面</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1073/400/300" alt="正面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">正面</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1074/400/300" alt="后面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">后面</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1075/400/300" alt="右侧面" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">右侧面</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1076/400/300" alt="更多" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">更多</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/1077/400/300" alt="铭牌" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">铭牌</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 证件资料 -->
-                <div>
-                    <h3 class="text-lg font-semibold text-gray-800 mb-4">证件资料</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/20/400/300" alt="行驶证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">行驶证</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/21/400/300" alt="车钥匙" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">车钥匙</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                        <div class="space-y-2">
-                            <div class="upload-area h-40 flex flex-col items-center justify-center relative">
-                                <img src="https://picsum.photos/id/22/400/300" alt="车辆登记证" class="absolute inset-0 w-full h-full object-cover rounded-lg">
-                                <div class="absolute top-1 right-1 bg-danger text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer">
-                                    <i class="fa fa-times"></i>
-                                </div>
-                            </div>
-                            <p class="text-xs text-center text-gray-600">车辆登记证</p>
-                            <input type="file" class="hidden" accept="image/*">
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </main>
 
@@ -752,12 +614,6 @@
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
-                // 检查是否是交车确认tab并且支付状态不是已支付
-                if (tab.id === 'tab-delivery' && tab.dataset.paymentStatus !== 'paid') {
-                    alert('当前工单未完成支付，无法编辑交车确认信息');
-                    return;
-                }
-                
                 // 移除所有tab的active状态
                 tabs.forEach(t => t.classList.remove('tab-active'));
                 tabs.forEach(t => t.classList.add('tab-inactive'));
