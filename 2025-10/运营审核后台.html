@@ -1,0 +1,1473 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>轻改专家 - 运营审核后台</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#007AFF',
+            secondary: '#8E8E93',
+            success: '#34C759',
+            warning: '#FF9500',
+            danger: '#FF3B30',
+            light: '#F2F2F7',
+            dark: '#1C1C1E',
+            pending: '#FFCC00',
+            approved: '#34C759',
+            rejected: '#FF3B30'
+          },
+          fontFamily: {
+            'sf': ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-shadow {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      }
+      .status-badge {
+        padding: 3px 6px;
+        border-radius: 10px;
+        font-size: 9px;
+        font-weight: 600;
+        text-align: center;
+      }
+      .filter-chip {
+        padding: 4px 10px;
+        border-radius: 14px;
+        font-size: 11px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .filter-chip:hover {
+        transform: translateY(-1px);
+      }
+      .filter-chip.active {
+        background-color: #007AFF;
+        color: white;
+      }
+      .audit-action-btn {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .audit-action-btn:hover {
+        transform: translateY(-1px);
+      }
+      .table-row-hover:hover {
+        background-color: rgba(0, 122, 255, 0.03);
+      }
+      .checkbox-primary {
+        accent-color: #007AFF;
+      }
+      .small-select {
+        padding: 4px 8px;
+        font-size: 12px;
+        height: 30px;
+      }
+      .small-input {
+        padding: 4px 8px;
+        font-size: 12px;
+        height: 30px;
+      }
+      .small-label {
+        font-size: 10px;
+        color: #6B7280;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sf min-h-screen">
+  <div class="flex h-screen overflow-hidden">
+    <!-- 侧边栏导航 -->
+    <aside class="w-64 bg-white border-r border-gray-200 flex-shrink-0 hidden md:flex flex-col">
+      <!-- 侧边栏头部 -->
+      <div class="p-4 border-b border-gray-200">
+        <h1 class="text-xl font-bold text-dark">轻改专家运营后台</h1>
+      </div>
+      
+      <!-- 侧边栏菜单 -->
+      <nav class="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-1">
+        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-100">
+          <i class="fa fa-home w-5 h-5 mr-3 text-gray-400"></i>
+          首页
+        </a>
+        <div class="space-y-1">
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-100">
+            <i class="fa fa-exclamation-triangle w-5 h-5 mr-3 text-gray-400"></i>
+            预警管理
+          </a>
+          <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-primary/10 text-primary border-l-4 border-primary ml-6">
+            <i class="fa fa-file-o w-5 h-5 mr-3"></i>
+            接待缺失报备
+          </a>
+        </div>
+        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-100">
+          <i class="fa fa-users w-5 h-5 mr-3 text-gray-400"></i>
+          用户管理
+        </a>
+        <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-100">
+          <i class="fa fa-bar-chart w-5 h-5 mr-3 text-gray-400"></i>
+          数据统计
+        </a>
+      </nav>
+    </aside>
+
+    <!-- 主内容区域 -->
+    <main class="flex-1 overflow-y-auto">
+      <!-- 顶部导航栏 -->
+      <nav class="bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div class="flex items-center justify-between h-16 px-4 md:px-6">
+          <!-- 移动端菜单按钮 -->
+          <button class="md:hidden text-gray-500 hover:text-gray-700">
+            <i class="fa fa-bars text-xl"></i>
+          </button>
+          
+          <!-- 页面标题 -->
+          <h2 class="text-lg font-semibold text-gray-800">平板接待缺失报备审核</h2>
+          
+          <!-- 右侧用户信息 -->
+          <div class="flex items-center space-x-4">
+            <div class="text-sm text-gray-500">
+              <i class="fa fa-bell-o mr-1"></i>
+              <span id="notification-count" class="bg-danger text-white rounded-full w-4 h-4 inline-flex items-center justify-center text-xs">3</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <img class="h-8 w-8 rounded-full" src="https://picsum.photos/id/1005/200/200" alt="运营人员头像">
+              <span class="text-sm font-medium text-gray-700">运营管理员</span>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- 页面内容 -->
+      <div class="p-4 md:p-6">
+    <!-- 页面标题 -->
+    <div class="mb-4">
+      <h2 class="text-xl font-bold text-gray-900">平板接待缺失报备审核</h2>
+      <p class="text-gray-500 mt-1 text-sm">管理所有报备记录，支持批量审核和重新审核</p>
+    </div>
+
+    <!-- 搜索和筛选条件 -->
+    <div class="bg-white rounded-lg p-4 card-shadow mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mb-3">
+        <!-- 员工姓名搜索 -->
+        <div class="md:col-span-2">
+          <label class="block small-label mb-1">员工姓名</label>
+          <div class="relative">
+            <input type="text" id="employee-name-search" placeholder="请输入" 
+                   class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent small-input">
+            <i class="fa fa-user absolute left-2 top-2 text-gray-400 text-xs"></i>
+          </div>
+        </div>
+        
+        <!-- 员工手机号搜索 -->
+        <div class="md:col-span-2">
+          <label class="block small-label mb-1">员工手机号</label>
+          <div class="relative">
+            <input type="text" id="employee-phone-search" placeholder="请输入" 
+                   class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent small-input">
+            <i class="fa fa-phone absolute left-2 top-2 text-gray-400 text-xs"></i>
+          </div>
+        </div>
+        
+        <!-- 状态筛选 -->
+        <div>
+          <label class="block small-label mb-1">审核状态</label>
+          <select id="status-filter" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent small-select">
+            <option value="">所有状态</option>
+            <option value="pending">待审核</option>
+            <option value="approved">已通过</option>
+            <option value="rejected">已驳回</option>
+          </select>
+        </div>
+        
+        <!-- 门店筛选 -->
+        <div>
+          <label class="block small-label mb-1">所属门店</label>
+          <div class="relative">
+            <select id="store-filter" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent small-select">
+              <option value="">所有门店</option>
+              <option value="深圳南山店">深圳南山店</option>
+              <option value="深圳福田店">深圳福田店</option>
+              <option value="广州天河店">广州天河店</option>
+              <option value="上海浦东店">上海浦东店</option>
+            </select>
+            <i class="fa fa-search absolute right-2 top-2 text-gray-400 text-xs cursor-pointer" onclick="toggleStoreSearch()"></i>
+          </div>
+          <!-- 门店搜索框 -->
+          <div id="store-search-container" class="hidden mt-1">
+            <input type="text" id="store-search-input" placeholder="搜索门店..." 
+                   class="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent small-input">
+            <i class="fa fa-search absolute left-2 top-2 text-gray-400 text-xs"></i>
+          </div>
+        </div>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mb-3">
+        <!-- 报备时间范围 -->
+        <div class="md:col-span-4">
+          <label class="block small-label mb-1">报备时间范围</label>
+          <div class="flex items-center space-x-2">
+            <div class="flex-1">
+              <input type="date" id="start-date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent small-select">
+            </div>
+            <div class="flex items-center text-gray-400 text-xs">至</div>
+            <div class="flex-1">
+              <input type="date" id="end-date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent small-select">
+            </div>
+          </div>
+        </div>
+        
+        <!-- 缺失原因筛选 -->
+        <div>
+          <label class="block small-label mb-1">缺失原因</label>
+          <select id="reason-filter" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent small-select">
+            <option value="">所有原因</option>
+            <option value="接待记录上传失败">接待记录上传失败</option>
+            <option value="平板故障">平板故障</option>
+            <option value="客户未到店，线上成交">线上成交</option>
+            <option value="误点完成接待">误点完成接待</option>
+            <option value="接待时间短，无记录">接待时间短</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- 操作按钮 -->
+      <div class="flex justify-end space-x-2 pt-3 border-t border-gray-100">
+        <button onclick="resetSearch()" class="px-3 py-1 border border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:bg-gray-50">
+          <i class="fa fa-bullseye mr-1"></i>重置
+        </button>
+        <button onclick="renderAuditList()" class="px-3 py-1 bg-primary text-white rounded-lg text-xs font-medium hover:bg-blue-600">
+          <i class="fa fa-search mr-1"></i>搜索
+        </button>
+      </div>
+    </div>
+
+    <!-- 批量操作按钮 -->
+    <div class="flex justify-between items-center mb-4">
+      <div class="flex space-x-2">
+        <button id="batch-approve-btn" onclick="showBatchAuditModal('approve')" class="px-3 py-1 bg-success text-white rounded-lg text-xs font-medium hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          <i class="fa fa-check mr-1"></i>批量通过
+        </button>
+        <button id="batch-reject-btn" onclick="showBatchAuditModal('reject')" class="px-3 py-1 bg-danger text-white rounded-lg text-xs font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          <i class="fa fa-times mr-1"></i>批量驳回
+        </button>
+        <button onclick="exportSelectedData()" class="px-3 py-1 bg-primary text-white rounded-lg text-xs font-medium hover:bg-blue-600">
+          <i class="fa fa-download mr-1"></i>导出数据
+        </button>
+      </div>
+      <div class="text-xs text-gray-500">
+        共 <span id="total-count" class="font-medium">0</span> 条记录
+      </div>
+    </div>
+
+    <!-- 审核列表 -->
+    <div class="bg-white rounded-lg card-shadow overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="px-4 py-2 text-left">
+                <div class="flex items-center">
+                  <input type="checkbox" id="select-all-checkbox" onclick="toggleSelectAll()" class="h-3 w-3 checkbox-primary">
+                </div>
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                员工姓名
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                员工手机号
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                门店
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                客户姓名
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                缺失原因
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                报备时间
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                审核人
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                审核时间
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                审核状态
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                审核意见
+              </th>
+              <th scope="col" class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                操作
+              </th>
+            </tr>
+          </thead>
+          <tbody id="audit-list" class="bg-white divide-y divide-gray-200">
+            <!-- 审核记录将通过JavaScript动态生成 -->
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- 分页 -->
+      <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+        <div class="flex items-center justify-between">
+          <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p class="text-xs text-gray-700">
+                显示第 <span class="font-medium">1</span> 到 <span class="font-medium">10</span> 条，共 <span class="font-medium">23</span> 条记录
+              </p>
+            </div>
+            <div>
+              <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <a href="#" class="relative inline-flex items-center px-2 py-1 rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">上一页</span>
+                  <i class="fa fa-chevron-left text-xs"></i>
+                </a>
+                <a href="#" class="relative inline-flex items-center px-3 py-1 border border-gray-300 bg-primary text-xs font-medium text-white">
+                  1
+                </a>
+                <a href="#" class="relative inline-flex items-center px-3 py-1 border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50">
+                  2
+                </a>
+                <a href="#" class="relative inline-flex items-center px-3 py-1 border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50">
+                  3
+                </a>
+                <span class="relative inline-flex items-center px-3 py-1 border border-gray-300 bg-white text-xs font-medium text-gray-700">
+                  ...
+                </span>
+                <a href="#" class="relative inline-flex items-center px-3 py-1 border border-gray-300 bg-white text-xs font-medium text-gray-700 hover:bg-gray-50">
+                  3
+                </a>
+                <a href="#" class="relative inline-flex items-center px-2 py-1 rounded-r-md border border-gray-300 bg-white text-xs font-medium text-gray-500 hover:bg-gray-50">
+                  <span class="sr-only">下一页</span>
+                  <i class="fa fa-chevron-right text-xs"></i>
+                </a>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 审核操作弹窗 -->
+  <div id="audit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-lg max-w-md w-full">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 id="audit-modal-title" class="text-lg font-semibold text-gray-900">审核操作</h3>
+          <button onclick="closeAuditModal()" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4">
+        <p id="audit-modal-subtitle" class="text-sm text-gray-600 mb-4">请对以下报备进行审核：</p>
+        <div id="audit-item-info" class="mb-4">
+          <!-- 审核项目信息 -->
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">审核意见</label>
+          <textarea id="audit-comment" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入审核意见..."></textarea>
+        </div>
+        <div id="previous-audit-info" class="mb-4 hidden">
+          <!-- 历史审核信息 -->
+        </div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div class="flex items-center justify-end space-x-3">
+          <button onclick="closeAuditModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+            取消
+          </button>
+          <button onclick="approveAudit()" class="px-4 py-2 bg-success text-white rounded-lg text-sm font-medium hover:bg-green-600">
+            通过
+          </button>
+          <button onclick="rejectAudit()" class="px-4 py-2 bg-danger text-white rounded-lg text-sm font-medium hover:bg-red-600">
+            驳回
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 批量审核操作弹窗 -->
+  <div id="batch-audit-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-lg max-w-md w-full">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 id="batch-audit-title" class="text-lg font-semibold text-gray-900">批量审核操作</h3>
+          <button onclick="closeBatchAuditModal()" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4">
+        <p id="batch-audit-message" class="text-sm text-gray-600 mb-4">请确认对选中的报备进行批量审核：</p>
+        <div id="batch-audit-count" class="mb-4 bg-gray-50 rounded-lg p-3">
+          <!-- 选中数量信息 -->
+        </div>
+        <div id="batch-previous-info" class="mb-4 hidden">
+          <!-- 批量历史审核信息提示 -->
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">审核意见</label>
+          <textarea id="batch-audit-comment" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入审核意见..."></textarea>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div class="flex items-center justify-end space-x-3">
+          <button onclick="closeBatchAuditModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+            取消
+          </button>
+          <button id="batch-confirm-btn" onclick="confirmBatchAudit()" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-blue-600">
+            确认操作
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成功提示 -->
+  <div id="success-toast" class="fixed bottom-4 right-4 bg-success text-white px-4 py-2 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+    <div class="flex items-center">
+      <i class="fa fa-check mr-2"></i>
+      <span id="success-message">操作成功！</span>
+    </div>
+  </div>
+
+  <!-- 确认重新审核弹窗 -->
+  <div id="re-audit-confirm-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-lg max-w-md w-full">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-gray-900">确认重新审核</h3>
+          <button onclick="closeReAuditConfirmModal()" class="text-gray-400 hover:text-gray-600">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="px-6 py-4">
+        <div class="text-center mb-4">
+          <div class="inline-flex items-center justify-center w-12 h-12 bg-warning/20 rounded-full mb-4">
+            <i class="fa fa-exclamation-triangle text-warning text-xl"></i>
+          </div>
+          <h4 class="text-base font-semibold text-gray-900 mb-2">确定要重新审核吗？</h4>
+          <p class="text-sm text-gray-600">
+            此操作将覆盖原有的审核结果和意见，<br>
+            请谨慎操作。
+          </p>
+        </div>
+        
+        <!-- 报备记录详情 -->
+        <div id="re-audit-item-info" class="hidden"></div>
+        
+        <!-- 历史审核信息 -->
+        <div id="re-previous-audit-info" class="hidden"></div>
+      </div>
+      
+      <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div class="flex items-center justify-end space-x-3">
+          <button onclick="closeReAuditConfirmModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50">
+            取消
+          </button>
+          <button onclick="confirmReAudit()" class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-blue-600">
+            确认重新审核
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 模拟数据 - 平铺显示每个客户的报备记录，手机号不脱敏
+    const flatAuditData = [
+      {
+        id: 'AR20251005001-001',
+        parentId: 'AR20251005001',
+        employee: {
+          name: '张三',
+          phone: '13812345678',
+          id: 'EMP001'
+        },
+        store: '深圳南山店',
+        customer: '客户1',
+        reason: '接待记录上传失败',
+        date: '2025-10-05',
+        time: '10:30',
+        submitTime: '2025-10-05 18:30:25',
+        status: 'pending',
+        auditBy: '',
+        auditTime: '',
+        auditComment: ''
+      },
+      {
+        id: 'AR20251005001-002',
+        parentId: 'AR20251005001',
+        employee: {
+          name: '张三',
+          phone: '13812345678',
+          id: 'EMP001'
+        },
+        store: '深圳南山店',
+        customer: '客户2',
+        reason: '平板故障',
+        date: '2025-10-05',
+        time: '14:15',
+        submitTime: '2025-10-05 18:30:25',
+        status: 'pending',
+        auditBy: '',
+        auditTime: '',
+        auditComment: ''
+      },
+      {
+        id: 'AR20251005001-003',
+        parentId: 'AR20251005001',
+        employee: {
+          name: '张三',
+          phone: '13812345678',
+          id: 'EMP001'
+        },
+        store: '深圳南山店',
+        customer: '客户3',
+        reason: '客户未到店，线上成交',
+        date: '2025-10-05',
+        time: '16:45',
+        submitTime: '2025-10-05 18:30:25',
+        status: 'pending',
+        auditBy: '',
+        auditTime: '',
+        auditComment: ''
+      },
+      {
+        id: 'AR20251005002-001',
+        parentId: 'AR20251005002',
+        employee: {
+          name: '李四',
+          phone: '13987654321',
+          id: 'EMP002'
+        },
+        store: '深圳福田店',
+        customer: '客户A',
+        reason: '误点完成接待',
+        date: '2025-10-05',
+        time: '09:45',
+        submitTime: '2025-10-05 17:45:12',
+        status: 'pending',
+        auditBy: '',
+        auditTime: '',
+        auditComment: ''
+      },
+      {
+        id: 'AR20251005002-002',
+        parentId: 'AR20251005002',
+        employee: {
+          name: '李四',
+          phone: '13987654321',
+          id: 'EMP002'
+        },
+        store: '深圳福田店',
+        customer: '客户B',
+        reason: '接待时间短，无记录',
+        date: '2025-10-05',
+        time: '15:20',
+        submitTime: '2025-10-05 17:45:12',
+        status: 'pending',
+        auditBy: '',
+        auditTime: '',
+        auditComment: ''
+      },
+      {
+        id: 'AR20251004003-001',
+        parentId: 'AR20251004003',
+        employee: {
+          name: '王五',
+          phone: '13765432198',
+          id: 'EMP003'
+        },
+        store: '广州天河店',
+        customer: '客户X',
+        reason: '一次接待多辆车辆',
+        date: '2025-10-04',
+        time: '11:20',
+        submitTime: '2025-10-04 19:10:33',
+        status: 'approved',
+        auditBy: '运营管理员',
+        auditTime: '2025-10-05 09:20:15',
+        auditComment: '情况属实，予以通过'
+      },
+      {
+        id: 'AR20251004002-001',
+        parentId: 'AR20251004002',
+        employee: {
+          name: '赵六',
+          phone: '13654321987',
+          id: 'EMP004'
+        },
+        store: '上海浦东店',
+        customer: '客户甲',
+        reason: '接待记录上传失败',
+        date: '2025-10-04',
+        time: '08:50',
+        submitTime: '2025-10-04 18:20:45',
+        status: 'rejected',
+        auditBy: '运营管理员',
+        auditTime: '2025-10-05 10:15:30',
+        auditComment: '原因说明不充分，请补充详细信息'
+      },
+      {
+        id: 'AR20251004002-002',
+        parentId: 'AR20251004002',
+        employee: {
+          name: '赵六',
+          phone: '13654321987',
+          id: 'EMP004'
+        },
+        store: '上海浦东店',
+        customer: '客户乙',
+        reason: '平板故障',
+        date: '2025-10-04',
+        time: '10:15',
+        submitTime: '2025-10-04 18:20:45',
+        status: 'rejected',
+        auditBy: '运营管理员',
+        auditTime: '2025-10-05 10:15:30',
+        auditComment: '原因说明不充分，请补充详细信息'
+      },
+      {
+        id: 'AR20251003005-001',
+        parentId: 'AR20251003005',
+        employee: {
+          name: '张三',
+          phone: '13812345678',
+          id: 'EMP001'
+        },
+        store: '深圳南山店',
+        customer: '客户P',
+        reason: '临时支援门店',
+        date: '2025-10-03',
+        time: '14:00',
+        submitTime: '2025-10-03 19:05:22',
+        status: 'approved',
+        auditBy: '运营管理员',
+        auditTime: '2025-10-04 08:45:18',
+        auditComment: '符合规定，通过审核'
+      },
+      {
+        id: 'AR20251003005-002',
+        parentId: 'AR20251003005',
+        employee: {
+          name: '张三',
+          phone: '13812345678',
+          id: 'EMP001'
+        },
+        store: '深圳南山店',
+        customer: '客户Q',
+        reason: '二次接待回访',
+        date: '2025-10-03',
+        time: '15:45',
+        submitTime: '2025-10-03 19:05:22',
+        status: 'approved',
+        auditBy: '运营管理员',
+        auditTime: '2025-10-04 08:45:18',
+        auditComment: '符合规定，通过审核'
+      },
+      {
+        id: 'AR20251003006-001',
+        parentId: 'AR20251003006',
+        employee: {
+          name: '王五',
+          phone: '13765432198',
+          id: 'EMP003'
+        },
+        store: '广州天河店',
+        customer: '客户Y',
+        reason: '资源车，不介入触客',
+        date: '2025-10-03',
+        time: '10:30',
+        submitTime: '2025-10-03 18:45:33',
+        status: 'pending',
+        auditBy: '',
+        auditTime: '',
+        auditComment: ''
+      },
+      {
+        id: 'AR20251002007-001',
+        parentId: 'AR20251002007',
+        employee: {
+          name: '赵六',
+          phone: '13654321987',
+          id: 'EMP004'
+        },
+        store: '上海浦东店',
+        customer: '客户Z',
+        reason: '门店关系客户/员工，不介入触客',
+        date: '2025-10-02',
+        time: '11:15',
+        submitTime: '2025-10-02 19:20:15',
+        status: 'approved',
+        auditBy: '运营管理员',
+        auditTime: '2025-10-03 09:10:25',
+        auditComment: '情况属实，予以通过'
+      }
+    ];
+
+    let currentAuditItem = null;
+    let batchAuditType = 'approve';
+    let selectedItems = new Set();
+    let reAuditItems = new Set();
+    let originalStores = ['深圳南山店', '深圳福田店', '广州天河店', '上海浦东店'];
+
+    // 初始化页面
+    document.addEventListener('DOMContentLoaded', function() {
+      setDefaultDateRange();
+      renderAuditList();
+      initializeEventListeners();
+      updateTotalCount();
+    });
+
+    // 设置默认日期范围（近3个月）
+    function setDefaultDateRange() {
+      const endDate = new Date();
+      const startDate = new Date();
+      startDate.setMonth(startDate.getMonth() - 3);
+
+      // 格式化日期为YYYY-MM-DD
+      const formatDate = (date) => {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const dd = String(date.getDate()).padStart(2, '0');
+        return `${yyyy}-${mm}-${dd}`;
+      };
+
+      document.getElementById('start-date').value = formatDate(startDate);
+      document.getElementById('end-date').value = formatDate(endDate);
+    }
+
+    // 初始化事件监听器
+    function initializeEventListeners() {
+      // 搜索框回车事件
+      ['employee-name-search', 'employee-phone-search', 'store-search-input'].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+              if (id === 'store-search-input') {
+                filterStores();
+              } else {
+                renderAuditList();
+              }
+            }
+          });
+        }
+      });
+
+      // 筛选条件变化事件
+      ['status-filter', 'store-filter', 'reason-filter', 'start-date', 'end-date'].forEach(id => {
+        document.getElementById(id).addEventListener('change', renderAuditList);
+      });
+
+      // 门店搜索输入事件
+      const storeSearchInput = document.getElementById('store-search-input');
+      if (storeSearchInput) {
+        storeSearchInput.addEventListener('input', filterStores);
+      }
+    }
+
+    // 切换门店搜索框显示
+    function toggleStoreSearch() {
+      const container = document.getElementById('store-search-container');
+      container.classList.toggle('hidden');
+      if (!container.classList.contains('hidden')) {
+        document.getElementById('store-search-input').focus();
+      }
+    }
+
+    // 筛选门店
+    function filterStores() {
+      const searchTerm = document.getElementById('store-search-input').value.toLowerCase();
+      const storeFilter = document.getElementById('store-filter');
+      
+      // 清空现有选项
+      storeFilter.innerHTML = '';
+      
+      // 添加所有门店选项
+      const filteredStores = originalStores.filter(store => 
+        store.toLowerCase().includes(searchTerm)
+      );
+      
+      // 添加默认选项
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '所有门店';
+      storeFilter.appendChild(defaultOption);
+      
+      // 添加筛选后的门店
+      filteredStores.forEach(store => {
+        const option = document.createElement('option');
+        option.value = store;
+        option.textContent = store;
+        storeFilter.appendChild(option);
+      });
+      
+      // 如果只有一个结果，自动选择
+      if (filteredStores.length === 1) {
+        storeFilter.value = filteredStores[0];
+        renderAuditList();
+      }
+    }
+
+    // 渲染审核列表
+    function renderAuditList() {
+      const listElement = document.getElementById('audit-list');
+      const employeeName = document.getElementById('employee-name-search').value.toLowerCase();
+      const employeePhone = document.getElementById('employee-phone-search').value.toLowerCase();
+      const statusFilter = document.getElementById('status-filter').value;
+      const storeFilter = document.getElementById('store-filter').value;
+      const reasonFilter = document.getElementById('reason-filter').value;
+      const startDate = document.getElementById('start-date').value;
+      const endDate = document.getElementById('end-date').value;
+
+      let filteredData = flatAuditData;
+
+      // 应用筛选条件
+      if (employeeName) {
+        filteredData = filteredData.filter(item => 
+          item.employee.name.toLowerCase().includes(employeeName)
+        );
+      }
+
+      if (employeePhone) {
+        filteredData = filteredData.filter(item => 
+          item.employee.phone.includes(employeePhone)
+        );
+      }
+
+      if (statusFilter) {
+        filteredData = filteredData.filter(item => item.status === statusFilter);
+      }
+
+      if (storeFilter) {
+        filteredData = filteredData.filter(item => item.store === storeFilter);
+      }
+
+      if (reasonFilter) {
+        filteredData = filteredData.filter(item => item.reason.includes(reasonFilter));
+      }
+
+      // 日期范围筛选
+      if (startDate && endDate) {
+        filteredData = filteredData.filter(item => {
+          const submitDate = new Date(item.submitTime.split(' ')[0]);
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+          return submitDate >= start && submitDate <= end;
+        });
+      }
+
+      // 渲染列表
+      listElement.innerHTML = filteredData.map(item => `
+        <tr class="table-row-hover transition-colors duration-200">
+          <td class="px-4 py-2 whitespace-nowrap">
+            <input type="checkbox" data-id="${item.id}" 
+                   ${selectedItems.has(item.id) ? 'checked' : ''} 
+                   onclick="toggleSelectItem('${item.id}')" class="h-3 w-3 checkbox-primary">
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap text-xs font-medium text-gray-900">
+            ${item.employee.name}
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-500">
+            ${item.employee.phone}
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-500">
+            ${item.store}
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-900">
+            ${item.customer}
+          </td>
+          <td class="px-4 py-2">
+            <div class="text-xs text-gray-900 max-w-xs truncate" title="${item.reason}">
+              ${item.reason}
+            </div>
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-500">
+            ${formatDateTime(item.submitTime)}
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-500">
+            ${item.auditBy || '-'}
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-500">
+            ${item.auditTime ? formatDateTime(item.auditTime) : '-'}
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap">
+            <span class="status-badge ${getStatusClass(item.status)}">
+              ${getStatusText(item.status)}
+            </span>
+          </td>
+          <td class="px-4 py-2">
+            <div class="text-xs text-gray-900 max-w-xs truncate" title="${item.auditComment || '-'}">
+              ${item.auditComment || '-'}
+            </div>
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap text-right text-xs font-medium">
+            <button onclick="showAuditModal('${item.id}', ${item.status !== 'pending'})" class="text-primary hover:text-blue-700">
+              ${item.status === 'pending' ? '审核' : '重新审核'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      // 更新全选复选框状态
+      updateSelectAllStatus();
+      // 更新批量操作按钮状态
+      updateBatchButtonStatus();
+      // 更新总数显示
+      updateTotalCount(filteredData.length);
+    }
+
+    // 更新总数显示
+    function updateTotalCount(count = null) {
+      const totalCountElement = document.getElementById('total-count');
+      if (count !== null) {
+        totalCountElement.textContent = count;
+      } else {
+        totalCountElement.textContent = flatAuditData.length;
+      }
+    }
+
+    // 获取状态样式类
+    function getStatusClass(status) {
+      const classes = {
+        'pending': 'bg-yellow-100 text-yellow-800',
+        'approved': 'bg-green-100 text-green-800',
+        'rejected': 'bg-red-100 text-red-800'
+      };
+      return classes[status] || 'bg-gray-100 text-gray-800';
+    }
+
+    // 获取状态文本
+    function getStatusText(status) {
+      const texts = {
+        'pending': '待审核',
+        'approved': '已通过',
+        'rejected': '已驳回'
+      };
+      return texts[status] || '未知';
+    }
+
+    // 格式化日期时间
+    function formatDateTime(dateTimeString) {
+      const date = new Date(dateTimeString);
+      return date.toLocaleString('zh-CN', { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    // 切换全选
+    function toggleSelectAll() {
+      const selectAllCheckbox = document.getElementById('select-all-checkbox');
+      const checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]');
+      
+      if (selectAllCheckbox.checked) {
+        checkboxes.forEach(checkbox => {
+          checkbox.checked = true;
+          selectedItems.add(checkbox.dataset.id);
+        });
+      } else {
+        checkboxes.forEach(checkbox => {
+          checkbox.checked = false;
+          selectedItems.delete(checkbox.dataset.id);
+        });
+      }
+      
+      updateBatchButtonStatus();
+    }
+
+    // 切换单个选择
+    function toggleSelectItem(itemId) {
+      const checkbox = document.querySelector(`input[type="checkbox"][data-id="${itemId}"]`);
+      
+      if (checkbox.checked) {
+        selectedItems.add(itemId);
+      } else {
+        selectedItems.delete(itemId);
+      }
+      
+      updateSelectAllStatus();
+      updateBatchButtonStatus();
+    }
+
+    // 更新全选状态
+    function updateSelectAllStatus() {
+      const selectAllCheckbox = document.getElementById('select-all-checkbox');
+      const checkboxes = document.querySelectorAll('input[type="checkbox"][data-id]');
+      const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"][data-id]:checked');
+      
+      selectAllCheckbox.checked = checkboxes.length > 0 && checkboxes.length === checkedCheckboxes.length;
+    }
+
+    // 更新批量操作按钮状态
+    function updateBatchButtonStatus() {
+      const batchApproveBtn = document.getElementById('batch-approve-btn');
+      const batchRejectBtn = document.getElementById('batch-reject-btn');
+      
+      const hasSelected = selectedItems.size > 0;
+      
+      batchApproveBtn.disabled = !hasSelected;
+      batchRejectBtn.disabled = !hasSelected;
+    }
+
+    // 重置搜索条件
+    function resetSearch() {
+      document.getElementById('employee-name-search').value = '';
+      document.getElementById('employee-phone-search').value = '';
+      document.getElementById('status-filter').value = '';
+      document.getElementById('store-filter').value = '';
+      document.getElementById('reason-filter').value = '';
+      document.getElementById('store-search-input').value = '';
+      document.getElementById('store-search-container').classList.add('hidden');
+      setDefaultDateRange();
+      
+      // 重置门店选项
+      const storeFilter = document.getElementById('store-filter');
+      storeFilter.innerHTML = '';
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = '所有门店';
+      storeFilter.appendChild(defaultOption);
+      originalStores.forEach(store => {
+        const option = document.createElement('option');
+        option.value = store;
+        option.textContent = store;
+        storeFilter.appendChild(option);
+      });
+      
+      // 清空选中项
+      selectedItems.clear();
+      document.getElementById('select-all-checkbox').checked = false;
+      
+      renderAuditList();
+      updateBatchButtonStatus();
+    }
+
+    // 显示审核弹窗
+    function showAuditModal(id, isReAudit = false) {
+      currentAuditItem = flatAuditData.find(item => item.id === id);
+      if (!currentAuditItem) return;
+
+      const modalTitle = document.getElementById('audit-modal-title');
+      const modalSubtitle = document.getElementById('audit-modal-subtitle');
+      const previousAuditInfo = document.getElementById('previous-audit-info');
+      
+      if (isReAudit) {
+        modalTitle.textContent = '重新审核操作';
+        modalSubtitle.textContent = '请对以下报备进行重新审核：';
+        
+        // 显示历史审核信息
+        previousAuditInfo.innerHTML = `
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <h5 class="text-xs font-medium text-yellow-800 mb-2">
+              <i class="fa fa-history mr-1"></i>历史审核信息
+            </h5>
+            <p class="text-xs text-yellow-700 mb-1">
+              <span class="font-medium">审核状态：</span>${getStatusText(currentAuditItem.status)}
+            </p>
+            <p class="text-xs text-yellow-700 mb-1">
+              <span class="font-medium">审核人：</span>${currentAuditItem.auditBy}
+            </p>
+            <p class="text-xs text-yellow-700 mb-1">
+              <span class="font-medium">审核时间：</span>${currentAuditItem.auditTime}
+            </p>
+            <p class="text-xs text-yellow-700">
+              <span class="font-medium">审核意见：</span>${currentAuditItem.auditComment}
+            </p>
+          </div>
+        `;
+        previousAuditInfo.classList.remove('hidden');
+      } else {
+        modalTitle.textContent = '审核操作';
+        modalSubtitle.textContent = '请对以下报备进行审核：';
+        previousAuditInfo.classList.add('hidden');
+      }
+
+      const auditItemInfo = document.getElementById('audit-item-info');
+      auditItemInfo.innerHTML = `
+        <div class="bg-gray-50 rounded-lg p-3">
+          <p class="text-sm font-medium text-gray-900">${currentAuditItem.employee.name} (${currentAuditItem.employee.phone})</p>
+          <p class="text-xs text-gray-500">${currentAuditItem.store}</p>
+          <p class="text-xs text-gray-500">客户：${currentAuditItem.customer} - ${currentAuditItem.reason}</p>
+        </div>
+      `;
+
+      // 清空审核意见
+      document.getElementById('audit-comment').value = '';
+
+      document.getElementById('audit-modal').classList.remove('hidden');
+      document.getElementById('audit-modal').classList.add('flex');
+    }
+
+    // 关闭审核弹窗
+    function closeAuditModal() {
+      document.getElementById('audit-modal').classList.add('hidden');
+      document.getElementById('audit-modal').classList.remove('flex');
+      currentAuditItem = null;
+    }
+
+    // 通过审核
+    function approveAudit() {
+      if (!currentAuditItem) return;
+
+      const comment = document.getElementById('audit-comment').value || '审核通过';
+      const isReAudit = currentAuditItem.status !== 'pending';
+      
+      // 更新状态
+      currentAuditItem.status = 'approved';
+      currentAuditItem.auditBy = '运营管理员';
+      currentAuditItem.auditTime = new Date().toLocaleString('zh-CN');
+      currentAuditItem.auditComment = comment;
+
+      closeAuditModal();
+      renderAuditList();
+      
+      const actionText = isReAudit ? '重新审核通过' : '审核通过';
+      showSuccessToast(`${actionText}操作成功！`);
+    }
+
+    // 驳回审核
+    function rejectAudit() {
+      if (!currentAuditItem) return;
+
+      const comment = document.getElementById('audit-comment').value;
+      if (!comment) {
+        alert('请输入驳回理由！');
+        return;
+      }
+
+      const isReAudit = currentAuditItem.status !== 'pending';
+      
+      // 更新状态
+      currentAuditItem.status = 'rejected';
+      currentAuditItem.auditBy = '运营管理员';
+      currentAuditItem.auditTime = new Date().toLocaleString('zh-CN');
+      currentAuditItem.auditComment = comment;
+
+      closeAuditModal();
+      renderAuditList();
+      
+      const actionText = isReAudit ? '重新审核驳回' : '审核驳回';
+      showSuccessToast(`${actionText}操作成功！`);
+    }
+
+    // 显示批量审核弹窗
+    function showBatchAuditModal(type) {
+      batchAuditType = type;
+      
+      const title = document.getElementById('batch-audit-title');
+      const message = document.getElementById('batch-audit-message');
+      const count = document.getElementById('batch-audit-count');
+      const confirmBtn = document.getElementById('batch-confirm-btn');
+      const previousInfo = document.getElementById('batch-previous-info');
+      
+      // 检查是否包含已审核的项目
+      const hasReAuditItems = Array.from(selectedItems).some(id => {
+        const item = flatAuditData.find(item => item.id === id);
+        return item && item.status !== 'pending';
+      });
+
+      if (type === 'approve') {
+        title.textContent = '批量通过审核';
+        message.textContent = hasReAuditItems ? '请确认对选中的报备进行批量重新通过审核：' : '请确认对选中的报备进行批量通过审核：';
+        confirmBtn.textContent = '确认通过';
+        confirmBtn.className = 'px-4 py-2 bg-success text-white rounded-lg text-sm font-medium hover:bg-green-600';
+      } else {
+        title.textContent = '批量驳回审核';
+        message.textContent = hasReAuditItems ? '请确认对选中的报备进行批量重新驳回审核：' : '请确认对选中的报备进行批量驳回审核：';
+        confirmBtn.textContent = '确认驳回';
+        confirmBtn.className = 'px-4 py-2 bg-danger text-white rounded-lg text-sm font-medium hover:bg-red-600';
+      }
+      
+      if (hasReAuditItems) {
+        previousInfo.innerHTML = `
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+            <p class="text-xs text-yellow-700">
+              <i class="fa fa-exclamation-triangle mr-1"></i>
+              注意：部分选中项已审核，将覆盖原有审核结果
+            </p>
+          </div>
+        `;
+        previousInfo.classList.remove('hidden');
+      } else {
+        previousInfo.classList.add('hidden');
+      }
+      
+      count.innerHTML = `
+        <p class="text-sm font-medium text-gray-900">已选中 ${selectedItems.size} 条记录</p>
+      `;
+      
+      // 清空审核意见
+      document.getElementById('batch-audit-comment').value = type === 'reject' ? '' : '批量审核通过';
+
+      document.getElementById('batch-audit-modal').classList.remove('hidden');
+      document.getElementById('batch-audit-modal').classList.add('flex');
+    }
+
+    // 关闭批量审核弹窗
+    function closeBatchAuditModal() {
+      document.getElementById('batch-audit-modal').classList.add('hidden');
+      document.getElementById('batch-audit-modal').classList.remove('flex');
+    }
+
+    // 确认批量审核
+    function confirmBatchAudit() {
+      const comment = document.getElementById('batch-audit-comment').value;
+      
+      if (batchAuditType === 'reject' && !comment) {
+        alert('请输入驳回理由！');
+        return;
+      }
+
+      // 检查是否包含已审核的项目
+      const hasReAuditItems = Array.from(selectedItems).some(id => {
+        const item = flatAuditData.find(item => item.id === id);
+        return item && item.status !== 'pending';
+      });
+
+      if (hasReAuditItems) {
+        // 显示重新审核确认
+        reAuditItems = new Set(selectedItems);
+        showReAuditConfirmModal();
+        return;
+      }
+
+      // 直接执行批量审核
+      executeBatchAudit(comment);
+    }
+
+    // 执行批量审核
+    function executeBatchAudit(comment) {
+      // 更新选中项的状态
+      selectedItems.forEach(id => {
+        const item = flatAuditData.find(item => item.id === id);
+        if (item) {
+          item.status = batchAuditType === 'approve' ? 'approved' : 'rejected';
+          item.auditBy = '运营管理员';
+          item.auditTime = new Date().toLocaleString('zh-CN');
+          item.auditComment = comment;
+        }
+      });
+
+      closeBatchAuditModal();
+      // 清空选中项
+      selectedItems.clear();
+      renderAuditList();
+      
+      const actionText = batchAuditType === 'approve' ? '批量通过' : '批量驳回';
+      showSuccessToast(`${actionText}操作成功！共处理 ${selectedItems.size} 条记录`);
+    }
+
+    // 显示重新审核确认弹窗
+    function showReAuditConfirmModal() {
+      // 获取第一个选中的项目用于显示详情
+      const firstItemId = Array.from(reAuditItems)[0];
+      const firstItem = flatAuditData.find(item => item.id === firstItemId);
+      
+      if (firstItem) {
+        // 显示报备记录详情
+        const reAuditItemInfo = document.getElementById('re-audit-item-info');
+        if (reAuditItemInfo) {
+          reAuditItemInfo.innerHTML = `
+            <div class="bg-gray-50 rounded-lg p-3 mb-4">
+              <p class="text-sm font-medium text-gray-900">${firstItem.employee.name} (${firstItem.employee.phone})</p>
+              <p class="text-xs text-gray-500">${firstItem.store}</p>
+              <p class="text-xs text-gray-500">客户：${firstItem.customer} - ${firstItem.reason}</p>
+            </div>
+          `;
+          reAuditItemInfo.classList.remove('hidden');
+        }
+        
+        // 显示历史审核信息
+        const rePreviousAuditInfo = document.getElementById('re-previous-audit-info');
+        if (rePreviousAuditInfo) {
+          rePreviousAuditInfo.innerHTML = `
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
+              <h5 class="text-xs font-medium text-yellow-800 mb-2">
+                <i class="fa fa-history mr-1"></i>历史审核信息
+              </h5>
+              <p class="text-xs text-yellow-700 mb-1">
+                <span class="font-medium">审核状态：</span>${getStatusText(firstItem.status)}
+              </p>
+              <p class="text-xs text-yellow-700 mb-1">
+                <span class="font-medium">审核人：</span>${firstItem.auditBy}
+              </p>
+              <p class="text-xs text-yellow-700 mb-1">
+                <span class="font-medium">审核时间：</span>${firstItem.auditTime}
+              </p>
+              <p class="text-xs text-yellow-700">
+                <span class="font-medium">审核意见：</span>${firstItem.auditComment}
+              </p>
+            </div>
+          `;
+          rePreviousAuditInfo.classList.remove('hidden');
+        }
+      }
+      
+      document.getElementById('re-audit-confirm-modal').classList.remove('hidden');
+      document.getElementById('re-audit-confirm-modal').classList.add('flex');
+    }
+
+    // 关闭重新审核确认弹窗
+    function closeReAuditConfirmModal() {
+      document.getElementById('re-audit-confirm-modal').classList.add('hidden');
+      document.getElementById('re-audit-confirm-modal').classList.remove('flex');
+    }
+
+    // 确认重新审核
+    function confirmReAudit() {
+      const comment = document.getElementById('batch-audit-comment').value;
+      
+      if (batchAuditType === 'reject' && !comment) {
+        alert('请输入驳回理由！');
+        return;
+      }
+
+      // 更新选中项的状态（重新审核）
+      reAuditItems.forEach(id => {
+        const item = flatAuditData.find(item => item.id === id);
+        if (item) {
+          item.status = batchAuditType === 'approve' ? 'approved' : 'rejected';
+          item.auditBy = '运营管理员';
+          item.auditTime = new Date().toLocaleString('zh-CN');
+          item.auditComment = comment;
+        }
+      });
+
+      closeReAuditConfirmModal();
+      closeBatchAuditModal();
+      // 清空选中项
+      selectedItems.clear();
+      reAuditItems.clear();
+      renderAuditList();
+      
+      const actionText = batchAuditType === 'approve' ? '批量重新通过' : '批量重新驳回';
+      showSuccessToast(`${actionText}操作成功！共处理 ${reAuditItems.size} 条记录`);
+    }
+
+    // 导出选中数据
+    function exportSelectedData() {
+      const exportData = Array.from(selectedItems).map(id => {
+        const item = flatAuditData.find(item => item.id === id);
+        return item ? {
+          '员工姓名': item.employee.name,
+          '员工手机号': item.employee.phone,
+          '门店': item.store,
+          '客户姓名': item.customer,
+          '缺失原因': item.reason,
+          '报备日期': item.date,
+          '报备时间': item.time,
+          '提交时间': item.submitTime,
+          '审核人': item.auditBy || '',
+          '审核时间': item.auditTime || '',
+          '审核状态': getStatusText(item.status),
+          '审核意见': item.auditComment || ''
+        } : null;
+      }).filter(item => item);
+
+      if (exportData.length === 0) {
+        alert('请先选择要导出的记录！');
+        return;
+      }
+
+      // 转换为CSV格式
+      const headers = Object.keys(exportData[0]);
+      const csvContent = [
+        headers.join(','),
+        ...exportData.map(item => headers.map(header => `"${item[header] || ''}"`).join(','))
+      ].join('\n');
+
+      // 创建下载链接
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `报备审核数据_${new Date().toLocaleDateString()}.csv`);
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showSuccessToast(`导出成功！共导出 ${exportData.length} 条记录`);
+    }
+
+    // 显示成功提示
+    function showSuccessToast(message) {
+      const toast = document.getElementById('success-toast');
+      const messageElement = document.getElementById('success-message');
+      
+      messageElement.textContent = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3000);
+    }
+
+    // 点击弹窗外部关闭
+    document.getElementById('audit-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAuditModal();
+      }
+    });
+
+    document.getElementById('batch-audit-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeBatchAuditModal();
+      }
+    });
+
+    document.getElementById('re-audit-confirm-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeReAuditConfirmModal();
+      }
+    });
+
+    // 键盘事件监听
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeAuditModal();
+        closeBatchAuditModal();
+        closeReAuditConfirmModal();
+      }
+    });
+  </script>
+</body>
+</html>
