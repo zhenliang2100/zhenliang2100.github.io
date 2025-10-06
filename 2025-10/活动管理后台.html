@@ -1,0 +1,1937 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活动管理后台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+   <link href="../css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e40af', // 深蓝色作为主色调
+                        secondary: '#0ea5e9', // 浅蓝色作为辅助色
+                        success: '#10b981', // 成功色
+                        warning: '#f59e0b', // 警告色
+                        danger: '#ef4444', // 危险色
+                        neutral: {
+                            100: '#f3f4f6',
+                            200: '#e5e7eb',
+                            300: '#d1d5db',
+                            400: '#9ca3af',
+                            500: '#6b7280',
+                            600: '#4b5563',
+                            700: '#374151',
+                            800: '#1f2937',
+                            900: '#111827',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'table': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                    },
+                    transitionProperty: {
+                        'height': 'height',
+                        'spacing': 'margin, padding',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'zoom-in-95': 'zoomIn95 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        zoomIn95: {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                    },
+                },
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-custom {
+                transition: all 0.2s ease-in-out;
+            }
+            .hover-lift {
+                transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            }
+            .hover-lift:hover {
+                transform: translateY(-2px);
+            }
+            .scrollbar-hide {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+        }
+    </style>
+</head>
+<body class="bg-neutral-100 text-neutral-800 min-h-screen">
+    <div class="flex h-screen overflow-hidden">
+        <!-- 侧边栏导航 -->
+        <aside class="w-64 bg-white border-r border-neutral-200 flex-shrink-0 hidden md:flex flex-col">
+            <!-- 侧边栏头部 -->
+            <div class="p-4 border-b border-neutral-200">
+                <h1 class="text-xl font-bold text-primary">智享车生活后台</h1>
+            </div>
+            
+            <!-- 侧边栏菜单 -->
+            <nav class="flex-1 overflow-y-auto scrollbar-hide p-4 space-y-1">
+                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-600 hover:bg-neutral-100">
+                    <i class="fa fa-home w-5 h-5 mr-3 text-neutral-400"></i>
+                    首页
+                </a>
+                <div class="space-y-1">
+                    <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-600 hover:bg-neutral-100">
+                        <i class="fa fa-file-text w-5 h-5 mr-3 text-neutral-400"></i>
+                        内容管理
+                    </a>
+                    <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-primary/10 text-primary border-l-4 border-primary ml-6">
+                        <i class="fa fa-calendar-check-o w-5 h-5 mr-3"></i>
+                        活动管理
+                    </a>
+                </div>
+                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-600 hover:bg-neutral-100">
+                    <i class="fa fa-users w-5 h-5 mr-3 text-neutral-400"></i>
+                    用户管理
+                </a>
+                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-600 hover:bg-neutral-100">
+                    <i class="fa fa-comments w-5 h-5 mr-3 text-neutral-400"></i>
+                    评论管理
+                </a>
+                <a href="#" class="flex items-center px-3 py-2 text-sm font-medium rounded-md text-neutral-600 hover:bg-neutral-100">
+                    <i class="fa fa-bar-chart w-5 h-5 mr-3 text-neutral-400"></i>
+                    数据统计
+                </a>
+            </nav>
+            
+            <!-- 侧边栏底部 -->
+            
+        </aside>
+        
+        <!-- 主内容区域 -->
+        <main class="flex-1 overflow-y-auto">
+            <!-- 顶部导航栏 -->
+            <header class="bg-white border-b border-neutral-200 sticky top-0 z-10">
+                <div class="flex items-center justify-between h-16 px-4 md:px-6">
+                    <!-- 移动端菜单按钮 -->
+                    <button class="md:hidden text-neutral-500 hover:text-neutral-700">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                    
+                    <!-- 页面标题 -->
+                    <h2 class="text-lg font-semibold text-neutral-800">SaaS+增值业务管理平台</h2>
+                    
+                    <!-- 右侧操作区 -->
+                    <div class="flex items-center space-x-4">
+                        <button class="text-neutral-500 hover:text-neutral-700 relative">
+                            <i class="fa fa-bell text-xl"></i>
+                            <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                        <button class="text-neutral-500 hover:text-neutral-700">
+                            <i class="fa fa-cog text-xl"></i>
+                        </button>
+                        <div class="hidden md:flex items-center">
+                            <img src="https://picsum.photos/32/32" alt="管理员头像" class="w-8 h-8 rounded-full mr-2">
+                            <span class="text-sm font-medium text-neutral-700">管理员</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 页面内容 -->
+            <div class="p-4 md:p-6">
+                <!-- 操作栏 -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-neutral-800">活动列表</h3>
+                        <p class="text-sm text-neutral-500 mt-1">管理和查看所有活动信息</p>
+                    </div>
+                    <button id="createActivityBtn" class="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-custom">
+                        <i class="fa fa-plus mr-1"></i> 创建活动
+                    </button>
+                </div>
+                
+                <!-- 筛选和搜索 -->
+                <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label class="block text-sm font-medium text-neutral-700 mb-1">搜索</label>
+                            <div class="relative">
+                                <input type="text" id="searchInput" class="w-full pl-10 pr-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="搜索活动名称">
+                                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"></i>
+                            </div>
+                        </div>
+                        <div class="w-full md:w-48">
+                            <label class="block text-sm font-medium text-neutral-700 mb-1">活动状态</label>
+                            <select id="statusFilter" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="all">全部状态</option>
+                                <option value="active">进行中</option>
+                                <option value="completed">已结束</option>
+                                <option value="upcoming">即将开始</option>
+                            </select>
+                        </div>
+                        <div class="w-full md:w-48">
+                            <label class="block text-sm font-medium text-neutral-700 mb-1">开始时间</label>
+                            <input type="date" id="startDateFilter" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div class="w-full md:w-48">
+                            <label class="block text-sm font-medium text-neutral-700 mb-1">结束时间</label>
+                            <input type="date" id="endDateFilter" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+                        </div>
+                        <div class="flex items-end space-x-2">
+                            <button id="searchBtn" class="px-4 py-2 bg-primary border border-primary rounded-md text-sm font-medium text-white hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom">
+                                <i class="fa fa-search mr-1"></i> 搜索
+                            </button>
+                            <button id="resetBtn" class="px-4 py-2 bg-white border border-neutral-300 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom">
+                                <i class="fa fa-refresh mr-1"></i> 重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 活动列表表格 -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-neutral-200">
+                            <thead class="bg-neutral-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">活动名称</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">业务类型</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">品类类型</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">活动时间</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">活动状态</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-neutral-500 uppercase tracking-wider">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-neutral-200">
+                                <!-- 活动1 -->
+                                <tr class="hover:bg-neutral-50 transition-custom">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-neutral-900">金秋销售冲刺</div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            延保
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        问界, 通用
+                                    </td>
+
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        2023-09-01 00:00 至 2023-09-30 23:59
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            进行中
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-primary hover:text-primary/80 mr-3" onclick="viewActivity(1)">
+                                            <i class="fa fa-eye mr-1"></i> 查看
+                                        </button>
+                                        <button class="text-secondary hover:text-secondary/80 mr-3" onclick="editActivity(1)">
+                                            <i class="fa fa-pencil mr-1"></i> 编辑
+                                        </button>
+                                        <button class="text-success hover:text-success/80 mr-3" onclick="openImportWinners(1)">
+                                            <i class="fa fa-upload mr-1"></i> 导入名单
+                                        </button>
+                                        <button class="text-danger hover:text-danger/80" onclick="deleteActivity(1)">
+                                            <i class="fa fa-trash mr-1"></i> 删除
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- 活动2 -->
+                                <tr class="hover:bg-neutral-50 transition-custom">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-neutral-900">新客拓展计划</div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            轻改
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        鸿蒙
+                                    </td>
+
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        2023-09-15 00:00 至 2023-10-15 23:59
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            进行中
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-primary hover:text-primary/80 mr-3" onclick="viewActivity(2)">
+                                            <i class="fa fa-eye mr-1"></i> 查看
+                                        </button>
+                                        <button class="text-secondary hover:text-secondary/80 mr-3" onclick="editActivity(2)">
+                                            <i class="fa fa-pencil mr-1"></i> 编辑
+                                        </button>
+                                        <button class="text-success hover:text-success/80 mr-3" onclick="openImportWinners(2)">
+                                            <i class="fa fa-upload mr-1"></i> 导入名单
+                                        </button>
+                                        <button class="text-danger hover:text-danger/80" onclick="deleteActivity(2)">
+                                            <i class="fa fa-trash mr-1"></i> 删除
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- 活动3 -->
+                                <tr class="hover:bg-neutral-50 transition-custom">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-neutral-900">夏季清凉促销</div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            权益
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        问界, 鸿蒙
+                                    </td>
+
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        2023-07-01 00:00 至 2023-08-31 23:59
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-neutral-100 text-neutral-800">
+                                            已结束
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-primary hover:text-primary/80 mr-3" onclick="viewActivity(3)">
+                                            <i class="fa fa-eye mr-1"></i> 查看
+                                        </button>
+                                        <button class="text-neutral-300 mr-3 cursor-not-allowed" title="已结束的活动不可编辑">
+                                            <i class="fa fa-pencil mr-1"></i> 编辑
+                                        </button>
+                                        <button class="text-neutral-300 mr-3 cursor-not-allowed" title="已结束的活动不可导入名单">
+                                            <i class="fa fa-upload mr-1"></i> 导入名单
+                                        </button>
+                                        <button class="text-danger hover:text-danger/80" onclick="deleteActivity(3)">
+                                            <i class="fa fa-trash mr-1"></i> 删除
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- 活动4 -->
+                                <tr class="hover:bg-neutral-50 transition-custom">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-neutral-900">国庆黄金周促销</div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            延保
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        通用
+                                    </td>
+
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        2023-10-01 00:00 至 2023-10-07 23:59
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            即将开始
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-primary hover:text-primary/80 mr-3" onclick="viewActivity(4)">
+                                            <i class="fa fa-eye mr-1"></i> 查看
+                                        </button>
+                                        <button class="text-secondary hover:text-secondary/80 mr-3" onclick="editActivity(4)">
+                                            <i class="fa fa-pencil mr-1"></i> 编辑
+                                        </button>
+                                        <button class="text-neutral-300 mr-3 cursor-not-allowed" title="即将开始的活动不可导入名单">
+                                            <i class="fa fa-upload mr-1"></i> 导入名单
+                                        </button>
+                                        <button class="text-danger hover:text-danger/80" onclick="deleteActivity(4)">
+                                            <i class="fa fa-trash mr-1"></i> 删除
+                                        </button>
+                                    </td>
+                                </tr>
+                                
+                                <!-- 活动5 -->
+                                <tr class="hover:bg-neutral-50 transition-custom">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="text-sm font-medium text-neutral-900">会员专享服务周</div>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                                            轻改
+                                        </span>
+                                    </td>
+                                    
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        问界, 通用, 鸿蒙
+                                    </td>
+
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">
+                                        2023-09-25 00:00 至 2023-10-01 23:59
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                            进行中
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button class="text-primary hover:text-primary/80 mr-3" onclick="viewActivity(5)">
+                                            <i class="fa fa-eye mr-1"></i> 查看
+                                        </button>
+                                        <button class="text-secondary hover:text-secondary/80 mr-3" onclick="editActivity(5)">
+                                            <i class="fa fa-pencil mr-1"></i> 编辑
+                                        </button>
+                                        <button class="text-success hover:text-success/80 mr-3" onclick="openImportWinners(5)">
+                                            <i class="fa fa-upload mr-1"></i> 导入名单
+                                        </button>
+                                        <button class="text-danger hover:text-danger/80" onclick="deleteActivity(5)">
+                                            <i class="fa fa-trash mr-1"></i> 删除
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 分页控件 -->
+                    <div class="bg-white px-6 py-3 border-t border-neutral-200 sm:px-6 flex items-center justify-between">
+                        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                            <div>
+                                <p class="text-sm text-neutral-700">
+                                    显示 <span class="font-medium">1</span> 到 <span class="font-medium">5</span> 条，共 <span class="font-medium">8</span> 条结果
+                                </p>
+                            </div>
+                            <div>
+                                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50">
+                                        <span class="sr-only">上一页</span>
+                                        <i class="fa fa-chevron-left text-xs"></i>
+                                    </a>
+                                    <a href="#" aria-current="page" class="relative inline-flex items-center px-4 py-2 border border-primary bg-primary/10 text-sm font-medium text-primary">
+                                        1
+                                    </a>
+                                    <a href="#" class="relative inline-flex items-center px-4 py-2 border border-neutral-300 bg-white text-sm font-medium text-neutral-700 hover:bg-neutral-50">
+                                        2
+                                    </a>
+                                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50">
+                                        <span class="sr-only">下一页</span>
+                                        <i class="fa fa-chevron-right text-xs"></i>
+                                    </a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- 创建活动弹窗 -->
+    <div id="createActivityModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" id="modalOverlay"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-300">
+                <!-- 弹窗标题 -->
+                <div class="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-neutral-900">创建活动</h3>
+                    <button id="closeCreateModal" class="text-neutral-400 hover:text-neutral-600">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- 弹窗内容 -->
+                <div class="p-6">
+                    <form id="createActivityForm">
+                        <!-- 基本信息 -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium text-neutral-700 mb-3">基本信息</h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-neutral-700 mb-1">活动名称 <span class="text-danger">*</span></label>
+                                    <input type="text" id="activityName" name="activityName" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入活动名称" required>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-neutral-700 mb-1">开始时间 <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" id="startTime" name="startTime" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-neutral-700 mb-1">结束时间 <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" id="endTime" name="endTime" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                </div>
+                            </div>
+                            
+                            <!-- 业务类型 -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-neutral-700 mb-1">业务类型 <span class="text-danger">*</span></label>
+                                <select id="businessType" name="businessType" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                    <option value="">请选择业务类型</option>
+                                    <option value="warranty">延保</option>
+                                    <option value="modification">轻改</option>
+                                    <option value="rights">权益</option>
+                                </select>
+                            </div>
+                            
+                            <!-- 品类类型 -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-neutral-700 mb-1">品类类型 <span class="text-danger">*</span></label>
+                                <div class="flex flex-wrap gap-3">
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="categoryTypes" value="wenjie" class="rounded border-neutral-300 text-primary focus:ring-primary h-4 w-4">
+                                        <span class="ml-2 text-sm text-neutral-700">问界</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="categoryTypes" value="general" class="rounded border-neutral-300 text-primary focus:ring-primary h-4 w-4">
+                                        <span class="ml-2 text-sm text-neutral-700">通用</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="categoryTypes" value="harmony" class="rounded border-neutral-300 text-primary focus:ring-primary h-4 w-4">
+                                        <span class="ml-2 text-sm text-neutral-700">鸿蒙</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- 活动封面 -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-neutral-700 mb-1">活动封面</label>
+                                <div class="grid grid-cols-4 gap-3 mt-2">
+                                    <!-- 内置封面图 -->
+                                    <div class="cover-item cursor-pointer border-2 border-primary rounded-md overflow-hidden aspect-video">
+                                        <img src="https://picsum.photos/id/1071/400/200" alt="封面1" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="cover-item cursor-pointer border-2 border-transparent hover:border-neutral-300 rounded-md overflow-hidden aspect-video">
+                                        <img src="https://picsum.photos/id/1072/400/200" alt="封面2" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="cover-item cursor-pointer border-2 border-transparent hover:border-neutral-300 rounded-md overflow-hidden aspect-video">
+                                        <img src="https://picsum.photos/id/1073/400/200" alt="封面3" class="w-full h-full object-cover">
+                                    </div>
+                                    <!-- 自定义上传 -->
+                                    <div class="cover-upload cursor-pointer border-2 border-dashed border-neutral-300 rounded-md flex items-center justify-center aspect-video hover:border-primary transition-custom">
+                                        <i class="fa fa-plus text-neutral-400 text-2xl"></i>
+                                        <input type="file" class="hidden" accept="image/*" id="coverUpload">
+                                    </div>
+                                </div>
+                                <p class="mt-2 text-xs text-neutral-500">支持 JPG、PNG 格式，建议尺寸 1200x600px</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 评选规则 -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium text-neutral-700 mb-3">评选规则</h4>
+                            <textarea id="selectionRules" name="selectionRules" rows="3" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入活动评选规则"></textarea>
+                        </div>
+                        
+
+                    </form>
+                </div>
+                
+                <!-- 弹窗底部 -->
+                <div class="px-6 py-4 border-t border-neutral-200 flex justify-end gap-3">
+                    <button id="cancelCreateActivity" class="px-4 py-2 border border-neutral-300 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom">
+                        取消
+                    </button>
+                    <button id="submitCreateActivity" class="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-custom">
+                        创建活动
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 编辑活动弹窗 -->
+    <div id="editActivityModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" id="editModalOverlay"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-300">
+                <!-- 弹窗标题 -->
+                <div class="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-neutral-900">编辑活动</h3>
+                    <button id="closeEditModal" class="text-neutral-400 hover:text-neutral-600">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- 弹窗内容 -->
+                <div class="p-6">
+                    <form id="editActivityForm">
+                        <input type="hidden" id="editActivityId">
+                        <!-- 基本信息 -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium text-neutral-700 mb-3">基本信息</h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-medium text-neutral-700 mb-1">活动名称 <span class="text-danger">*</span></label>
+                                    <input type="text" id="editActivityName" name="activityName" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入活动名称" required>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-neutral-700 mb-1">开始时间 <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" id="editStartTime" name="startTime" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-neutral-700 mb-1">结束时间 <span class="text-danger">*</span></label>
+                                    <input type="datetime-local" id="editEndTime" name="endTime" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                </div>
+                            </div>
+                            
+                            <!-- 业务类型 -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-neutral-700 mb-1">业务类型 <span class="text-danger">*</span></label>
+                                <select id="editBusinessType" name="businessType" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                    <option value="">请选择业务类型</option>
+                                    <option value="warranty">延保</option>
+                                    <option value="modification">轻改</option>
+                                    <option value="rights">权益</option>
+                                </select>
+                            </div>
+                            
+                            <!-- 品类类型 -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-neutral-700 mb-1">品类类型 <span class="text-danger">*</span></label>
+                                <div class="flex flex-wrap gap-3">
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="categoryTypes" value="wenjie" class="rounded border-neutral-300 text-primary focus:ring-primary h-4 w-4" id="editCategoryWenjie">
+                                        <span class="ml-2 text-sm text-neutral-700">问界</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="categoryTypes" value="general" class="rounded border-neutral-300 text-primary focus:ring-primary h-4 w-4" id="editCategoryGeneral">
+                                        <span class="ml-2 text-sm text-neutral-700">通用</span>
+                                    </label>
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="categoryTypes" value="harmony" class="rounded border-neutral-300 text-primary focus:ring-primary h-4 w-4" id="editCategoryHarmony">
+                                        <span class="ml-2 text-sm text-neutral-700">鸿蒙</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- 活动封面 -->
+                            <div class="mt-4">
+                                <label class="block text-sm font-medium text-neutral-700 mb-1">活动封面</label>
+                                <div class="grid grid-cols-4 gap-3 mt-2">
+                                    <!-- 内置封面图 -->
+                                    <div class="edit-cover-item cursor-pointer border-2 border-transparent hover:border-neutral-300 rounded-md overflow-hidden aspect-video">
+                                        <img src="https://picsum.photos/id/1071/400/200" alt="封面1" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="edit-cover-item cursor-pointer border-2 border-transparent hover:border-neutral-300 rounded-md overflow-hidden aspect-video">
+                                        <img src="https://picsum.photos/id/1072/400/200" alt="封面2" class="w-full h-full object-cover">
+                                    </div>
+                                    <div class="edit-cover-item cursor-pointer border-2 border-transparent hover:border-neutral-300 rounded-md overflow-hidden aspect-video">
+                                        <img src="https://picsum.photos/id/1073/400/200" alt="封面3" class="w-full h-full object-cover">
+                                    </div>
+                                    <!-- 自定义上传 -->
+                                    <div class="edit-cover-upload cursor-pointer border-2 border-dashed border-neutral-300 rounded-md flex items-center justify-center aspect-video hover:border-primary transition-custom">
+                                        <i class="fa fa-plus text-neutral-400 text-2xl"></i>
+                                        <input type="file" class="hidden" accept="image/*" id="editCoverUpload">
+                                    </div>
+                                </div>
+                                <p class="mt-2 text-xs text-neutral-500">支持 JPG、PNG 格式，建议尺寸 1200x600px</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 评选规则 -->
+                        <div class="mb-6">
+                            <h4 class="text-sm font-medium text-neutral-700 mb-3">评选规则</h4>
+                            <textarea id="editSelectionRules" name="selectionRules" rows="3" class="w-full px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入活动评选规则"></textarea>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- 弹窗底部 -->
+                <div class="px-6 py-4 border-t border-neutral-200 flex justify-end gap-3">
+                    <button id="cancelEditActivity" class="px-4 py-2 border border-neutral-300 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom">
+                        取消
+                    </button>
+                    <button id="submitEditActivity" class="px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-custom">
+                        保存活动
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 导入获奖名单弹窗 -->
+    <div id="importWinnersModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" id="importWinnersOverlay"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-300">
+                <!-- 弹窗标题 -->
+                <div class="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-neutral-900">导入获奖名单</h3>
+                    <button id="closeImportModal" class="text-neutral-400 hover:text-neutral-600">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- 弹窗内容 -->
+                <div class="p-6">
+                    <!-- 活动信息 -->
+                    <div class="mb-6 p-4 bg-neutral-50 rounded-md">
+                        <div class="flex items-center mb-2">
+                            <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-md flex items-center justify-center text-blue-500">
+                                <i class="fa fa-bullhorn text-lg"></i>
+                            </div>
+                            <div class="ml-3">
+                                <div id="importActivityName" class="text-sm font-medium text-neutral-900">金秋销售冲刺</div>
+                                <div class="text-xs text-neutral-500">2023-09-01 至 2023-09-30</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 评选周期 -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-neutral-700 mb-1">评选周期 <span class="text-danger">*</span></label>
+                        <div class="flex gap-2">
+                            <select id="selectionPeriod" class="flex-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" required>
+                                <option value="">请选择评选周期</option>
+                                <option value="week1">第1周 (9月1日-9月7日)</option>
+                                <option value="week2">第2周 (9月8日-9月14日)</option>
+                                <option value="week3">第3周 (9月15日-9月21日)</option>
+                                <option value="week4">第4周 (9月22日-9月28日)</option>
+                                <option value="week5">第5周 (9月29日-9月30日)</option>
+                                <option value="total">活动总评</option>
+                            </select>
+                            <button type="button" id="createNewPeriodBtn" class="px-3 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-custom">
+                                新建
+                            </button>
+                        </div>
+                        <!-- 创建新周期的输入框（默认隐藏） -->
+                        <div id="createNewPeriodContainer" class="mt-2 hidden">
+                            <div class="flex gap-2">
+                                <input type="text" id="newPeriodName" class="flex-1 px-3 py-2 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="请输入评选周期名称，如：第一期、第一周等">
+                                <button type="button" id="confirmNewPeriodBtn" class="px-3 py-2 bg-success text-white rounded-md text-sm font-medium hover:bg-success/90 focus:outline-none focus:ring-2 focus:ring-success focus:ring-offset-2 transition-custom">
+                                    确定
+                                </button>
+                                <button type="button" id="cancelNewPeriodBtn" class="px-3 py-2 bg-neutral-300 text-neutral-700 rounded-md text-sm font-medium hover:bg-neutral-400 focus:outline-none focus:ring-2 focus:ring-neutral-300 focus:ring-offset-2 transition-custom">
+                                    取消
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 文件上传 -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-neutral-700 mb-1">上传获奖名单 <span class="text-danger">*</span></label>
+                        <div id="dropArea" class="border-2 border-dashed border-neutral-300 rounded-md p-6 text-center hover:border-primary transition-custom">
+                            <i class="fa fa-cloud-upload text-3xl text-neutral-400 mb-2"></i>
+                            <p class="text-sm text-neutral-500 mb-2">拖拽文件至此处上传，或</p>
+                            <button type="button" class="px-4 py-1 bg-primary/10 text-primary rounded-md text-sm font-medium hover:bg-primary/20 transition-custom">
+                                选择文件
+                            </button>
+                            <p class="mt-2 text-xs text-neutral-400">支持 .xls, .xlsx 格式，文件大小不超过 10MB</p>
+                            <input type="file" id="fileInput" class="hidden" accept=".xls,.xlsx">
+                        </div>
+                        
+                        <!-- 文件预览 -->
+                        <div id="filePreview" class="hidden mt-3 flex items-center p-3 bg-neutral-50 rounded-md">
+                            <i class="fa fa-file-excel-o text-xl text-green-500 mr-3"></i>
+                            <div class="flex-1">
+                                <div id="fileName" class="text-sm text-neutral-800 truncate"></div>
+                                <div class="text-xs text-neutral-500">文件大小: <span id="fileSize"></span></div>
+                            </div>
+                            <button id="removeFile" class="text-neutral-400 hover:text-danger">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 模板下载 -->
+                    <div class="mb-6 p-3 bg-blue-50 rounded-md">
+                        <div class="flex items-center">
+                            <i class="fa fa-info-circle text-blue-500 mr-2"></i>
+                            <div class="flex-1">
+                                <p class="text-sm text-blue-700">请使用标准模板上传获奖名单</p>
+                            </div>
+                            <a href="#" class="text-blue-500 hover:text-blue-700 text-sm">
+                                <i class="fa fa-download mr-1"></i> 下载模板
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 弹窗底部 -->
+                <div class="px-6 py-4 border-t border-neutral-200 flex justify-end gap-3">
+                    <button id="cancelImport" class="px-4 py-2 border border-neutral-300 rounded-md text-sm font-medium text-neutral-700 hover:bg-neutral-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-custom">
+                        取消
+                    </button>
+                    <button id="submitImport" class="px-4 py-2 bg-success text-white rounded-md text-sm font-medium hover:bg-success/90 focus:outline-none focus:ring-2 focus:ring-success focus:ring-offset-2 transition-custom">
+                        导入名单
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 活动详情弹窗 -->
+    <div id="activityDetailModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity" id="detailModalOverlay"></div>
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-300">
+                <!-- 弹窗标题 -->
+                <div class="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
+                    <h3 class="text-lg font-medium text-neutral-900">活动详情</h3>
+                    <button id="closeDetailModal" class="text-neutral-400 hover:text-neutral-600">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- 弹窗内容 -->
+                <div class="p-6">
+                    <!-- 活动基本信息 -->
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-neutral-700 mb-3">基本信息</h4>
+                        <div class="bg-neutral-50 p-4 rounded-md">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-xs text-neutral-500 mb-1">活动名称</p>
+                                    <p id="detailActivityName" class="text-base font-medium text-neutral-900"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-neutral-500 mb-1">活动状态</p>
+                                    <p id="detailActivityStatus" class="text-base font-medium text-neutral-900"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-neutral-500 mb-1">业务类型</p>
+                                    <p id="detailBusinessType" class="text-base text-neutral-900"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-neutral-500 mb-1">品类类型</p>
+                                    <p id="detailCategoryTypes" class="text-base text-neutral-900"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-neutral-500 mb-1">开始时间</p>
+                                    <p id="detailStartTime" class="text-base text-neutral-900"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-neutral-500 mb-1">结束时间</p>
+                                    <p id="detailEndTime" class="text-base text-neutral-900"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 评选规则 -->
+                    <div class="mb-6">
+                        <h4 class="text-sm font-medium text-neutral-700 mb-3">评选规则</h4>
+                        <div class="bg-blue-50 p-4 rounded-md">
+                            <div id="selectionRulesContainer" class="whitespace-pre-line text-sm text-neutral-700 leading-relaxed max-h-40 overflow-y-auto transition-all duration-300"></div>
+                            <button id="toggleRulesBtn" class="mt-2 text-sm text-primary hover:text-primary/80 flex items-center justify-center w-full">
+                                <i class="fa fa-chevron-down mr-1"></i> 展开全部
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 获奖名单 -->
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="text-sm font-medium text-neutral-700">获奖名单</h4>
+                            <button id="exportWinnersBtn" class="px-3 py-1 bg-primary/10 text-primary rounded-md text-sm font-medium hover:bg-primary/20 transition-custom">
+                                <i class="fa fa-download mr-1"></i> 导出名单
+                            </button>
+                        </div>
+                        
+                        <!-- 获奖名单选项卡 -->
+                        <div class="mb-4" id="winnersTabs">
+                            <div class="border-b border-neutral-200">
+                                <nav class="flex -mb-px space-x-8">
+                                    <!-- 选项卡将通过JavaScript动态生成 -->
+                                </nav>
+                            </div>
+                        </div>
+                        
+                        <!-- 获奖名单内容 -->
+                        <div id="winnersContent">
+                            <!-- 内容将通过JavaScript动态生成 -->
+                            <div class="text-center py-10 text-neutral-500">选择上方的评选周期查看获奖名单</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 成功提示框 -->
+    <div id="successToast" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+        <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity"></div>
+        <div class="relative bg-white rounded-lg shadow-xl p-6 max-w-md w-full mx-4 transform transition-all animate-in fade-in zoom-in-95 duration-300">
+            <div class="text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-success/10 text-success mb-4">
+                    <i class="fa fa-check text-2xl"></i>
+                </div>
+                <h3 class="text-lg font-medium text-neutral-900">操作成功</h3>
+                <p id="successMessage" class="mt-2 text-neutral-600">您的操作已成功完成。</p>
+                <button id="closeSuccessToast" class="mt-4 px-4 py-2 bg-primary text-white rounded-md text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-custom">
+                    确定
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 活动数据
+        const activities = [
+            {
+                id: 1,
+                name: '金秋销售冲刺',
+                type: 'sales',
+                typeText: '销售活动',
+                typeColor: 'bg-green-100 text-green-800',
+                startTime: '2023-09-01 00:00',
+                endTime: '2023-09-30 23:59',
+                status: 'active',
+                statusText: '进行中',
+                statusColor: 'bg-yellow-100 text-yellow-800',
+                businessType: 'warranty',
+                businessTypeText: '延保',
+                categoryTypes: ['wenjie', 'general'],
+                categoryTypesText: '问界, 通用',
+                selectionRules: '🎉【7 月延保爆单攻略】3 重奖励暴击来袭！📢\n🌟 每日必冲・延保之星双赛道\n✅ 时间：每天 0:00-19:00⏰\n✅ 赛道 1：M8/M9 车型最高客单 TOP1→50 元红包\n✅ 赛道 2：M5/M7 车型最高客单 TOP1→50 元红包\n📢 晒单姿势：订单截图 + 车型 + 金额 ，当天最晚 19 点前晒单有效！\n\n🎁 周六限定・整车延保惊喜奖\n✅ 开奖日：每周六 0:00-19:00🎯\n✅ 获奖条件：\n1、整车延保渗透率＞70% + 当天卖＞3单\n2、渗透率 TOP3 直接拿 80 元红包\n⚠️ 决胜关键：同排名时，整车订单数多的伙伴优先！周六冲 3 +单整车延保，奖金稳了～\n\n🏆 本月新增・套餐突破之星\n✅ 奖金：周 TOP3 每人 300 元现金红包💸\n✅ 周期：7月分 4 个自然周（次周公布）📅\n✅ 冲奖秘籍：\n当周触客≥8 人 + 套餐渗透率＞25%（达标门槛）\n比上周套餐提升百分点越高，排名越靠前\n同分情况下，套餐订单数多的伙伴优先胜出\nps：4个自然周1-6/7-13/14-20/21-27号\n\n🚀 终极动员\n本月延保3重奖励「日奖 + 周奖 +周六惊喜奖」，等你来瓜分！\n马上行动，下一个晒单拿奖的就是你👇'
+            },
+            {
+                id: 2,
+                name: '新客拓展计划',
+                type: 'marketing',
+                typeText: '营销活动',
+                typeColor: 'bg-blue-100 text-blue-800',
+                startTime: '2023-09-15 00:00',
+                endTime: '2023-10-15 23:59',
+                status: 'active',
+                statusText: '进行中',
+                statusColor: 'bg-yellow-100 text-yellow-800',
+                businessType: 'modification',
+                businessTypeText: '轻改',
+                categoryTypes: ['harmony'],
+                categoryTypesText: '鸿蒙'
+            },
+            {
+                id: 3,
+                name: '夏季清凉促销',
+                type: 'sales',
+                typeText: '销售活动',
+                typeColor: 'bg-green-100 text-green-800',
+                startTime: '2023-07-01 00:00',
+                endTime: '2023-08-31 23:59',
+                status: 'completed',
+                statusText: '已结束',
+                statusColor: 'bg-neutral-100 text-neutral-800',
+                businessType: 'rights',
+                businessTypeText: '权益',
+                categoryTypes: ['wenjie', 'harmony'],
+                categoryTypesText: '问界, 鸿蒙'
+            },
+            {
+                id: 4,
+                name: '国庆黄金周促销',
+                type: 'sales',
+                typeText: '销售活动',
+                typeColor: 'bg-green-100 text-green-800',
+                startTime: '2023-10-01 00:00',
+                endTime: '2023-10-07 23:59',
+                status: 'upcoming',
+                statusText: '即将开始',
+                statusColor: 'bg-blue-100 text-blue-800',
+                businessType: 'warranty',
+                businessTypeText: '延保',
+                categoryTypes: ['general'],
+                categoryTypesText: '通用'
+            },
+            {
+                id: 5,
+                name: '会员专享服务周',
+                type: 'member',
+                typeText: '会员活动',
+                typeColor: 'bg-pink-100 text-pink-800',
+                startTime: '2023-09-25 00:00',
+                endTime: '2023-10-01 23:59',
+                status: 'active',
+                statusText: '进行中',
+                statusColor: 'bg-yellow-100 text-yellow-800',
+                businessType: 'modification',
+                businessTypeText: '轻改',
+                categoryTypes: ['wenjie', 'general', 'harmony'],
+                categoryTypesText: '问界, 通用, 鸿蒙',
+                selectionRules: '🎉【会员专享服务周】专享优惠等你来！📢\n🌟 会员专属折扣\n✅ 时间：9月25日-10月1日\n✅ 问界车型：享8.5折优惠\n✅ 鸿蒙系统：免费升级服务\n✅ 通用配件：满1000减200\n\n🎁 新会员专享好礼\n✅ 活动期间新注册会员即送100元代金券\n✅ 首单消费额外赠送精美礼品一份\n\n🏆 消费排行榜\n✅ 活动期间消费金额TOP10用户赠送VIP年卡\n✅ 每周公布排行榜，实时更新\n\n🚀 服务承诺\n所有服务均由专业技师提供，质量保证\n7天无理由退换货，让您购物无忧！👇',
+                winners: {
+                    'week1': [
+                        { name: '张三', phone: '13800138001', prize: '一等奖', category: '问界' },
+                        { name: '李四', phone: '13800138002', prize: '二等奖', category: '通用' },
+                        { name: '王五', phone: '13800138003', prize: '三等奖', category: '鸿蒙' }
+                    ],
+                    'week2': [
+                        { name: '赵六', phone: '13800138004', prize: '一等奖', category: '问界' },
+                        { name: '孙七', phone: '13800138005', prize: '二等奖', category: '通用' }
+                    ]
+                }
+            }
+        ];
+        
+        // DOM 元素
+        const createActivityBtn = document.getElementById('createActivityBtn');
+        const activityDetailModal = document.getElementById('activityDetailModal');
+        const closeDetailModal = document.getElementById('closeDetailModal');
+        const detailModalOverlay = document.getElementById('detailModalOverlay');
+        const exportWinnersBtn = document.getElementById('exportWinnersBtn');
+        const winnersTabs = document.getElementById('winnersTabs').querySelector('nav');
+        const winnersContent = document.getElementById('winnersContent');
+        const createActivityModal = document.getElementById('createActivityModal');
+        const closeCreateModal = document.getElementById('closeCreateModal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const cancelCreateActivity = document.getElementById('cancelCreateActivity');
+        const submitCreateActivity = document.getElementById('submitCreateActivity');
+        const addRewardBtn = document.getElementById('addRewardBtn');
+        const rewardsContainer = document.getElementById('rewardsContainer');
+        
+        const importWinnersModal = document.getElementById('importWinnersModal');
+        const closeImportModal = document.getElementById('closeImportModal');
+        const importWinnersOverlay = document.getElementById('importWinnersOverlay');
+        const cancelImport = document.getElementById('cancelImport');
+        const submitImport = document.getElementById('submitImport');
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('fileInput');
+        const filePreview = document.getElementById('filePreview');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFile = document.getElementById('removeFile');
+        const importActivityName = document.getElementById('importActivityName');
+        
+        const successToast = document.getElementById('successToast');
+        const closeSuccessToast = document.getElementById('closeSuccessToast');
+        const successMessage = document.getElementById('successMessage');
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置当前日期时间作为默认值
+            const now = new Date();
+            const formattedNow = now.toISOString().slice(0, 16);
+            
+            const endDate = new Date(now);
+            endDate.setDate(endDate.getDate() + 30);
+            const formattedEndDate = endDate.toISOString().slice(0, 16);
+            
+            if (document.getElementById('startTime')) {
+                document.getElementById('startTime').value = formattedNow;
+                document.getElementById('endTime').value = formattedEndDate;
+            }
+            
+            // 活动封面选择
+            const coverItems = document.querySelectorAll('.cover-item');
+            coverItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    coverItems.forEach(i => {
+                        i.classList.remove('border-primary');
+                        i.classList.add('border-transparent');
+                    });
+                    
+                    // 设置当前选中状态
+                    this.classList.remove('border-transparent');
+                    this.classList.add('border-primary');
+                });
+            });
+            
+            // 封面上传
+            const coverUpload = document.querySelector('.cover-upload');
+            const coverFileInput = document.getElementById('coverUpload');
+            
+            coverUpload.addEventListener('click', function() {
+                coverFileInput.click();
+            });
+            
+            coverFileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        // 检查是否已经有自定义上传的封面
+                        let customCover = document.querySelector('.custom-cover');
+                        if (!customCover) {
+                            // 创建新的封面项
+                            const customCoverContainer = document.createElement('div');
+                            customCoverContainer.className = 'cover-item custom-cover cursor-pointer border-2 border-primary rounded-md overflow-hidden aspect-video';
+                            customCoverContainer.innerHTML = `<img src="${e.target.result}" alt="自定义封面" class="w-full h-full object-cover">`;
+                            
+                            // 插入到封面列表前面
+                            const coversContainer = document.querySelector('.grid.grid-cols-4.gap-3');
+                            coversContainer.insertBefore(customCoverContainer, coversContainer.firstChild);
+                            
+                            // 更新事件监听
+                            coverItems = document.querySelectorAll('.cover-item');
+                            coverItems.forEach(item => {
+                                item.addEventListener('click', function() {
+                                    coverItems.forEach(i => {
+                                        i.classList.remove('border-primary');
+                                        i.classList.add('border-transparent');
+                                    });
+                                    this.classList.remove('border-transparent');
+                                    this.classList.add('border-primary');
+                                });
+                            });
+                        } else {
+                            // 更新已有的自定义封面
+                            const img = customCover.querySelector('img');
+                            img.src = e.target.result;
+                        }
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+            
+            // 文件上传相关事件
+            setupFileUpload();
+        });
+        
+        // 设置文件上传功能
+        function setupFileUpload() {
+            // 点击选择文件
+            dropArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // 拖拽文件
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.classList.add('border-primary');
+            }
+            
+            function unhighlight() {
+                dropArea.classList.remove('border-primary');
+            }
+            
+            // 处理文件拖放
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    handleFiles(files[0]);
+                }
+            }
+            
+            // 处理文件选择
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    handleFiles(this.files[0]);
+                }
+            });
+            
+            // 移除文件
+            removeFile.addEventListener('click', function() {
+                fileInput.value = '';
+                filePreview.classList.add('hidden');
+                fileName.textContent = '';
+                fileSize.textContent = '';
+            });
+            
+            // 处理文件
+            function handleFiles(file) {
+                // 验证文件类型
+                const validTypes = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+                if (!validTypes.includes(file.type)) {
+                    alert('请上传 .xls 或 .xlsx 格式的文件');
+                    return;
+                }
+                
+                // 验证文件大小
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                if (file.size > maxSize) {
+                    alert('文件大小不能超过 10MB');
+                    return;
+                }
+                
+                // 显示文件预览
+                fileName.textContent = file.name;
+                fileSize.textContent = formatFileSize(file.size);
+                filePreview.classList.remove('hidden');
+            }
+            
+            // 格式化文件大小
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+        }
+        
+        // 打开创建活动弹窗
+        createActivityBtn.addEventListener('click', function() {
+            createActivityModal.classList.remove('hidden');
+            // 重置表单
+            document.getElementById('createActivityForm').reset();
+            
+            // 设置默认日期
+            const now = new Date();
+            const formattedNow = now.toISOString().slice(0, 16);
+            
+            const endDate = new Date(now);
+            endDate.setDate(endDate.getDate() + 30);
+            const formattedEndDate = endDate.toISOString().slice(0, 16);
+            
+            document.getElementById('startTime').value = formattedNow;
+            document.getElementById('endTime').value = formattedEndDate;
+            
+
+        });
+        
+        // 关闭创建活动弹窗
+        function closeCreateActivityModal() {
+            createActivityModal.classList.add('hidden');
+        }
+        
+        closeCreateModal.addEventListener('click', closeCreateActivityModal);
+        modalOverlay.addEventListener('click', closeCreateActivityModal);
+        cancelCreateActivity.addEventListener('click', closeCreateActivityModal);
+        
+
+        
+        // 提交创建活动表单
+            submitCreateActivity.addEventListener('click', function() {
+                // 表单验证
+                const activityName = document.getElementById('activityName').value;
+                const startTime = document.getElementById('startTime').value;
+                const endTime = document.getElementById('endTime').value;
+                const businessType = document.getElementById('businessType').value;
+                const categoryCheckboxes = document.querySelectorAll('input[name="categoryTypes"]:checked');
+                
+                // 验证必填字段
+                if (!activityName) {
+                    alert('请输入活动名称');
+                    return;
+                }
+                
+                if (!startTime || !endTime) {
+                    alert('请选择活动时间');
+                    return;
+                }
+                
+                if (!businessType) {
+                    alert('请选择业务类型');
+                    return;
+                }
+                
+                if (categoryCheckboxes.length === 0) {
+                    alert('请至少选择一个品类类型');
+                    return;
+                }
+                
+                // 构建品类类型文本
+                const categoryTypes = Array.from(categoryCheckboxes).map(checkbox => checkbox.value);
+                const categoryTypesText = categoryTypes.map(type => {
+                    if (type === 'wenjie') return '问界';
+                    if (type === 'general') return '通用';
+                    if (type === 'harmony') return '鸿蒙';
+                    return type;
+                }).join(', ');
+                
+                // 构建业务类型文本
+                let businessTypeText = '';
+                if (businessType === 'warranty') businessTypeText = '延保';
+                else if (businessType === 'modification') businessTypeText = '轻改';
+                else if (businessType === 'rights') businessTypeText = '权益';
+                
+                // 显示成功提示
+                showSuccessToast('活动创建成功！');
+                
+                // 关闭弹窗
+                closeCreateActivityModal();
+            });
+        
+        // 打开导入获奖名单弹窗
+        function openImportWinners(activityId) {
+            // 查找活动信息
+            const activity = activities.find(a => a.id === activityId);
+            if (activity) {
+                // 检查活动状态，如果是已结束或即将开始则不允许导入
+                if (activity.status === 'completed') {
+                    alert('已结束的活动不可导入名单');
+                    return;
+                }
+                if (activity.status === 'upcoming') {
+                    alert('即将开始的活动不可导入名单');
+                    return;
+                }
+                
+                importActivityName.textContent = activity.name;
+            }
+            
+            // 重置文件上传
+            fileInput.value = '';
+            filePreview.classList.add('hidden');
+            
+            // 显示弹窗
+            importWinnersModal.classList.remove('hidden');
+        }
+        
+        // 关闭导入获奖名单弹窗
+        function closeImportWinnersModal() {
+            importWinnersModal.classList.add('hidden');
+        }
+        
+        closeImportModal.addEventListener('click', closeImportWinnersModal);
+        importWinnersOverlay.addEventListener('click', closeImportWinnersModal);
+        cancelImport.addEventListener('click', closeImportWinnersModal);
+        
+        // 新建评选周期相关元素
+        const createNewPeriodBtn = document.getElementById('createNewPeriodBtn');
+        const createNewPeriodContainer = document.getElementById('createNewPeriodContainer');
+        const newPeriodName = document.getElementById('newPeriodName');
+        const confirmNewPeriodBtn = document.getElementById('confirmNewPeriodBtn');
+        const cancelNewPeriodBtn = document.getElementById('cancelNewPeriodBtn');
+        
+        // 显示创建新周期输入框
+        createNewPeriodBtn.addEventListener('click', function() {
+            createNewPeriodContainer.classList.remove('hidden');
+        });
+        
+        // 确认创建新周期
+        confirmNewPeriodBtn.addEventListener('click', function() {
+            const periodName = newPeriodName.value.trim();
+            if (!periodName) {
+                alert('请输入评选周期名称');
+                return;
+            }
+            
+            // 检查是否已存在同名周期
+            const selectionPeriod = document.getElementById('selectionPeriod');
+            let optionExists = false;
+            for (let i = 0; i < selectionPeriod.options.length; i++) {
+                if (selectionPeriod.options[i].text === periodName) {
+                    optionExists = true;
+                    break;
+                }
+            }
+            
+            if (!optionExists) {
+                // 添加新选项
+                const newOption = document.createElement('option');
+                newOption.value = periodName;
+                newOption.text = periodName;
+                selectionPeriod.appendChild(newOption);
+            }
+            
+            // 选择新创建的周期
+            selectionPeriod.value = periodName;
+            
+            // 隐藏输入框并清空输入
+            createNewPeriodContainer.classList.add('hidden');
+            newPeriodName.value = '';
+        });
+        
+        // 取消创建新周期
+        cancelNewPeriodBtn.addEventListener('click', function() {
+            createNewPeriodContainer.classList.add('hidden');
+            newPeriodName.value = '';
+        });
+        
+        // 提交导入获奖名单
+        submitImport.addEventListener('click', function() {
+            // 验证表单
+            if (!fileInput.files.length) {
+                alert('请上传获奖名单文件');
+                return;
+            }
+            
+            const period = document.getElementById('selectionPeriod').value;
+            if (!period) {
+                alert('请选择评选周期');
+                return;
+            }
+            
+            // 获取当前活动ID
+            const activityId = importWinnersModal.dataset.activityId;
+            const activity = activities.find(a => a.id === activityId);
+            
+            // 初始化获奖名单对象
+            if (!activity.winners) {
+                activity.winners = {};
+            }
+            
+            // 添加新的评选周期（如果不存在）
+            if (!activity.winners[period]) {
+                activity.winners[period] = [];
+            }
+            
+            // 这里应该处理文件上传和解析逻辑
+            // 为了简化，我们直接显示成功提示
+            
+            // 显示成功提示
+            showSuccessToast('获奖名单导入成功！');
+            
+            // 关闭弹窗
+            closeImportWinnersModal();
+        });
+        
+        // DOM 元素 - 添加评选规则相关元素
+        const selectionRulesContainer = document.getElementById('selectionRulesContainer');
+        const toggleRulesBtn = document.getElementById('toggleRulesBtn');
+        
+        // 切换评选规则展开/收起状态
+        toggleRulesBtn.addEventListener('click', function() {
+            const container = document.getElementById('selectionRulesContainer');
+            const isExpanded = container.classList.contains('max-h-none');
+            
+            if (isExpanded) {
+                container.classList.remove('max-h-none');
+                container.classList.add('max-h-40');
+                toggleRulesBtn.innerHTML = '<i class="fa fa-chevron-down mr-1"></i> 展开全部';
+            } else {
+                container.classList.remove('max-h-40');
+                container.classList.add('max-h-none');
+                toggleRulesBtn.innerHTML = '<i class="fa fa-chevron-up mr-1"></i> 收起';
+            }
+        });
+        
+        // 查看活动
+        function viewActivity(activityId) {
+            // 查找活动信息
+            const activity = activities.find(a => a.id === activityId);
+            if (!activity) {
+                alert('找不到该活动');
+                return;
+            }
+            
+            // 填充活动基本信息
+            document.getElementById('detailActivityName').textContent = activity.name;
+            document.getElementById('detailActivityStatus').innerHTML = `<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${activity.statusColor}">${activity.statusText}</span>`;
+            document.getElementById('detailBusinessType').textContent = activity.businessTypeText;
+            document.getElementById('detailCategoryTypes').textContent = activity.categoryTypesText;
+            document.getElementById('detailStartTime').textContent = activity.startTime;
+            document.getElementById('detailEndTime').textContent = activity.endTime;
+            
+            // 填充评选规则
+            if (activity.selectionRules) {
+                selectionRulesContainer.textContent = activity.selectionRules;
+                // 重置展开状态
+                selectionRulesContainer.classList.remove('max-h-none');
+                selectionRulesContainer.classList.add('max-h-40');
+                toggleRulesBtn.innerHTML = '<i class="fa fa-chevron-down mr-1"></i> 展开全部';
+            } else {
+                selectionRulesContainer.textContent = '暂无评选规则';
+                toggleRulesBtn.classList.add('hidden');
+            }
+            
+            // 生成获奖名单选项卡
+            winnersTabs.innerHTML = '';
+            
+            if (activity.winners && Object.keys(activity.winners).length > 0) {
+                let hasActiveTab = false;
+                
+                Object.keys(activity.winners).forEach(period => {
+                    const tab = document.createElement('a');
+                    const isActive = !hasActiveTab; // 第一个选项卡默认激活
+                    if (isActive) hasActiveTab = true;
+                    
+                    // 如果是预定义的周期，使用预设名称，否则直接显示周期名称
+                    let periodText = '';
+                    switch(period) {
+                        case 'week1': periodText = '第1周 (9月1日-9月7日)'; break;
+                        case 'week2': periodText = '第2周 (9月8日-9月14日)'; break;
+                        case 'week3': periodText = '第3周 (9月15日-9月21日)'; break;
+                        case 'week4': periodText = '第4周 (9月22日-9月28日)'; break;
+                        case 'week5': periodText = '第5周 (9月29日-9月30日)'; break;
+                        case 'total': periodText = '活动总评'; break;
+                        default: periodText = period;
+                    }
+                    
+                    tab.href = '#';
+                    tab.className = `px-1 py-4 border-b-2 font-medium text-sm ${isActive ? 'border-primary text-primary' : 'border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300'}`;
+                    tab.textContent = periodText;
+                    tab.dataset.period = period;
+                    
+                    tab.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        
+                        // 更新选项卡状态
+                        winnersTabs.querySelectorAll('a').forEach(t => {
+                            t.className = 'px-1 py-4 border-b-2 font-medium text-sm border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300';
+                        });
+                        this.className = 'px-1 py-4 border-b-2 font-medium text-sm border-primary text-primary';
+                        
+                        // 显示对应内容
+                        renderWinnersList(activity, this.dataset.period);
+                    });
+                    
+                    winnersTabs.appendChild(tab);
+                });
+                
+                // 默认显示第一个选项卡内容
+                if (hasActiveTab) {
+                    const firstPeriod = Object.keys(activity.winners)[0];
+                    renderWinnersList(activity, firstPeriod);
+                }
+            } else {
+                winnersContent.innerHTML = '<div class="text-center py-10 text-neutral-500">暂无获奖名单</div>';
+            }
+            
+            // 存储当前活动ID用于导出
+            activityDetailModal.dataset.activityId = activityId;
+            
+            // 显示弹窗
+            activityDetailModal.classList.remove('hidden');
+        }
+        
+        // 渲染获奖名单
+        function renderWinnersList(activity, period) {
+            const winners = activity.winners[period];
+            
+            if (!winners || winners.length === 0) {
+                winnersContent.innerHTML = '<div class="text-center py-10 text-neutral-500">暂无获奖名单</div>';
+                return;
+            }
+            
+            let html = `
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-neutral-200">
+                        <thead class="bg-neutral-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">获奖人姓名 <span class="text-danger">*</span></th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">获奖人备注</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">奖项名称 <span class="text-danger">*</span></th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-neutral-500 uppercase tracking-wider">奖项备注</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-neutral-200">
+            `;
+            
+            winners.forEach((winner, index) => {
+                // 为了兼容现有数据，我们使用如下映射
+                const name = winner.name || '';
+                const personRemark = winner.remark || winner.category || ''; // 使用品类作为默认备注
+                
+                // 根据奖项类型显示不同的奖项名称
+                let prizeName = '';
+                if (winner.prize) {
+                    // 直接使用奖项名称，如果为空则根据奖项等级设置默认值
+                    if (winner.prize.includes('奶茶')) prizeName = '奶茶一杯';
+                    else if (winner.prize.includes('咖啡')) prizeName = '咖啡券一张';
+                    else if (winner.prize.includes('礼品')) prizeName = '精美礼品一份';
+                    else if (winner.prize.includes('奖金') || winner.prize.match(/\d+元/)) {
+                        // 如果奖项包含'奖金'或金额数字，直接显示
+                        prizeName = winner.prize;
+                    } else if (winner.prize.includes('一等') || winner.prize.includes('二等') || winner.prize.includes('三等')) {
+                        // 统一设置一、二、三等奖为1000元奖金
+                        prizeName = '1000元奖金';
+                    } else if (winner.prize.includes('优秀')) {
+                        prizeName = '500元奖金';
+                    } else if (winner.prize.includes('参与')) {
+                        prizeName = '200元奖金';
+                    } else {
+                        prizeName = winner.prize;
+                    }
+                }
+                
+                // 奖项备注显示等级信息
+                const prizeRemark = winner.prizeLevel || 
+                                  (winner.prize && (winner.prize.includes('一等') || winner.prize.includes('二等') || 
+                                                   winner.prize.includes('三等') || winner.prize.includes('优秀') || 
+                                                   winner.prize.includes('参与')) ? winner.prize : '');
+                
+                html += `
+                    <tr class="hover:bg-neutral-50 transition-custom">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-900">${name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-500">${personRemark}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-900">${prizeName}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-neutral-900">${prizeRemark}</td>
+                    </tr>
+                `;
+            });
+            
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+            
+            winnersContent.innerHTML = html;
+        }
+        
+        // 编辑活动
+        function editActivity(activityId) {
+            // 查找活动信息
+            const activity = activities.find(a => a.id === activityId);
+            if (activity) {
+                // 检查活动状态，如果是已结束则不允许编辑
+                if (activity.status === 'completed') {
+                    alert('已结束的活动不可编辑');
+                    return;
+                }
+                
+                // 获取编辑弹窗元素
+                const editActivityModal = document.getElementById('editActivityModal');
+                
+                // 回显活动数据
+                document.getElementById('editActivityId').value = activity.id;
+                document.getElementById('editActivityName').value = activity.name;
+                
+                // 处理时间格式
+                const startTime = new Date(activity.startTime);
+                const endTime = new Date(activity.endTime);
+                document.getElementById('editStartTime').value = startTime.toISOString().slice(0, 16);
+                document.getElementById('editEndTime').value = endTime.toISOString().slice(0, 16);
+                
+                // 回显业务类型
+                document.getElementById('editBusinessType').value = activity.businessType;
+                
+                // 回显品类类型
+                const categoryTypes = activity.categoryTypes || [];
+                document.getElementById('editCategoryWenjie').checked = categoryTypes.includes('wenjie');
+                document.getElementById('editCategoryGeneral').checked = categoryTypes.includes('general');
+                document.getElementById('editCategoryHarmony').checked = categoryTypes.includes('harmony');
+                
+                // 回显评选规则
+                document.getElementById('editSelectionRules').value = activity.selectionRules || '';
+                
+                // 设置封面选择功能
+                setupEditCoverSelection();
+                
+                // 显示弹窗
+                editActivityModal.classList.remove('hidden');
+            }
+        }
+        
+        // 关闭编辑活动弹窗
+        function closeEditActivityModal() {
+            const editActivityModal = document.getElementById('editActivityModal');
+            editActivityModal.classList.add('hidden');
+        }
+        
+        // 设置编辑活动弹窗的封面选择功能
+        function setupEditCoverSelection() {
+            // 活动封面选择
+            const editCoverItems = document.querySelectorAll('.edit-cover-item');
+            editCoverItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // 移除所有选中状态
+                    editCoverItems.forEach(i => {
+                        i.classList.remove('border-primary');
+                        i.classList.add('border-transparent');
+                    });
+                    
+                    // 设置当前选中状态
+                    this.classList.remove('border-transparent');
+                    this.classList.add('border-primary');
+                });
+            });
+            
+            // 封面上传
+            const editCoverUpload = document.querySelector('.edit-cover-upload');
+            const editCoverFileInput = document.getElementById('editCoverUpload');
+            
+            editCoverUpload.addEventListener('click', function() {
+                editCoverFileInput.click();
+            });
+            
+            editCoverFileInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        // 检查是否已经有自定义上传的封面
+                        let customCover = document.querySelector('.edit-custom-cover');
+                        if (!customCover) {
+                            // 创建新的封面项
+                            const customCoverContainer = document.createElement('div');
+                            customCoverContainer.className = 'edit-cover-item edit-custom-cover cursor-pointer border-2 border-primary rounded-md overflow-hidden aspect-video';
+                            customCoverContainer.innerHTML = `<img src="${e.target.result}" alt="自定义封面" class="w-full h-full object-cover">`;
+                            
+                            // 插入到封面列表前面
+                            const coversContainer = document.querySelector('#editActivityModal .grid.grid-cols-4.gap-3');
+                            coversContainer.insertBefore(customCoverContainer, coversContainer.firstChild);
+                            
+                            // 更新事件监听
+                            const newEditCoverItems = document.querySelectorAll('.edit-cover-item');
+                            newEditCoverItems.forEach(item => {
+                                item.addEventListener('click', function() {
+                                    newEditCoverItems.forEach(i => {
+                                        i.classList.remove('border-primary');
+                                        i.classList.add('border-transparent');
+                                    });
+                                    this.classList.remove('border-transparent');
+                                    this.classList.add('border-primary');
+                                });
+                            });
+                        } else {
+                            // 更新已有的自定义封面
+                            const img = customCover.querySelector('img');
+                            img.src = e.target.result;
+                        }
+                    }
+                    
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+        
+        // 保存编辑活动
+        function saveEditActivity() {
+            // 获取表单数据
+            const activityId = parseInt(document.getElementById('editActivityId').value);
+            const activityName = document.getElementById('editActivityName').value;
+            const startTime = document.getElementById('editStartTime').value;
+            const endTime = document.getElementById('editEndTime').value;
+            const businessType = document.getElementById('editBusinessType').value;
+            const selectionRules = document.getElementById('editSelectionRules').value;
+            
+            // 获取选中的品类类型
+            const categoryCheckboxes = document.querySelectorAll('input[name="categoryTypes"]:checked');
+            const categoryTypes = Array.from(categoryCheckboxes).map(checkbox => checkbox.value);
+            
+            // 表单验证
+            if (!activityName) {
+                alert('请输入活动名称');
+                return;
+            }
+            
+            if (!startTime || !endTime) {
+                alert('请选择活动时间');
+                return;
+            }
+            
+            if (!businessType) {
+                alert('请选择业务类型');
+                return;
+            }
+            
+            if (categoryTypes.length === 0) {
+                alert('请至少选择一个品类类型');
+                return;
+            }
+            
+            // 查找活动对象
+            const activity = activities.find(a => a.id === activityId);
+            if (activity) {
+                // 更新活动数据
+                activity.name = activityName;
+                activity.startTime = new Date(startTime).toISOString();
+                activity.endTime = new Date(endTime).toISOString();
+                activity.businessType = businessType;
+                activity.categoryTypes = categoryTypes;
+                activity.selectionRules = selectionRules;
+                
+                // 显示成功提示
+                showSuccessToast('活动编辑成功！');
+                
+                // 关闭弹窗
+                closeEditActivityModal();
+            }
+        }
+        
+        // 删除活动
+        function deleteActivity(activityId) {
+            if (confirm('确定要删除该活动吗？此操作不可撤销。')) {
+                showSuccessToast('活动删除成功！');
+            }
+        }
+        
+        // 显示成功提示框
+        function showSuccessToast(message) {
+            successMessage.textContent = message || '操作成功';
+            successToast.classList.remove('hidden');
+        }
+        
+        // 关闭活动详情弹窗
+        function closeActivityDetailModal() {
+            activityDetailModal.classList.add('hidden');
+        }
+        
+        closeDetailModal.addEventListener('click', closeActivityDetailModal);
+        detailModalOverlay.addEventListener('click', closeActivityDetailModal);
+        
+        // 关闭成功提示框
+        closeSuccessToast.addEventListener('click', function() {
+            successToast.classList.add('hidden');
+        });
+        
+        // ESC 键关闭弹窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (!createActivityModal.classList.contains('hidden')) {
+                    closeCreateActivityModal();
+                }
+                if (!importWinnersModal.classList.contains('hidden')) {
+                    closeImportWinnersModal();
+                }
+                if (!activityDetailModal.classList.contains('hidden')) {
+                    closeActivityDetailModal();
+                }
+                if (!successToast.classList.contains('hidden')) {
+                    successToast.classList.add('hidden');
+                }
+            }
+        });
+        
+        // 编辑活动弹窗事件监听器
+        document.addEventListener('DOMContentLoaded', function() {
+            const editActivityModal = document.getElementById('editActivityModal');
+            const closeEditModal = document.getElementById('closeEditModal');
+            const editModalOverlay = document.getElementById('editModalOverlay');
+            const cancelEditActivity = document.getElementById('cancelEditActivity');
+            const submitEditActivity = document.getElementById('submitEditActivity');
+            
+            if (closeEditModal) closeEditModal.addEventListener('click', closeEditActivityModal);
+            if (editModalOverlay) editModalOverlay.addEventListener('click', closeEditActivityModal);
+            if (cancelEditActivity) cancelEditActivity.addEventListener('click', closeEditActivityModal);
+            if (submitEditActivity) submitEditActivity.addEventListener('click', saveEditActivity);
+        });
+        
+        // 导出获奖名单
+        exportWinnersBtn.addEventListener('click', function() {
+            const activityId = parseInt(activityDetailModal.dataset.activityId);
+            const activity = activities.find(a => a.id === activityId);
+            
+            if (!activity || !activity.winners) {
+                alert('暂无获奖名单可导出');
+                return;
+            }
+            
+            // 获取当前选中的选项卡
+            const activeTab = winnersTabs.querySelector('a.border-primary');
+            const period = activeTab ? activeTab.dataset.period : Object.keys(activity.winners)[0];
+            const winners = activity.winners[period];
+            
+            if (!winners || winners.length === 0) {
+                alert('暂无获奖名单可导出');
+                return;
+            }
+            
+            // 构建CSV内容
+            let csvContent = "\uFEFF姓名,手机号,奖项,品类\n";
+            winners.forEach(winner => {
+                csvContent += `${winner.name},${winner.phone},${winner.prize},${winner.category}\n`;
+            });
+            
+            // 创建并下载文件
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `${activity.name}_${period}_获奖名单.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showSuccessToast('获奖名单导出成功！');
+        });
+        
+        // 搜索和筛选功能
+        function performSearchAndFilter() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const startDateFilter = document.getElementById('startDateFilter').value;
+            const endDateFilter = document.getElementById('endDateFilter').value;
+            
+            // 这里可以实现实际的筛选逻辑
+            console.log('搜索:', searchTerm);
+            console.log('状态筛选:', statusFilter);
+            console.log('开始时间筛选:', startDateFilter);
+            console.log('结束时间筛选:', endDateFilter);
+            
+            showSuccessToast('筛选功能待实现');
+        }
+        
+        // 为搜索框添加回车事件
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearchAndFilter();
+            }
+        });
+        
+        // 为状态筛选添加change事件
+        document.getElementById('statusFilter').addEventListener('change', performSearchAndFilter);
+        
+        // 为时间筛选添加change事件
+        document.getElementById('startDateFilter').addEventListener('change', performSearchAndFilter);
+        document.getElementById('endDateFilter').addEventListener('change', performSearchAndFilter);
+        
+        // 为搜索按钮添加点击事件
+        document.getElementById('searchBtn').addEventListener('click', performSearchAndFilter);
+        
+        // 为重置按钮添加点击事件
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            // 清空搜索框
+            document.getElementById('searchInput').value = '';
+            
+            // 重置状态筛选为"全部状态"
+            document.getElementById('statusFilter').value = 'all';
+            
+            // 清空时间筛选
+            document.getElementById('startDateFilter').value = '';
+            document.getElementById('endDateFilter').value = '';
+            
+            // 执行搜索以显示所有结果
+            performSearchAndFilter();
+        });
+    </script>
+</body>
+</html>
