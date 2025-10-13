@@ -793,6 +793,22 @@
                             </a>
                         </div>
                     </div>
+                    
+                    <!-- 错误提示区域（默认隐藏） -->
+                    <div id="importErrorContainer" class="hidden mb-6 p-3 bg-red-50 border border-red-200 rounded-md">
+                        <div class="flex items-start">
+                            <i class="fa fa-exclamation-circle text-red-500 mr-2 mt-0.5"></i>
+                            <div class="flex-1">
+                                <p id="importErrorMessage" class="text-sm text-red-700 font-medium"></p>
+                                <p id="importErrorDetails" class="text-xs text-red-600 mt-1"></p>
+                                <div class="mt-2">
+                                    <a href="#" id="downloadErrorReport" class="inline-flex items-center text-red-600 hover:text-red-800 text-sm">
+                                        <i class="fa fa-download mr-1"></i> 下载错误报告
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- 弹窗底部 -->
@@ -1326,6 +1342,9 @@
             fileInput.value = '';
             filePreview.classList.add('hidden');
             
+            // 隐藏错误提示区域
+            hideImportError();
+            
             // 显示弹窗
             importWinnersModal.classList.remove('hidden');
         }
@@ -1393,6 +1412,9 @@
         
         // 提交导入获奖名单
         submitImport.addEventListener('click', function() {
+            // 隐藏之前的错误提示
+            hideImportError();
+            
             // 验证表单
             if (!fileInput.files.length) {
                 alert('请上传获奖名单文件');
@@ -1402,6 +1424,16 @@
             const period = document.getElementById('selectionPeriod').value;
             if (!period) {
                 alert('请选择评选周期');
+                return;
+            }
+            
+            // 模拟文件校验过程
+            // 在实际应用中，这里应该是真实的文件解析和校验逻辑
+            const errors = validateWinnerFile(fileInput.files[0]);
+            
+            // 如果有错误，显示错误提示并返回
+            if (errors.length > 0) {
+                showImportError(errors);
                 return;
             }
             
@@ -1428,6 +1460,26 @@
             // 关闭弹窗
             closeImportWinnersModal();
         });
+        
+        // 模拟文件校验函数
+        function validateWinnerFile(file) {
+            // 在实际应用中，这里应该包含真实的文件校验逻辑
+            // 包括检查文件格式、内容格式、必填字段等
+            
+            // 模拟一些错误
+            const errors = [];
+            
+            // 示例错误条件（在实际应用中会根据文件内容判断）
+            const simulateError = Math.random() > 0.7; // 30%概率出现错误
+            
+            if (simulateError) {
+                errors.push("第3行：姓名字段不能为空");
+                errors.push("第7行：手机号格式不正确");
+                errors.push("第15行：奖项名称不在允许的范围内");
+            }
+            
+            return errors;
+        }
         
         // DOM 元素 - 添加评选规则相关元素
         const selectionRulesContainer = document.getElementById('selectionRulesContainer');
@@ -1931,6 +1983,72 @@
             
             // 执行搜索以显示所有结果
             performSearchAndFilter();
+        });
+        
+        // 显示导入错误提示
+        function showImportError(errors) {
+            // 隐藏文件预览区域
+            document.getElementById('filePreview').classList.add('hidden');
+            
+            // 显示错误提示区域
+            const errorContainer = document.getElementById('importErrorContainer');
+            const errorMessage = document.getElementById('importErrorMessage');
+            const errorDetails = document.getElementById('importErrorDetails');
+            
+            // 设置错误消息
+            errorMessage.textContent = `文件校验失败，共发现${errors.length}个错误，请根据以下提示修改后重新上传`;
+            
+            // 设置错误详情
+            errorDetails.innerHTML = errors.map((error, index) => 
+                `${index + 1}. ${error}`
+            ).join('<br>');
+            
+            // 显示错误容器
+            errorContainer.classList.remove('hidden');
+        }
+        
+        // 隐藏导入错误提示
+        function hideImportError() {
+            document.getElementById('importErrorContainer').classList.add('hidden');
+        }
+        
+        // 下载错误报告
+        function downloadErrorReport(errors) {
+            // 构建错误报告内容
+            let reportContent = "文件校验错误报告\n\n";
+            reportContent += `生成时间: ${new Date().toLocaleString('zh-CN')}\n\n`;
+            reportContent += `错误总数: ${errors.length}\n\n`;
+            reportContent += "详细错误信息:\n";
+            reportContent += errors.map((error, index) => 
+                `${index + 1}. ${error}`
+            ).join('\n');
+            
+            // 创建并下载文件
+            const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', '错误报告.txt');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // 为下载错误报告链接添加事件监听器
+        document.getElementById('downloadErrorReport').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 这里应该从某个地方获取错误信息，为了演示，我们使用示例错误
+            const sampleErrors = [
+                "第3行：姓名字段不能为空",
+                "第7行：手机号格式不正确",
+                "第15行：奖项名称不在允许的范围内"
+            ];
+            
+            downloadErrorReport(sampleErrors);
         });
     </script>
 </body>
