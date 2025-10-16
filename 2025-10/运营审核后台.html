@@ -221,7 +221,7 @@
       
       <div class="grid grid-cols-1 md:grid-cols-6 gap-3 mb-3">
         <!-- 报备时间范围 -->
-        <div class="md:col-span-4">
+        <div class="md:col-span-2">
           <label class="block small-label mb-1">报备时间范围</label>
           <div class="flex items-center space-x-2">
             <div class="flex-1">
@@ -230,6 +230,20 @@
             <div class="flex items-center text-gray-400 text-xs">至</div>
             <div class="flex-1">
               <input type="date" id="end-date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent small-select">
+            </div>
+          </div>
+        </div>
+        
+        <!-- 创建日期范围 -->
+        <div class="md:col-span-2">
+          <label class="block small-label mb-1">创建日期范围</label>
+          <div class="flex items-center space-x-2">
+            <div class="flex-1">
+              <input type="date" id="create-start-date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent small-select">
+            </div>
+            <div class="flex items-center text-gray-400 text-xs">至</div>
+            <div class="flex-1">
+              <input type="date" id="create-end-date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent small-select">
             </div>
           </div>
         </div>
@@ -305,6 +319,9 @@
               </th>
               <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 报备时间
+              </th>
+              <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                创建日期
               </th>
               <th scope="col" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 审核人
@@ -521,6 +538,7 @@
         date: '2025-10-05',
         time: '10:30',
         submitTime: '2025-10-05 18:30:25',
+        createTime: '2025-10-05',
         status: 'pending',
         auditBy: '',
         auditTime: '',
@@ -540,6 +558,7 @@
         date: '2025-10-05',
         time: '14:15',
         submitTime: '2025-10-05 18:30:25',
+        createTime: '2025-10-05',
         status: 'pending',
         auditBy: '',
         auditTime: '',
@@ -559,6 +578,7 @@
         date: '2025-10-05',
         time: '16:45',
         submitTime: '2025-10-05 18:30:25',
+        createTime: '2025-10-05',
         status: 'pending',
         auditBy: '',
         auditTime: '',
@@ -578,6 +598,7 @@
         date: '2025-10-05',
         time: '09:45',
         submitTime: '2025-10-05 17:45:12',
+        createTime: '2025-10-05',
         status: 'pending',
         auditBy: '',
         auditTime: '',
@@ -597,6 +618,7 @@
         date: '2025-10-05',
         time: '15:20',
         submitTime: '2025-10-05 17:45:12',
+        createTime: '2025-10-05',
         status: 'pending',
         auditBy: '',
         auditTime: '',
@@ -616,6 +638,7 @@
         date: '2025-10-04',
         time: '11:20',
         submitTime: '2025-10-04 19:10:33',
+        createTime: '2025-10-04',
         status: 'approved',
         auditBy: '运营管理员',
         auditTime: '2025-10-05 09:20:15',
@@ -635,6 +658,7 @@
         date: '2025-10-04',
         time: '08:50',
         submitTime: '2025-10-04 18:20:45',
+        createTime: '2025-10-04',
         status: 'rejected',
         auditBy: '运营管理员',
         auditTime: '2025-10-05 10:15:30',
@@ -654,6 +678,7 @@
         date: '2025-10-04',
         time: '10:15',
         submitTime: '2025-10-04 18:20:45',
+        createTime: '2025-10-04',
         status: 'rejected',
         auditBy: '运营管理员',
         auditTime: '2025-10-05 10:15:30',
@@ -673,6 +698,7 @@
         date: '2025-10-03',
         time: '14:00',
         submitTime: '2025-10-03 19:05:22',
+        createTime: '2025-10-03',
         status: 'approved',
         auditBy: '运营管理员',
         auditTime: '2025-10-04 08:45:18',
@@ -692,6 +718,7 @@
         date: '2025-10-03',
         time: '15:45',
         submitTime: '2025-10-03 19:05:22',
+        createTime: '2025-10-03',
         status: 'approved',
         auditBy: '运营管理员',
         auditTime: '2025-10-04 08:45:18',
@@ -852,6 +879,8 @@
       const reasonFilter = document.getElementById('reason-filter').value;
       const startDate = document.getElementById('start-date').value;
       const endDate = document.getElementById('end-date').value;
+      const createStartDate = document.getElementById('create-start-date').value;
+      const createEndDate = document.getElementById('create-end-date').value;
 
       let filteredData = flatAuditData;
 
@@ -880,13 +909,23 @@
         filteredData = filteredData.filter(item => item.reason.includes(reasonFilter));
       }
 
-      // 日期范围筛选
+      // 报备时间范围筛选
       if (startDate && endDate) {
         filteredData = filteredData.filter(item => {
           const submitDate = new Date(item.submitTime.split(' ')[0]);
           const start = new Date(startDate);
           const end = new Date(endDate);
           return submitDate >= start && submitDate <= end;
+        });
+      }
+
+      // 创建日期范围筛选
+      if (createStartDate && createEndDate) {
+        filteredData = filteredData.filter(item => {
+          const createDate = new Date(item.createTime);
+          const createStart = new Date(createStartDate);
+          const createEnd = new Date(createEndDate);
+          return createDate >= createStart && createDate <= createEnd;
         });
       }
 
@@ -917,6 +956,9 @@
           </td>
           <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-500">
             ${formatDateTime(item.submitTime)}
+          </td>
+          <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-500">
+            ${item.createTime}
           </td>
           <td class="px-4 py-2 whitespace-nowrap text-xs text-gray-500">
             ${item.auditBy || '-'}
@@ -1055,6 +1097,8 @@
       document.getElementById('reason-filter').value = '';
       document.getElementById('store-search-input').value = '';
       document.getElementById('store-search-container').classList.add('hidden');
+      document.getElementById('create-start-date').value = '';
+      document.getElementById('create-end-date').value = '';
       setDefaultDateRange();
       
       // 重置门店选项
@@ -1394,6 +1438,7 @@
           '报备日期': item.date,
           '报备时间': item.time,
           '提交时间': item.submitTime,
+          '创建日期': item.createTime,
           '审核人': item.auditBy || '',
           '审核时间': item.auditTime || '',
           '审核状态': getStatusText(item.status),
