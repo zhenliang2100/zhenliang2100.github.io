@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>轻改专家 - 质检复盘 (小程序版)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#007AFF',
+            secondary: '#8E8E93',
+            success: '#34C759',
+            warning: '#FF9500',
+            danger: '#FF3B30',
+            light: '#F2F2F7',
+            dark: '#1C1C1E'
+          },
+          fontFamily: {
+            'sf': ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .iphone-shadow {
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+      .nav-bar-shadow {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      .circle-btn {
+        width: auto;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        border: none;
+        transition: all 0.2s ease;
+      }
+      .circle-btn:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        border: none;
+      }
+      .card-iphone {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        padding: 16px;
+      }
+      .tab-item {
+        transition: all 0.2s ease;
+      }
+      .tab-item:active {
+        transform: scale(0.98);
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sf flex justify-center items-center min-h-screen">
+  <!-- iPhone模拟容器 -->
+  <div class="iphone-container w-[375px] h-[812px] bg-white rounded-[40px] iphone-shadow overflow-hidden relative border-[10px] border-dark">
+    <!-- 小程序导航栏（集成状态栏） -->
+    <div class="nav-bar bg-white nav-bar-shadow relative z-10">
+      <!-- 状态栏 -->
+      <div class="status-bar h-[44px] flex justify-between items-center px-[20px] text-dark font-semibold text-sm pt-[14px]">
+        <span id="current-time">9:41</span>
+        <div class="flex items-center space-x-1">
+          <i class="fa fa-signal text-xs"></i>
+          <i class="fa fa-wifi text-xs"></i>
+          <i class="fa fa-battery-full text-xs"></i>
+        </div>
+      </div>
+      
+      <!-- 导航栏内容 -->
+      <div class="h-[44px] flex items-center justify-between px-[16px] relative">
+        <!-- 返回按钮 -->
+        <button onclick="goBack()" class="flex items-center justify-center w-[44px] h-[44px] rounded-full hover:bg-gray-100 transition-colors duration-200 -ml-0.9">
+          <i class="fa fa-chevron-left text-dark"></i>
+        </button>
+        
+        <!-- 标题 -->
+        <div class="absolute left-1/2 transform -translate-x-1/2 text-center">
+          <h1 class="text-lg font-semibold text-dark">接待列表</h1>
+        </div>
+        
+        <!-- 右侧功能按钮 -->
+        <div class="flex items-center">
+          <!-- 更多按钮 -->
+          <div class="circle-btn">
+            <img src="../images/menu.png" alt="菜单" class="h-[30px] w-auto">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content h-[calc(100%-88px)] overflow-y-auto bg-light">
+      
+      <!-- 顶部可滑动的接待记录切换TAB -->
+      <div class="relative bg-white border-b border-gray-100">
+        <div class="overflow-x-auto scrollbar-hide">
+          <div class="flex whitespace-nowrap py-3 px-[16px]">
+            <!-- TAB 1 - 激活状态 -->
+            <div class="tab-item min-w-[200px] mr-[12px] p-[10px] rounded-[8px] bg-primary/10 border border-primary/20">
+              <div class="flex justify-between items-center mb-[4px]">
+                <h3 class="text-sm font-semibold text-dark">张小明</h3>
+                <span class="text-xs text-primary font-medium">90分</span>
+              </div>
+              <p class="text-xs text-secondary">138****1234</p>
+            </div>
+            
+            <!-- TAB 2 - 非激活状态 -->
+            <div class="tab-item min-w-[200px] mr-[12px] p-[10px] rounded-[8px] bg-white border border-gray-200">
+              <div class="flex justify-between items-center mb-[4px]">
+                <h3 class="text-sm font-semibold text-dark">李小红</h3>
+                <span class="text-xs text-warning font-medium">75分</span>
+              </div>
+              <p class="text-xs text-secondary">139****5678</p>
+            </div>
+            
+            <!-- TAB 3 - 非激活状态 -->
+            <div class="tab-item min-w-[200px] mr-[12px] p-[10px] rounded-[8px] bg-white border border-gray-200">
+              <div class="flex justify-between items-center mb-[4px]">
+                <h3 class="text-sm font-semibold text-dark">王大力</h3>
+                <span class="text-xs text-danger font-medium">60分</span>
+              </div>
+              <p class="text-xs text-secondary">137****9012</p>
+            </div>
+            
+            <!-- TAB 4 - 非激活状态 -->
+            <div class="tab-item min-w-[200px] mr-[12px] p-[10px] rounded-[8px] bg-white border border-gray-200">
+              <div class="flex justify-between items-center mb-[4px]">
+                <h3 class="text-sm font-semibold text-dark">赵小花</h3>
+                <span class="text-xs text-success font-medium">95分</span>
+              </div>
+              <p class="text-xs text-secondary">136****3456</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 客户接待详情 -->
+      <div class="p-[16px]">
+        <!-- 对话模块 -->
+        <div class="card-iphone mb-[16px]">
+          <h3 class="text-base font-semibold text-dark mb-[12px]">接待对话</h3>
+          
+
+          
+          <!-- 音频播放按钮 -->
+          <div class="mt-[12px] pt-[12px] border-t border-gray-100">
+            <button id="play-audio" class="w-full flex items-center justify-between p-[10px] bg-light rounded-[8px]">
+              <div class="flex items-center">
+                <div class="w-[36px] h-[36px] rounded-full bg-primary flex items-center justify-center mr-[10px]">
+                  <i class="fa fa-play text-white"></i>
+                </div>
+                <div>
+                  <p class="text-sm font-medium text-dark">现场录音</p>
+                  <p class="text-xs text-secondary">点击播放对话录音</p>
+                </div>
+              </div>
+              <span class="text-sm font-medium text-primary" id="audio-duration">00:00</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- 质检详情图片 -->
+        <div class="card-iphone">
+          <h3 class="text-base font-semibold text-dark mb-[12px]">质检详情</h3>
+          <div class="overflow-hidden rounded-[8px] border border-gray-200">
+            <img src="../images/小程序质检详情.png" alt="质检详情" class="w-full h-auto">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 更新当前时间
+    function updateTime() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      
+      // 格式化时间
+      const timeString = `${hours}:${minutes.toString().padStart(2, '0')}`;
+      document.getElementById('current-time').textContent = timeString;
+    }
+
+    // 每秒更新时间
+    setInterval(updateTime, 1000);
+    updateTime(); // 初始更新
+
+    // 返回上一页 - 跳转到质检复盘页面
+    function goBack() {
+      window.location.href = '小程序-质检复盘.html';
+    }
+
+    // 页面加载完成后的初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 添加页面加载动画
+      const mainContent = document.querySelector('.main-content');
+      mainContent.style.opacity = '0';
+      setTimeout(() => {
+        mainContent.style.transition = 'opacity 0.5s ease';
+        mainContent.style.opacity = '1';
+      }, 100);
+      
+      // 切换TAB项
+      const tabItems = document.querySelectorAll('.tab-item');
+      tabItems.forEach((tab, index) => {
+        tab.addEventListener('click', function() {
+          // 移除所有TAB的激活状态
+          tabItems.forEach(t => {
+            t.classList.remove('bg-primary/10', 'border-primary/20');
+            t.classList.add('bg-white', 'border-gray-200');
+          });
+          
+          // 激活当前TAB
+          this.classList.remove('bg-white', 'border-gray-200');
+          this.classList.add('bg-primary/10', 'border-primary/20');
+          
+          // 这里可以添加切换内容的逻辑
+          showToast(`已切换到客户${index + 1}的接待记录`);
+        });
+      });
+      
+      // 音频播放按钮
+      const playButton = document.getElementById('play-audio');
+      const playIcon = playButton.querySelector('i');
+      const durationDisplay = document.getElementById('audio-duration');
+      let isPlaying = false;
+      let duration = 0;
+      let timer = null;
+      
+      playButton.addEventListener('click', function() {
+        if (isPlaying) {
+          // 暂停播放
+          playIcon.className = 'fa fa-play text-white';
+          clearInterval(timer);
+          showToast('录音已暂停');
+        } else {
+          // 开始播放
+          playIcon.className = 'fa fa-pause text-white';
+          startAudioPlayback();
+          showToast('录音播放中...');
+        }
+        isPlaying = !isPlaying;
+      });
+      
+      // 模拟音频播放
+      function startAudioPlayback() {
+        duration = 0;
+        updateDurationDisplay();
+        
+        timer = setInterval(() => {
+          duration++;
+          updateDurationDisplay();
+          
+          // 模拟播放结束
+          if (duration >= 120) { // 2分钟
+            clearInterval(timer);
+            playIcon.className = 'fa fa-play text-white';
+            isPlaying = false;
+            showToast('录音播放结束');
+          }
+        }, 1000);
+      }
+      
+      // 更新时长显示
+      function updateDurationDisplay() {
+        const minutes = Math.floor(duration / 60).toString().padStart(2, '0');
+        const seconds = (duration % 60).toString().padStart(2, '0');
+        durationDisplay.textContent = `${minutes}:${seconds}`;
+      }
+    });
+    
+    // 显示提示消息
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-dark/80 text-white px-[16px] py-[10px] rounded-[16px] text-sm font-medium z-50';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+          toast.remove();
+        }, 500);
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

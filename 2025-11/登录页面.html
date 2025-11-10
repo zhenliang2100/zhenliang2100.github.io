@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>汽车销售超级孪生智能体 - 登录</title>
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36CFC9',
+            warning: '#FF7D00',
+            danger: '#F53F3F',
+            gray: {
+              100: '#F7F8FA',
+              200: '#F2F3F5',
+              300: '#E5E6EB',
+              400: '#C9CDD4',
+              500: '#86909C',
+              600: '#4E5969',
+              700: '#1D2129',
+            }
+          },
+          fontFamily: {
+            sans: ['Microsoft YaHei', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .form-input {
+        @apply w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+      }
+      .btn-primary {
+        @apply bg-primary text-white px-4 py-3 rounded-md hover:bg-primary/90 transition-all;
+      }
+      .login-card {
+        @apply bg-white rounded-xl shadow-lg p-8 w-full max-w-md;
+      }
+      .form-label {
+        @apply block text-sm font-medium text-gray-700 mb-2;
+      }
+      .input-icon {
+        @apply absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-500 z-10;
+      }
+      .form-group {
+        @apply relative mb-6;
+      }
+      .auth-logo {
+        @apply text-2xl font-bold text-primary mb-6 flex items-center justify-center;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans text-gray-700 min-h-screen flex items-center justify-center">
+  <!-- 登录容器 -->
+  <div class="w-full max-w-md p-4">
+    <!-- 登录卡片 -->
+    <div class="login-card">
+      <!-- 登录标题 -->
+      <div class="auth-logo">
+        <i class="fa fa-robot text-3xl mr-2"></i>
+        <span>汽车销售超级孪生智能体</span>
+      </div>
+      
+      <!-- 登录表单 -->
+      <form id="login-form" class="space-y-6">
+        <!-- 账号输入 -->
+        <div class="form-group">
+          <label class="form-label">账号</label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="username" 
+              placeholder="请输入账号"
+              class="form-input"
+              required
+            >
+          </div>
+        </div>
+        
+        <!-- 密码输入 -->
+        <div class="form-group">
+          <label class="form-label">密码</label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="password" 
+              placeholder="请输入密码"
+              class="form-input pr-12"
+              required
+            >
+            <button 
+              type="button" 
+              id="toggle-password" 
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+            >
+              <i class="fa fa-eye-slash"></i>
+            </button>
+          </div>
+        </div>
+        
+        <!-- 验证码输入 -->
+        <div class="form-group">
+          <label class="form-label">验证码</label>
+          <div class="flex space-x-3">
+            <div class="relative flex-1">
+              <input 
+                type="text" 
+                id="captcha" 
+                placeholder="请输入验证码"
+                class="form-input"
+                required
+              >
+            </div>
+            <div class="w-32 h-12 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
+              <img 
+                id="captcha-image" 
+                src="https://picsum.photos/id/1/128/48" 
+                alt="验证码" 
+                class="w-full h-full object-cover cursor-pointer"
+                onclick="refreshCaptcha()"
+              >
+            </div>
+          </div>
+        </div>
+        
+        <!-- 记住密码 -->
+        <div class="flex items-center justify-between">
+          <label class="inline-flex items-center">
+            <input type="checkbox" id="remember-me" class="form-checkbox text-primary">
+            <span class="ml-2 text-sm text-gray-600">记住密码</span>
+          </label>
+          <a href="#" class="text-sm text-primary hover:text-primary/80">忘记密码？</a>
+        </div>
+        
+        <!-- 登录按钮 -->
+        <button 
+          type="submit" 
+          class="btn-primary w-full font-medium"
+        >
+          <i class="fa fa-sign-in mr-2"></i>登录
+        </button>
+      </form>
+      
+      <!-- 版本信息已移除 -->
+    </div>
+  </div>
+
+  <!-- 提示框 -->
+  <div id="toast" class="fixed top-4 right-4 bg-gray-800 text-white px-4 py-2 rounded-md shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none">
+    <div class="flex items-center">
+      <i id="toast-icon" class="fa fa-info-circle mr-2"></i>
+      <span id="toast-message">提示信息</span>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // 显示提示信息
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toast-message');
+      const toastIcon = document.getElementById('toast-icon');
+      
+      toastMessage.textContent = message;
+      
+      // 设置图标
+      toastIcon.className = 'fa mr-2';
+      if (type === 'success') {
+        toastIcon.classList.add('fa-check-circle', 'text-green-400');
+      } else if (type === 'error') {
+        toastIcon.classList.add('fa-times-circle', 'text-red-400');
+      } else {
+        toastIcon.classList.add('fa-info-circle', 'text-blue-400');
+      }
+      
+      // 显示提示
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+      
+      // 3秒后自动隐藏
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+      }, 3000);
+    }
+    
+    // 刷新验证码
+    function refreshCaptcha() {
+      const captchaImage = document.getElementById('captcha-image');
+      // 添加随机数防止缓存
+      captchaImage.src = `https://picsum.photos/id/${Math.floor(Math.random() * 100)}/128/48?timestamp=${Date.now()}`;
+    }
+    
+    // 切换密码显示
+    document.getElementById('toggle-password').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const icon = this.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      }
+    });
+    
+    // 表单提交处理 - 直接跳转，无需验证
+    document.getElementById('login-form').addEventListener('submit', function(event) {
+      event.preventDefault();
+      
+      // 显示登录成功提示
+      showToast('登录成功，正在跳转...', 'success');
+      
+      // 直接跳转到岗位助理配置页面
+      setTimeout(() => {
+        window.location.href = '岗位助理配置.html';
+      }, 1500);
+    });
+    
+    // 页面加载时初始化
+    window.addEventListener('DOMContentLoaded', function() {
+      // 初始化验证码
+      refreshCaptcha();
+      
+      // 聚焦到账号输入框
+      document.getElementById('username').focus();
+    });
+  </script>
+</body>
+</html>

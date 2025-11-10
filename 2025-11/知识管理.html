@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智享车生活后台 - 知识管理</title>
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36CFC9',
+            warning: '#FF7D00',
+            danger: '#F53F3F',
+            gray: {
+              100: '#F7F8FA',
+              200: '#F2F3F5',
+              300: '#E5E6EB',
+              400: '#C9CDD4',
+              500: '#86909C',
+              600: '#4E5969',
+              700: '#1D2129',
+            }
+          },
+          fontFamily: {
+            sans: ['Microsoft YaHei', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .sidebar-item-active {
+        @apply bg-primary/10 text-primary border-l-4 border-primary;
+      }
+      .card-hover {
+        @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+      }
+      .btn-primary {
+        @apply bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-all;
+      }
+      .btn-secondary {
+        @apply bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition-all;
+      }
+      .form-input {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+      }
+      .form-radio {
+        @apply h-4 w-4 text-primary border-gray-300 focus:ring-primary;
+      }
+      
+      .form-checkbox {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border: 2px solid #d1d5db;
+        border-radius: 4px;
+        outline: none;
+        cursor: pointer;
+        position: relative;
+      }
+      
+      .form-checkbox:checked {
+        border-color: #165DFF;
+        background-color: #165DFF;
+      }
+      
+      .form-checkbox:checked::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      
+      .tree-node {
+        user-select: none;
+      }
+      
+      .toggle-btn {
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        background: none;
+        cursor: pointer;
+      }
+      
+      .toggle-btn:hover {
+        background-color: #f3f4f6;
+        border-radius: 3px;
+      }
+      
+      .tree-children {
+        transition: all 0.2s ease-in-out;
+      }
+      .material-card {
+        @apply bg-white rounded-lg shadow-sm overflow-hidden card-hover;
+      }
+      .material-type-badge {
+        @apply inline-block px-2 py-1 text-xs font-medium rounded-full;
+      }
+      .tab-active {
+        @apply border-b-2 border-primary text-primary font-medium;
+      }
+      .category-item-active {
+        @apply bg-primary/10 text-primary;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans text-gray-700 min-h-screen flex overflow-hidden">
+  <!-- 左侧导航栏 -->
+  <aside id="sidebar" class="bg-white w-64 h-screen border-r border-gray-300 flex-shrink-0 transition-all duration-300 ease-in-out z-20">
+    <!-- 系统标题 -->
+    <div class="h-16 flex items-center justify-between px-4 border-b border-gray-300">
+      <h1 class="text-lg font-semibold text-gray-700">智享车生活后台</h1>
+      <button id="collapse-sidebar" class="text-gray-500 hover:text-primary">
+        <i class="fa fa-angle-double-left"></i>
+      </button>
+    </div>
+    
+    <!-- 导航菜单 -->
+    <nav class="py-4 flex-1 overflow-y-auto">
+      <ul>
+        <!-- 智能助理一级菜单（展开状态） -->
+        <li class="mb-1">
+          <div class="flex items-center justify-between px-4 py-3 bg-primary text-white cursor-pointer">
+            <div class="flex items-center">
+              <i class="fa fa-robot w-5 text-center mr-3"></i>
+              <span>智能助理</span>
+            </div>
+            <i class="fa fa-angle-down"></i>
+          </div>
+          <ul class="bg-white pl-2">
+            <li>
+              <a href="岗位助理配置.html" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary/10 hover:text-primary transition-colors">
+                <i class="fa fa-cogs w-5 text-center mr-3"></i>
+                <span>岗位助理配置</span>
+              </a>
+            </li>
+            <li>
+              <a href="知识管理.html" class="sidebar-item-active flex items-center px-4 py-3 transition-colors">
+                <i class="fa fa-file-text w-5 text-center mr-3"></i>
+                <span>知识管理</span>
+              </a>
+            </li>
+            <li>
+              <a href="智能体管理.html" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary/10 hover:text-primary transition-colors">
+                <i class="fa fa-cog w-5 text-center mr-3"></i>
+                <span>智能体管理</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- 主内容区 -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- 顶部导航 -->
+    <header class="h-16 bg-white border-b border-gray-300 flex items-center justify-between px-6 z-10">
+      <div class="flex items-center">
+        <button id="toggle-sidebar" class="text-gray-500 hover:text-primary md:hidden">
+          <i class="fa fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="flex items-center">
+        <button class="relative p-2 text-gray-500 hover:text-primary mr-4">
+          <i class="fa fa-bell"></i>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+        </button>
+        <div class="flex items-center">
+          <img src="https://picsum.photos/id/1005/40/40" alt="用户头像" class="w-8 h-8 rounded-full mr-2">
+          <span class="mr-2">张经理</span>
+          <i class="fa fa-angle-down text-gray-500"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- 页面内容区 -->
+    <main class="flex-1 overflow-y-auto p-6 bg-gray-100">
+      <!-- 知识管理面板 -->
+      <div class="module-panel">
+        <!-- 顶部标题 -->
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold text-gray-700">知识管理</h2>
+        </div>
+        
+        <!-- 标签切换 -->
+        <div class="bg-white rounded-lg shadow-sm mb-6">
+          <div class="flex border-b border-gray-200">
+            <button class="tab-active px-6 py-4 text-base transition-colors" onclick="switchTab('material')">
+              素材库
+            </button>
+            <button class="px-6 py-4 text-base text-gray-500 hover:text-primary transition-colors" onclick="switchTab('other')">
+              其他
+            </button>
+          </div>
+        </div>
+        
+        <!-- 主要内容区域：左侧分类 + 右侧素材展示 -->
+        <div class="flex flex-col md:flex-row gap-6">
+          <!-- 左侧分类区 -->
+          <div class="bg-white rounded-lg shadow-sm w-full md:w-64 flex-shrink-0">
+            <!-- 分类管理标题 -->
+            <div class="px-4 py-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 class="font-medium text-gray-700">全部素材（70）</h3>
+              <button class="text-primary hover:text-primary/80" onclick="openAddCategoryModal()">
+                <i class="fa fa-plus-circle"></i>
+              </button>
+            </div>
+            
+            <!-- 分类搜索 -->
+            <div class="px-4 py-3">
+              <div class="relative">
+                <input type="text" id="categorySearch" placeholder="请输入分组名称" class="pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+              </div>
+            </div>
+            
+            <!-- 分类列表 -->
+            <div class="py-2">
+              <ul>
+                <li>
+                  <a href="#" class="category-item-active flex items-center justify-between px-4 py-3 transition-colors">
+                    <span>未分组</span>
+                    <span class="text-xs text-gray-500">18</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-100 transition-colors">
+                    <span>车型资料</span>
+                    <span class="text-xs text-gray-500">12</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-100 transition-colors">
+                    <span>产品功能 - 智能驾驶</span>
+                    <span class="text-xs text-gray-500">9</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-100 transition-colors">
+                    <span>销售培训</span>
+                    <span class="text-xs text-gray-500">10</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-100 transition-colors">
+                    <span>售后服务</span>
+                    <span class="text-xs text-gray-500">8</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-100 transition-colors">
+                    <span>充电解决方案</span>
+                    <span class="text-xs text-gray-500">7</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="flex items-center justify-between px-4 py-3 text-gray-600 hover:bg-gray-100 transition-colors">
+                    <span>金融服务</span>
+                    <span class="text-xs text-gray-500">6</span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <!-- 中间素材展示区 -->
+          <div class="flex-1">
+            <!-- 筛选区域 -->
+              <div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div class="w-full sm:w-40">
+                  <select id="materialTypeFilter" class="form-input text-sm w-full">
+                    <option value="">全部类型</option>
+                    <option value="document">文档</option>
+                    <option value="video">视频</option>
+                    <option value="image">图片</option>
+                  </select>
+                </div>
+                <div class="relative flex-1">
+                  <input type="text" id="materialSearch" placeholder="素材名称" class="pl-9 pr-3 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
+                  <i class="fa fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+                <div class="flex gap-2 w-full sm:w-auto">
+                  <button class="btn-primary w-full sm:w-auto" onclick="searchMaterials()">
+                    查询
+                  </button>
+                  <button class="btn-secondary w-full sm:w-auto" onclick="resetFilters()">
+                    重置
+                  </button>
+                  <button class="btn-primary w-full sm:w-auto" onclick="openUploadModal()">
+                    <i class="fa fa-upload mr-1"></i> 上传素材
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 素材网格展示 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <!-- 文档类型素材 -->
+              <div class="material-card">
+                <div class="p-4 flex flex-col items-center text-center">
+                  <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa fa-file-pdf-o text-2xl text-blue-500"></i>
+                  </div>
+                  <div class="material-type-badge bg-blue-100 text-blue-800 mb-2">文档</div>
+                  <h4 class="font-medium text-gray-900 mb-1 truncate w-full">产品说明书PDF版本.pdf</h4>
+                  <div class="mt-3 flex gap-2 w-full">
+                    <button class="text-primary hover:text-primary/80 flex-1 py-1 border border-primary/30 rounded text-sm">
+                      预览
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-900 flex-1 py-1 border border-gray-300 rounded text-sm">
+                      编辑
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Word文档类型素材 -->
+              <div class="material-card">
+                <div class="p-4 flex flex-col items-center text-center">
+                  <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa fa-file-word-o text-2xl text-green-500"></i>
+                  </div>
+                  <div class="material-type-badge bg-green-100 text-green-800 mb-2">文档</div>
+                  <h4 class="font-medium text-gray-900 mb-1 truncate w-full">2025年度工作总结报告.docx</h4>
+                  <div class="mt-3 flex gap-2 w-full">
+                    <button class="text-primary hover:text-primary/80 flex-1 py-1 border border-primary/30 rounded text-sm">
+                      预览
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-900 flex-1 py-1 border border-gray-300 rounded text-sm">
+                      编辑
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 视频类型素材 -->
+              <div class="material-card">
+                <div class="p-4 flex flex-col items-center text-center">
+                  <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa fa-file-video-o text-2xl text-red-500"></i>
+                  </div>
+                  <div class="material-type-badge bg-red-100 text-red-800 mb-2">视频</div>
+                  <h4 class="font-medium text-gray-900 mb-1 truncate w-full">产品功能演示视频.mp4</h4>
+                  <div class="mt-3 flex gap-2 w-full">
+                    <button class="text-primary hover:text-primary/80 flex-1 py-1 border border-primary/30 rounded text-sm">
+                      预览
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-900 flex-1 py-1 border border-gray-300 rounded text-sm">
+                      编辑
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 图片类型素材 -->
+              <div class="material-card">
+                <div class="p-4 flex flex-col items-center text-center">
+                  <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa fa-file-image-o text-2xl text-purple-500"></i>
+                  </div>
+                  <div class="material-type-badge bg-purple-100 text-purple-800 mb-2">图片</div>
+                  <h4 class="font-medium text-gray-900 mb-1 truncate w-full">产品外观设计图.png</h4>
+                  <div class="mt-3 flex gap-2 w-full">
+                    <button class="text-primary hover:text-primary/80 flex-1 py-1 border border-primary/30 rounded text-sm">
+                      预览
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-900 flex-1 py-1 border border-gray-300 rounded text-sm">
+                      编辑
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 文档类型素材 -->
+              <div class="material-card">
+                <div class="p-4 flex flex-col items-center text-center">
+                  <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa fa-file-excel-o text-2xl text-blue-500"></i>
+                  </div>
+                  <div class="material-type-badge bg-blue-100 text-blue-800 mb-2">文档</div>
+                  <h4 class="font-medium text-gray-900 mb-1 truncate w-full">月度销售数据统计.xlsx</h4>
+                  <div class="mt-3 flex gap-2 w-full">
+                    <button class="text-primary hover:text-primary/80 flex-1 py-1 border border-primary/30 rounded text-sm">
+                      预览
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-900 flex-1 py-1 border border-gray-300 rounded text-sm" onclick="openEditModal('月度销售数据统计.xlsx', '文档', 'carModels', ['销售部', '销售一部'])">
+                      编辑
+                    </button>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 视频类型素材 -->
+              <div class="material-card">
+                <div class="p-4 flex flex-col items-center text-center">
+                  <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-3">
+                    <i class="fa fa-file-video-o text-2xl text-red-500"></i>
+                  </div>
+                  <div class="material-type-badge bg-red-100 text-red-800 mb-2">视频</div>
+                  <h4 class="font-medium text-gray-900 mb-1 truncate w-full">员工培训教程.mp4</h4>
+                  <div class="mt-3 flex gap-2 w-full">
+                    <button class="text-primary hover:text-primary/80 flex-1 py-1 border border-primary/30 rounded text-sm">
+                      预览
+                    </button>
+                    <button class="text-gray-600 hover:text-gray-900 flex-1 py-1 border border-gray-300 rounded text-sm" onclick="openEditModal('员工培训教程.mp4', '视频', 'salesTraining', ['总公司', '市场部'])">
+                      编辑
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 分页 -->
+            <div class="mt-6 flex items-center justify-between">
+              <div class="text-sm text-gray-600">
+                显示 1-6 条，共 70 条
+              </div>
+              <div class="flex space-x-1">
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50 disabled:opacity-50" disabled>
+                  <i class="fa fa-angle-left"></i>
+                </button>
+                <button class="px-3 py-1 border border-primary bg-primary text-white rounded-md">1</button>
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">2</button>
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">3</button>
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">...</button>
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">11</button>
+                <button class="px-3 py-1 border border-gray-300 rounded-md text-gray-600 hover:bg-gray-50">
+                  <i class="fa fa-angle-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- 上传素材模态框 -->
+  <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-700">上传素材</h3>
+          <button onclick="closeUploadModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        
+        <form id="uploadForm" class="space-y-4">
+          <!-- 文件上传 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">选择文件</label>
+            <div class="border-2 border-dashed border-gray-300 rounded-md p-6 text-center">
+              <input type="file" class="hidden" id="uploadFileInput" accept=".pdf,.doc,.docx,.xlsx,.pptx,.jpg,.png,.gif,.mp4,.avi,.mov">
+              <div class="space-y-2">
+                <i class="fa fa-cloud-upload text-4xl text-gray-400"></i>
+                <p class="text-sm text-gray-600">拖拽文件到此处或点击上传</p>
+                <p class="text-xs text-gray-500">支持 PDF、Word、Excel、PPT、图片、视频等格式，最大 50MB</p>
+                <button type="button" onclick="document.getElementById('uploadFileInput').click()" class="btn-primary text-sm">
+                  选择文件
+                </button>
+              </div>
+            </div>
+            <div id="uploadFilePreview" class="mt-3 hidden">
+              <div class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                <div class="flex items-center">
+                  <i id="previewIcon" class="fa fa-file-pdf-o text-red-500 mr-2"></i>
+                  <span class="text-sm" id="uploadFileName"></span>
+                </div>
+                <button type="button" onclick="clearUploadFile()" class="text-gray-500 hover:text-gray-700">
+                  <i class="fa fa-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 素材信息 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">素材名称 <span class="text-danger">*</span></label>
+            <input type="text" id="materialName" class="form-input" placeholder="请输入素材名称" required>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">所属分组</label>
+            <select id="materialCategory" class="form-input">
+              <option value="">未分组</option>
+              <option value="carModels">车型资料</option>
+              <option value="smartDriving">产品功能 - 智能驾驶</option>
+              <option value="salesTraining">销售培训</option>
+              <option value="afterSales">售后服务</option>
+              <option value="chargingSolution">充电解决方案</option>
+              <option value="financialService">金融服务</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">关联部门/岗位</label>
+            <div class="border border-gray-300 rounded-md p-3 max-h-[200px] overflow-y-auto">
+              <!-- 组织架构树 -->
+              <div class="org-tree">
+                <!-- 总公司 -->
+                <div class="tree-node mb-2">
+                  <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" class="form-checkbox" value="总公司" data-level="1">
+                    <span class="ml-2 font-medium">总公司</span>
+                    <button type="button" class="toggle-btn ml-2 text-gray-500" data-target="company-1">
+                      <i class="fa fa-chevron-down"></i>
+                    </button>
+                  </label>
+                  <div class="tree-children ml-6 mt-1" id="company-1">
+                    <!-- 销售部 -->
+                    <div class="tree-node mb-2">
+                      <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="form-checkbox" value="销售部" data-level="2">
+                        <span class="ml-2">销售部</span>
+                        <button type="button" class="toggle-btn ml-2 text-gray-500" data-target="dept-1">
+                          <i class="fa fa-chevron-down"></i>
+                        </button>
+                      </label>
+                      <div class="tree-children ml-6 mt-1" id="dept-1">
+                        <label class="flex items-center cursor-pointer mb-1">
+                          <input type="checkbox" class="form-checkbox" value="销售一部" data-level="3">
+                          <span class="ml-2">销售一部</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer mb-1">
+                          <input type="checkbox" class="form-checkbox" value="销售二部" data-level="3">
+                          <span class="ml-2">销售二部</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                          <input type="checkbox" class="form-checkbox" value="大客户销售组" data-level="3">
+                          <span class="ml-2">大客户销售组</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <!-- 技术部 -->
+                    <div class="tree-node mb-2">
+                      <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="form-checkbox" value="技术部" data-level="2">
+                        <span class="ml-2">技术部</span>
+                        <button type="button" class="toggle-btn ml-2 text-gray-500" data-target="dept-2">
+                          <i class="fa fa-chevron-down"></i>
+                        </button>
+                      </label>
+                      <div class="tree-children ml-6 mt-1" id="dept-2">
+                        <label class="flex items-center cursor-pointer mb-1">
+                          <input type="checkbox" class="form-checkbox" value="研发一组" data-level="3">
+                          <span class="ml-2">研发一组</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                          <input type="checkbox" class="form-checkbox" value="测试组" data-level="3">
+                          <span class="ml-2">测试组</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <!-- 客服部 -->
+                    <div class="tree-node mb-2">
+                      <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="form-checkbox" value="客服部" data-level="2">
+                        <span class="ml-2">客服部</span>
+                        <button type="button" class="toggle-btn ml-2 text-gray-500" data-target="dept-3">
+                          <i class="fa fa-chevron-down"></i>
+                        </button>
+                      </label>
+                      <div class="tree-children ml-6 mt-1" id="dept-3">
+                        <label class="flex items-center cursor-pointer mb-1">
+                          <input type="checkbox" class="form-checkbox" value="售前咨询" data-level="3">
+                          <span class="ml-2">售前咨询</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                          <input type="checkbox" class="form-checkbox" value="售后服务" data-level="3">
+                          <span class="ml-2">售后服务</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <!-- 市场部 -->
+                    <label class="flex items-center cursor-pointer">
+                      <input type="checkbox" class="form-checkbox" value="市场部" data-level="2">
+                      <span class="ml-2">市场部</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-2 flex flex-wrap gap-2" id="selectedDepartments">
+              <small class="text-gray-500">已选择: 无</small>
+            </div>
+          </div>
+          
+          <div class="flex justify-end space-x-3 pt-4">
+            <button type="button" onclick="closeUploadModal()" class="btn-secondary">取消</button>
+            <button type="submit" class="btn-primary">上传素材</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 新增分组模态框 -->
+  <div id="addCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-md">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-700">新增素材分组</h3>
+          <button onclick="closeAddCategoryModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        
+        <form id="addCategoryForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">分组名称</label>
+            <input type="text" id="categoryName" class="form-input" placeholder="请输入分组名称" required>
+          </div>
+          
+          <div class="flex justify-end space-x-3 pt-4">
+            <button type="button" onclick="closeAddCategoryModal()" class="btn-secondary">取消</button>
+            <button type="submit" class="btn-primary">创建</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 编辑素材模态框 -->
+  <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-lg font-semibold text-gray-700">编辑素材</h3>
+          <button onclick="closeEditModal()" class="text-gray-500 hover:text-gray-700">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        
+        <form id="editForm" class="space-y-4">
+          <!-- 素材信息 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">素材名称 <span class="text-danger">*</span></label>
+            <input type="text" id="editMaterialName" class="form-input" placeholder="请输入素材名称" required>
+            <input type="hidden" id="editMaterialId">
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">所属分组</label>
+            <select id="editMaterialCategory" class="form-input">
+              <option value="">未分组</option>
+              <option value="carModels">车型资料</option>
+              <option value="smartDriving">产品功能 - 智能驾驶</option>
+              <option value="salesTraining">销售培训</option>
+              <option value="afterSales">售后服务</option>
+              <option value="chargingSolution">充电解决方案</option>
+              <option value="financialService">金融服务</option>
+            </select>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">素材类型</label>
+            <div class="p-3 bg-gray-50 rounded-md">
+              <span id="editMaterialType" class="text-gray-700"></span>
+            </div>
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">关联部门/岗位</label>
+            <div class="border border-gray-300 rounded-md p-3 max-h-[200px] overflow-y-auto">
+              <!-- 组织架构树 -->
+              <div class="org-tree">
+                <!-- 总公司 -->
+                <div class="tree-node mb-2">
+                  <label class="flex items-center cursor-pointer">
+                    <input type="checkbox" class="form-checkbox" value="总公司" data-level="1" data-modal="edit">
+                    <span class="ml-2 font-medium">总公司</span>
+                    <button type="button" class="toggle-btn ml-2 text-gray-500" data-target="edit-company-1">
+                      <i class="fa fa-chevron-down"></i>
+                    </button>
+                  </label>
+                  <div class="tree-children ml-6 mt-1" id="edit-company-1">
+                    <!-- 销售部 -->
+                    <div class="tree-node mb-2">
+                      <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="form-checkbox" value="销售部" data-level="2" data-modal="edit">
+                        <span class="ml-2">销售部</span>
+                        <button type="button" class="toggle-btn ml-2 text-gray-500" data-target="edit-dept-1">
+                          <i class="fa fa-chevron-down"></i>
+                        </button>
+                      </label>
+                      <div class="tree-children ml-6 mt-1" id="edit-dept-1">
+                        <label class="flex items-center cursor-pointer mb-1">
+                          <input type="checkbox" class="form-checkbox" value="销售一部" data-level="3" data-modal="edit">
+                          <span class="ml-2">销售一部</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer mb-1">
+                          <input type="checkbox" class="form-checkbox" value="销售二部" data-level="3" data-modal="edit">
+                          <span class="ml-2">销售二部</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                          <input type="checkbox" class="form-checkbox" value="大客户销售组" data-level="3" data-modal="edit">
+                          <span class="ml-2">大客户销售组</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <!-- 技术部 -->
+                    <div class="tree-node mb-2">
+                      <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="form-checkbox" value="技术部" data-level="2" data-modal="edit">
+                        <span class="ml-2">技术部</span>
+                        <button type="button" class="toggle-btn ml-2 text-gray-500" data-target="edit-dept-2">
+                          <i class="fa fa-chevron-down"></i>
+                        </button>
+                      </label>
+                      <div class="tree-children ml-6 mt-1" id="edit-dept-2">
+                        <label class="flex items-center cursor-pointer mb-1">
+                          <input type="checkbox" class="form-checkbox" value="研发一组" data-level="3" data-modal="edit">
+                          <span class="ml-2">研发一组</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                          <input type="checkbox" class="form-checkbox" value="测试组" data-level="3" data-modal="edit">
+                          <span class="ml-2">测试组</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <!-- 客服部 -->
+                    <div class="tree-node mb-2">
+                      <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="form-checkbox" value="客服部" data-level="2" data-modal="edit">
+                        <span class="ml-2">客服部</span>
+                        <button type="button" class="toggle-btn ml-2 text-gray-500" data-target="edit-dept-3">
+                          <i class="fa fa-chevron-down"></i>
+                        </button>
+                      </label>
+                      <div class="tree-children ml-6 mt-1" id="edit-dept-3">
+                        <label class="flex items-center cursor-pointer mb-1">
+                          <input type="checkbox" class="form-checkbox" value="售前咨询" data-level="3" data-modal="edit">
+                          <span class="ml-2">售前咨询</span>
+                        </label>
+                        <label class="flex items-center cursor-pointer">
+                          <input type="checkbox" class="form-checkbox" value="售后服务" data-level="3" data-modal="edit">
+                          <span class="ml-2">售后服务</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    <!-- 市场部 -->
+                    <label class="flex items-center cursor-pointer">
+                      <input type="checkbox" class="form-checkbox" value="市场部" data-level="2" data-modal="edit">
+                      <span class="ml-2">市场部</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-2 flex flex-wrap gap-2" id="editSelectedDepartments">
+              <small class="text-gray-500">已选择: 无</small>
+            </div>
+          </div>
+          
+          <div class="flex justify-end space-x-3 pt-4">
+            <button type="button" onclick="closeEditModal()" class="btn-secondary">取消</button>
+            <button type="submit" class="btn-primary">保存修改</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // 侧边栏切换功能
+    document.getElementById('toggle-sidebar').addEventListener('click', function() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+    document.getElementById('collapse-sidebar').addEventListener('click', function() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('w-64');
+      sidebar.classList.toggle('w-16');
+    });
+
+    // 标签切换功能
+    function switchTab(tabName) {
+      // 获取所有标签按钮
+      const tabs = document.querySelectorAll('.flex.border-b button');
+      
+      // 移除所有标签的激活状态
+      tabs.forEach(tab => {
+        tab.classList.remove('tab-active');
+        tab.classList.add('text-gray-500');
+      });
+      
+      // 激活当前标签
+      if (tabName === 'material') {
+        tabs[0].classList.add('tab-active');
+        tabs[0].classList.remove('text-gray-500');
+        // 显示素材库内容，隐藏其他内容
+        // 显示上传按钮和素材区域
+        document.querySelector('.module-panel > .flex:nth-child(3) .bg-white.rounded-lg').style.display = 'block';
+      } else {
+        tabs[1].classList.add('tab-active');
+        tabs[1].classList.remove('text-gray-500');
+        // 显示其他内容，隐藏素材库内容
+        // 隐藏上传按钮和素材区域
+        document.querySelector('.module-panel > .flex:nth-child(3) .bg-white.rounded-lg').style.display = 'none';
+      }
+    }
+    
+    // 页面加载时初始化
+    window.addEventListener('DOMContentLoaded', function() {
+      switchTab('material'); // 默认显示素材库
+    });
+
+    // 上传素材模态框功能
+    function openUploadModal() {
+      document.getElementById('uploadModal').classList.remove('hidden');
+    }
+
+    function closeUploadModal() {
+      document.getElementById('uploadModal').classList.add('hidden');
+      document.getElementById('uploadForm').reset();
+      document.getElementById('uploadFilePreview').classList.add('hidden');
+      // 重置部门选择
+      const checkboxes = document.querySelectorAll('.org-tree input[type="checkbox"]:not([data-modal="edit"])');
+      checkboxes.forEach(checkbox => {
+          checkbox.checked = false;
+      });
+      const selectedDepartmentsEl = document.getElementById('selectedDepartments');
+      if (selectedDepartmentsEl) {
+          selectedDepartmentsEl.innerHTML = '<small class="text-gray-500">已选择: 无</small>';
+      }
+      // 重置展开状态
+      document.querySelectorAll('.tree-children[id^="company-"], .tree-children[id^="dept-"]').forEach(children => {
+          children.classList.remove('hidden');
+      });
+      document.querySelectorAll('.toggle-btn[data-target^="company-"], .toggle-btn[data-target^="dept-"]').forEach(btn => {
+          const icon = btn.querySelector('i');
+          icon.className = 'fa fa-chevron-down';
+      });
+    }
+    
+    // 编辑素材模态框功能
+    function openEditModal(materialName, materialType, category, selectedDepts = []) {
+      // 设置素材信息
+      document.getElementById('editMaterialName').value = materialName;
+      document.getElementById('editMaterialType').textContent = materialType;
+      
+      // 设置分组
+      const categorySelect = document.getElementById('editMaterialCategory');
+      categorySelect.value = category || '';
+      
+      // 重置部门选择
+      const editCheckboxes = document.querySelectorAll('.org-tree input[type="checkbox"][data-modal="edit"]');
+      editCheckboxes.forEach(checkbox => {
+          checkbox.checked = selectedDepts.includes(checkbox.value);
+      });
+      
+      // 更新已选部门显示
+      updateEditSelectedDepartments();
+      
+      // 显示模态框
+      document.getElementById('editModal').classList.remove('hidden');
+    }
+    
+    function closeEditModal() {
+      document.getElementById('editModal').classList.add('hidden');
+      document.getElementById('editForm').reset();
+      
+      // 重置部门选择
+      const editCheckboxes = document.querySelectorAll('.org-tree input[type="checkbox"][data-modal="edit"]');
+      editCheckboxes.forEach(checkbox => {
+          checkbox.checked = false;
+      });
+      
+      const editSelectedDepartmentsEl = document.getElementById('editSelectedDepartments');
+      if (editSelectedDepartmentsEl) {
+          editSelectedDepartmentsEl.innerHTML = '<small class="text-gray-500">已选择: 无</small>';
+      }
+      
+      // 重置展开状态
+      document.querySelectorAll('.tree-children[id^="edit-company-"], .tree-children[id^="edit-dept-"]').forEach(children => {
+          children.classList.remove('hidden');
+      });
+      document.querySelectorAll('.toggle-btn[data-target^="edit-company-"], .toggle-btn[data-target^="edit-dept-"]').forEach(btn => {
+          const icon = btn.querySelector('i');
+          icon.className = 'fa fa-chevron-down';
+      });
+    }
+
+    // 新增分组模态框功能
+    function openAddCategoryModal() {
+      document.getElementById('addCategoryModal').classList.remove('hidden');
+    }
+
+    function closeAddCategoryModal() {
+      document.getElementById('addCategoryModal').classList.add('hidden');
+      document.getElementById('addCategoryForm').reset();
+    }
+
+    // 文件上传处理
+    document.getElementById('uploadFileInput').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        // 检查文件大小（50MB限制）
+        if (file.size > 50 * 1024 * 1024) {
+          alert('文件大小不能超过50MB');
+          this.value = '';
+          return;
+        }
+        
+        // 设置文件名
+        document.getElementById('uploadFileName').textContent = file.name;
+        // 设置默认素材名称
+        document.getElementById('materialName').value = file.name.split('.').slice(0, -1).join('.');
+        // 根据文件类型设置图标
+        const fileExtension = file.name.split('.').pop().toLowerCase();
+        const iconElement = document.getElementById('previewIcon');
+        iconElement.className = 'mr-2';
+        
+        if (['pdf'].includes(fileExtension)) {
+          iconElement.className += ' fa fa-file-pdf-o text-red-500';
+        } else if (['doc', 'docx'].includes(fileExtension)) {
+          iconElement.className += ' fa fa-file-word-o text-blue-500';
+        } else if (['xls', 'xlsx'].includes(fileExtension)) {
+          iconElement.className += ' fa fa-file-excel-o text-green-500';
+        } else if (['ppt', 'pptx'].includes(fileExtension)) {
+          iconElement.className += ' fa fa-file-powerpoint-o text-orange-500';
+        } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+          iconElement.className += ' fa fa-file-image-o text-purple-500';
+        } else if (['mp4', 'avi', 'mov', 'wmv'].includes(fileExtension)) {
+          iconElement.className += ' fa fa-file-video-o text-red-500';
+        } else {
+          iconElement.className += ' fa fa-file-o text-gray-500';
+        }
+        
+        document.getElementById('uploadFilePreview').classList.remove('hidden');
+      }
+    });
+    
+    // 简化的表单处理，移除了标签和描述相关功能
+
+    function clearUploadFile() {
+      document.getElementById('uploadFileInput').value = '';
+      document.getElementById('uploadFilePreview').classList.add('hidden');
+      document.getElementById('materialName').value = '';
+    }
+
+    // 素材搜索和筛选功能
+    function searchMaterials() {
+      const searchTerm = document.getElementById('materialSearch').value;
+      const typeFilter = document.getElementById('materialTypeFilter').value;
+      
+      console.log('搜索素材:', { searchTerm, typeFilter });
+      // 这里可以添加实际的搜索逻辑
+    }
+
+    function resetFilters() {
+      document.getElementById('materialSearch').value = '';
+      document.getElementById('materialTypeFilter').value = '';
+    }
+
+    // 表单提交处理
+    // 组织架构树交互功能
+    const toggleBtns = document.querySelectorAll('.toggle-btn');
+    const checkboxes = document.querySelectorAll('.org-tree input[type="checkbox"]');
+    const selectedDepartmentsEl = document.getElementById('selectedDepartments');
+    
+    // 切换展开/折叠
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const targetId = this.getAttribute('data-target');
+            const target = document.getElementById(targetId);
+            const icon = this.querySelector('i');
+            
+            if (target.classList.contains('hidden')) {
+                target.classList.remove('hidden');
+                icon.classList.remove('fa-chevron-right');
+                icon.classList.add('fa-chevron-down');
+            } else {
+                target.classList.add('hidden');
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-right');
+            }
+        });
+    });
+    
+    // 处理上传弹窗复选框选择
+    const uploadCheckboxes = document.querySelectorAll('.org-tree input[type="checkbox"]:not([data-modal="edit"])');
+    uploadCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            // 级联选择逻辑
+            const level = parseInt(this.getAttribute('data-level'));
+            const targetId = this.parentElement.querySelector('.toggle-btn')?.getAttribute('data-target');
+            
+            // 如果是父节点，更新子节点
+            if (targetId) {
+                const childCheckboxes = document.querySelectorAll(`#${targetId} input[type="checkbox"]:not([data-modal="edit"])`,);
+                childCheckboxes.forEach(child => {
+                    child.checked = this.checked;
+                });
+            }
+            
+            // 更新已选部门显示
+            updateSelectedDepartments();
+        });
+    });
+    
+    // 处理编辑弹窗复选框选择
+    const editCheckboxes = document.querySelectorAll('.org-tree input[type="checkbox"][data-modal="edit"]');
+    editCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            // 级联选择逻辑
+            const level = parseInt(this.getAttribute('data-level'));
+            const targetId = this.parentElement.querySelector('.toggle-btn')?.getAttribute('data-target');
+            
+            // 如果是父节点，更新子节点
+            if (targetId) {
+                const childCheckboxes = document.querySelectorAll(`#${targetId} input[type="checkbox"][data-modal="edit"]`);
+                childCheckboxes.forEach(child => {
+                    child.checked = this.checked;
+                });
+            }
+            
+            // 更新已选部门显示
+            updateEditSelectedDepartments();
+        });
+    });
+    
+    // 更新上传弹窗已选部门显示
+    function updateSelectedDepartments() {
+        const checkedBoxes = document.querySelectorAll('.org-tree input[type="checkbox"]:checked:not([data-modal="edit"])');
+        const selectedDepts = Array.from(checkedBoxes).map(box => box.value);
+        
+        selectedDepartmentsEl.innerHTML = '';
+        
+        if (selectedDepts.length === 0) {
+            selectedDepartmentsEl.innerHTML = '<small class="text-gray-500">已选择: 无</small>';
+        } else {
+            selectedDepts.forEach(dept => {
+                const tag = document.createElement('span');
+                tag.className = 'inline-flex items-center bg-blue-50 text-blue-700 px-2 py-1 rounded-md text-sm';
+                tag.innerHTML = `
+                    ${dept}
+                    <button type="button" class="ml-1 text-blue-500 hover:text-blue-700 remove-upload-dept" data-dept="${dept}">
+                        <i class="fa fa-times"></i>
+                    </button>
+                `;
+                selectedDepartmentsEl.appendChild(tag);
+            });
+            
+            // 绑定删除标签事件
+            document.querySelectorAll('.remove-upload-dept').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const dept = this.getAttribute('data-dept');
+                    const checkbox = document.querySelector(`.org-tree input[type="checkbox"][value="${dept}"]:not([data-modal="edit"])`,);
+                    if (checkbox) {
+                        checkbox.checked = false;
+                        updateSelectedDepartments();
+                    }
+                });
+            });
+        }
+    }
+    
+    // 更新编辑弹窗已选部门显示
+    function updateEditSelectedDepartments() {
+        const checkedBoxes = document.querySelectorAll('.org-tree input[type="checkbox"][data-modal="edit"]:checked');
+        const selectedDepts = Array.from(checkedBoxes).map(box => box.value);
+        const editSelectedDepartmentsEl = document.getElementById('editSelectedDepartments');
+        
+        editSelectedDepartmentsEl.innerHTML = '';
+        
+        if (selectedDepts.length === 0) {
+            editSelectedDepartmentsEl.innerHTML = '<small class="text-gray-500">已选择: 无</small>';
+        } else {
+            selectedDepts.forEach(dept => {
+                const tag = document.createElement('span');
+                tag.className = 'inline-flex items-center bg-blue-50 text-blue-700 px-2 py-1 rounded-md text-sm';
+                tag.innerHTML = `
+                    ${dept}
+                    <button type="button" class="ml-1 text-blue-500 hover:text-blue-700 remove-edit-dept" data-dept="${dept}">
+                        <i class="fa fa-times"></i>
+                    </button>
+                `;
+                editSelectedDepartmentsEl.appendChild(tag);
+            });
+            
+            // 绑定删除标签事件
+            document.querySelectorAll('.remove-edit-dept').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const dept = this.getAttribute('data-dept');
+                    const checkbox = document.querySelector(`.org-tree input[type="checkbox"][value="${dept}"][data-modal="edit"]`);
+                    if (checkbox) {
+                        checkbox.checked = false;
+                        updateEditSelectedDepartments();
+                    }
+                });
+            });
+        }
+    }
+    
+    // 上传表单提交处理
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const materialName = document.getElementById('materialName').value;
+      const materialCategory = document.getElementById('materialCategory').value;
+      const fileInput = document.getElementById('uploadFileInput');
+      const checkedBoxes = document.querySelectorAll('.org-tree input[type="checkbox"]:checked:not([data-modal="edit"])');
+      const selectedDepts = Array.from(checkedBoxes).map(box => box.value);
+      
+      if (!fileInput.files.length) {
+        alert('请选择要上传的文件');
+        return;
+      }
+      
+      if (!materialName.trim()) {
+        alert('请输入素材名称');
+        document.getElementById('materialName').focus();
+        return;
+      }
+      
+      // 模拟上传
+      const submitButton = this.querySelector('button[type="submit"]');
+      const originalText = submitButton.innerHTML;
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i> 上传中...';
+    });
+    
+    // 编辑表单提交处理
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const materialName = document.getElementById('editMaterialName').value;
+      const materialCategory = document.getElementById('editMaterialCategory').value;
+      const checkedBoxes = document.querySelectorAll('.org-tree input[type="checkbox"][data-modal="edit"]:checked');
+      const selectedDepts = Array.from(checkedBoxes).map(box => box.value);
+      
+      if (!materialName.trim()) {
+        alert('请输入素材名称');
+        document.getElementById('editMaterialName').focus();
+        return;
+      }
+      
+      // 模拟保存修改
+      const submitButton = this.querySelector('button[type="submit"]');
+      const originalText = submitButton.innerHTML;
+      submitButton.disabled = true;
+      submitButton.innerHTML = '<i class="fa fa-spinner fa-spin mr-1"></i> 保存中...';
+      
+      // 模拟保存延迟
+      setTimeout(() => {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalText;
+        alert('素材修改成功！');
+        closeEditModal();
+      }, 1000);
+      
+      // 模拟上传延迟
+      setTimeout(() => {
+        // 模拟上传
+        console.log('上传素材:', { 
+          materialName, 
+          materialCategory,
+          selectedDepts,
+          fileName: fileInput.files[0].name
+        });
+        
+        // 恢复按钮状态并关闭弹窗
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalText;
+        alert('素材上传成功！');
+        closeUploadModal();
+      }, 1500);
+    });
+
+    document.getElementById('addCategoryForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const categoryName = document.getElementById('categoryName').value;
+      
+      if (!categoryName.trim()) {
+        alert('请输入分组名称');
+        return;
+      }
+      
+      // 模拟创建分组
+      console.log('创建分组:', { categoryName });
+      alert('分组创建成功！');
+      closeAddCategoryModal();
+    });
+
+    // 拖拽上传功能 - 增强版
+    const dropZone = document.querySelector('#uploadModal .border-dashed');
+    if (dropZone) {
+      // 拖拽过程中的视觉反馈
+      dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        dropZone.classList.add('border-primary', 'bg-primary/5');
+      });
+
+      dropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        dropZone.classList.remove('border-primary', 'bg-primary/5');
+      });
+
+      // 处理拖放文件
+      dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        dropZone.classList.remove('border-primary', 'bg-primary/5');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          // 只取第一个文件
+          const file = files[0];
+          
+          // 检查文件大小（50MB限制）
+          if (file.size > 50 * 1024 * 1024) {
+            alert('文件大小不能超过50MB');
+            return;
+          }
+          
+          // 设置文件并触发change事件
+          const dataTransfer = new DataTransfer();
+          dataTransfer.items.add(file);
+          document.getElementById('uploadFileInput').files = dataTransfer.files;
+          
+          // 触发change事件处理函数
+          const event = new Event('change');
+          document.getElementById('uploadFileInput').dispatchEvent(event);
+        }
+      });
+      
+      // 点击区域也可以触发文件选择
+      dropZone.addEventListener('click', function() {
+        document.getElementById('uploadFileInput').click();
+      });
+    }
+  </script>
+</body>
+</html>

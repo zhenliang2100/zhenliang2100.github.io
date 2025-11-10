@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>轻改专家 - 质检复盘 (小程序版)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#007AFF',
+            secondary: '#8E8E93',
+            success: '#34C759',
+            warning: '#FF9500',
+            danger: '#FF3B30',
+            light: '#F2F2F7',
+            dark: '#1C1C1E'
+          },
+          fontFamily: {
+            'sf': ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .iphone-shadow {
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+      .nav-bar-shadow {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      .circle-btn {
+        width: auto;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        border: none;
+        transition: all 0.2s ease;
+      }
+      .circle-btn:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+        border: none;
+      }
+      .card-iphone {
+        background-color: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        padding: 16px;
+      }
+      .tab-active {
+        color: #007AFF;
+        border-bottom: 2px solid #007AFF;
+      }
+      .radar-chart-container {
+        position: relative;
+        width: 280px;
+        height: 280px;
+        margin: 0 auto;
+      }
+      .radar-axis {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 100%;
+        height: 100%;
+        transform-origin: center;
+      }
+      .radar-point {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        width: 8px;
+        height: 8px;
+        background-color: #007AFF;
+        border-radius: 50%;
+      }
+      .radar-line {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 50%;
+        height: 2px;
+        background-color: #E5E5EA;
+        transform-origin: center left;
+      }
+      .ability-label {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        font-size: 10px;
+        color: #8E8E93;
+        text-align: center;
+        width: 50px;
+      }
+      .stat-card {
+        background-color: white;
+        border-radius: 12px;
+        padding: 12px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      }
+      .practice-btn {
+        background-color: #007AFF;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+      .practice-btn:hover {
+        background-color: #0066CC;
+        transform: translateY(-1px);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sf flex justify-center items-center min-h-screen">
+  <!-- iPhone模拟容器 -->
+  <div class="iphone-container w-[375px] h-[812px] bg-white rounded-[40px] iphone-shadow overflow-hidden relative border-[10px] border-dark">
+    <!-- 小程序导航栏（集成状态栏） -->
+    <div class="nav-bar bg-white nav-bar-shadow relative z-10">
+      <!-- 状态栏 -->
+      <div class="status-bar h-[44px] flex justify-between items-center px-[20px] text-dark font-semibold text-sm pt-[14px]">
+        <span id="current-time">9:41</span>
+        <div class="flex items-center space-x-1">
+          <i class="fa fa-signal text-xs"></i>
+          <i class="fa fa-wifi text-xs"></i>
+          <i class="fa fa-battery-full text-xs"></i>
+        </div>
+      </div>
+      
+      <!-- 导航栏内容 -->
+      <div class="h-[44px] flex items-center justify-between px-[16px] relative">
+        <!-- 返回按钮 -->
+        <button onclick="goBack()" class="flex items-center justify-center w-[44px] h-[44px] rounded-full hover:bg-gray-100 transition-colors duration-200 -ml-0.9">
+          <i class="fa fa-chevron-left text-dark"></i>
+        </button>
+        
+        <!-- 标题 -->
+        <div class="absolute left-1/2 transform -translate-x-1/2 text-center">
+          <h1 class="text-lg font-semibold text-dark">质检复盘</h1>
+        </div>
+        
+        <!-- 右侧功能按钮 -->
+        <div class="flex items-center">
+          <!-- 更多按钮 -->
+          <div class="circle-btn">
+            <img src="../images/menu.png" alt="菜单" class="h-[30px] w-auto">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 主要内容区域 -->
+    <div class="main-content h-[calc(100%-88px)] overflow-y-auto px-[16px] py-[16px] bg-light">
+      
+      <!-- 复盘周期选择 -->
+      <div class="card-iphone mb-[16px]">
+        <div class="flex items-center justify-between mb-[10px]">
+          <h3 class="text-base font-semibold text-dark">复盘周期</h3>
+          <button class="text-primary text-sm flex items-center">
+            选择日期 <i class="fa fa-chevron-right ml-1 text-xs"></i>
+          </button>
+        </div>
+        <p class="text-lg font-bold text-primary">2025年11月10日</p>
+      </div>
+      
+      <!-- 基础看板 -->
+      <div class="card-iphone mb-[16px] cursor-pointer hover:opacity-90 transition-opacity duration-200" onclick="window.location.href='小程序-质检列表.html'">
+        <div class="flex items-center justify-between mb-[12px]">
+          <h3 class="text-base font-semibold text-dark">基础数据看板</h3>
+          <i class="fa fa-chevron-right text-secondary text-xs"></i>
+        </div>
+        <div class="grid grid-cols-2 gap-[12px]">
+          <div class="stat-card">
+            <p class="text-secondary text-xs mb-1">接待次数</p>
+            <p class="text-2xl font-bold text-dark">16</p>
+          </div>
+          <div class="stat-card">
+            <p class="text-secondary text-xs mb-1">成交次数</p>
+            <p class="text-2xl font-bold text-success">5</p>
+          </div>
+          <div class="stat-card">
+            <p class="text-secondary text-xs mb-1">成交占比</p>
+            <p class="text-2xl font-bold text-success">31%</p>
+          </div>
+          <div class="stat-card">
+            <p class="text-secondary text-xs mb-1">战败占比</p>
+            <p class="text-2xl font-bold text-danger">69%</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 能力分析 - 9维图 -->
+      <div class="card-iphone mb-[16px]">
+        <div class="flex items-center justify-between mb-[12px]">
+          <h3 class="text-base font-semibold text-dark">话术能力分析</h3>
+          <div class="flex text-xs">
+            <button id="tab-all" class="tab-active px-3 py-1">全部</button>
+            <button id="tab-success" class="px-3 py-1 text-secondary">成交</button>
+            <button id="tab-fail" class="px-3 py-1 text-secondary">战败</button>
+          </div>
+        </div>
+        
+        <!-- 9维雷达图容器 -->
+        <div class="radar-chart-container mb-[10px]">
+          <!-- 雷达图背景线 -->
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="w-[80%] h-[80%] rounded-full border border-gray-200"></div>
+            <div class="absolute w-[60%] h-[60%] rounded-full border border-gray-200"></div>
+            <div class="absolute w-[40%] h-[40%] rounded-full border border-gray-200"></div>
+            <div class="absolute w-[20%] h-[20%] rounded-full border border-gray-200"></div>
+          </div>
+          <!-- 坐标轴 -->
+          <div class="radar-line" style="transform: rotate(0deg);"></div>
+          <div class="radar-line" style="transform: rotate(40deg);"></div>
+          <div class="radar-line" style="transform: rotate(80deg);"></div>
+          <div class="radar-line" style="transform: rotate(120deg);"></div>
+          <div class="radar-line" style="transform: rotate(160deg);"></div>
+          <div class="radar-line" style="transform: rotate(200deg);"></div>
+          <div class="radar-line" style="transform: rotate(240deg);"></div>
+          <div class="radar-line" style="transform: rotate(280deg);"></div>
+          <div class="radar-line" style="transform: rotate(320deg);"></div>
+          <!-- 能力标签 -->
+          <div class="ability-label" style="top: 10%; left: 50%;">身份介绍</div>
+          <div class="ability-label" style="top: 25%; left: 80%;">服务意识</div>
+          <div class="ability-label" style="top: 60%; left: 90%;">逼单能力</div>
+          <div class="ability-label" style="top: 85%; left: 70%;">话题介入</div>
+          <div class="ability-label" style="top: 90%; left: 30%;">攻防能力</div>
+          <div class="ability-label" style="top: 60%; left: 10%;">需求分析</div>
+          <div class="ability-label" style="top: 25%; left: 20%;">案例展示</div>
+          <div class="ability-label" style="top: 15%; left: 40%;">场景塑造</div>
+          <div class="ability-label" style="top: 18%; left: 60%;">专业知识</div>
+          <!-- 数据点 -->
+          <div class="radar-point" style="top: 15%; left: 50%;"></div>
+          <div class="radar-point" style="top: 30%; left: 75%;"></div>
+          <div class="radar-point" style="top: 50%; left: 85%;"></div>
+          <div class="radar-point" style="top: 75%; left: 70%;"></div>
+          <div class="radar-point" style="top: 80%; left: 35%;"></div>
+          <div class="radar-point" style="top: 50%; left: 15%;"></div>
+          <div class="radar-point" style="top: 30%; left: 25%;"></div>
+          <div class="radar-point" style="top: 20%; left: 45%;"></div>
+          <div class="radar-point" style="top: 25%; left: 65%;"></div>
+        </div>
+        <p class="text-xs text-center text-secondary">数据来源：系统自动分析16次接待记录</p>
+      </div>
+      
+      <!-- 接待剖析 -->
+      <div class="card-iphone mb-[16px]">
+        <h3 class="text-base font-semibold text-dark mb-[12px]">接待剖析（不足项）</h3>
+        
+        <!-- 不足项1 -->
+        <div class="mb-[16px] pb-[16px] border-b border-gray-100">
+          <div class="flex justify-between items-start mb-[8px]">
+            <h4 class="text-sm font-semibold text-dark flex items-center">
+              <span class="inline-block w-6 h-6 rounded-full bg-danger/20 text-danger text-xs flex items-center justify-center mr-2">1</span>
+              逼单能力
+            </h4>
+            <span class="text-xs text-danger font-medium">待提升</span>
+          </div>
+          <p class="text-xs text-gray-600 mb-[8px] leading-relaxed">
+            <strong class="text-dark">不足点评：</strong>在客户表示考虑时，未能有效推进决策过程，缺少明确的行动建议和利益强调。
+          </p>
+          <p class="text-xs text-gray-600 mb-[10px] leading-relaxed">
+            <strong class="text-dark">改善意见：</strong>采用假设成交法，如"如果您今天确定下来，我可以为您申请免费的内饰升级"，或提供限时优惠增加紧迫感。
+          </p>
+          <button class="practice-btn" onclick="window.location.href='小程序-话术对练.html'">
+            <i class="fa fa-play-circle mr-1"></i> 练一练
+          </button>
+        </div>
+        
+        <!-- 不足项2 -->
+        <div class="mb-[16px] pb-[16px] border-b border-gray-100">
+          <div class="flex justify-between items-start mb-[8px]">
+            <h4 class="text-sm font-semibold text-dark flex items-center">
+              <span class="inline-block w-6 h-6 rounded-full bg-warning/20 text-warning text-xs flex items-center justify-center mr-2">2</span>
+              需求分析
+            </h4>
+            <span class="text-xs text-warning font-medium">需加强</span>
+          </div>
+          <p class="text-xs text-gray-600 mb-[8px] leading-relaxed">
+            <strong class="text-dark">不足点评：</strong>询问客户需求时过于表面，未能深入挖掘客户的潜在需求和痛点。
+          </p>
+          <p class="text-xs text-gray-600 mb-[10px] leading-relaxed">
+            <strong class="text-dark">改善意见：</strong>使用开放式问题引导客户，如"您对车辆最看重的三个方面是什么？"，并根据回答进一步追问。
+          </p>
+          <button class="practice-btn" onclick="window.location.href='小程序-话术对练.html'">
+            <i class="fa fa-play-circle mr-1"></i> 练一练
+          </button>
+        </div>
+        
+        <!-- 不足项3 -->
+        <div class="mb-[16px]">
+          <div class="flex justify-between items-start mb-[8px]">
+            <h4 class="text-sm font-semibold text-dark flex items-center">
+              <span class="inline-block w-6 h-6 rounded-full bg-warning/20 text-warning text-xs flex items-center justify-center mr-2">3</span>
+              场景塑造
+            </h4>
+            <span class="text-xs text-warning font-medium">需加强</span>
+          </div>
+          <p class="text-xs text-gray-600 mb-[8px] leading-relaxed">
+            <strong class="text-dark">不足点评：</strong>未能有效描绘产品使用场景，帮助客户想象拥有产品后的体验。
+          </p>
+          <p class="text-xs text-gray-600 mb-[10px] leading-relaxed">
+            <strong class="text-dark">改善意见：</strong>结合客户需求，描述具体使用场景，如"您周末带家人自驾游时，这个全景天窗会让旅程更加愉悦"。
+          </p>
+          <button class="practice-btn" onclick="window.location.href='小程序-话术对练.html'">
+            <i class="fa fa-play-circle mr-1"></i> 练一练
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 更新当前时间
+    function updateTime() {
+      const now = new Date();
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      
+      // 格式化时间
+      const timeString = `${hours}:${minutes.toString().padStart(2, '0')}`;
+      document.getElementById('current-time').textContent = timeString;
+    }
+
+    // 每秒更新时间
+    setInterval(updateTime, 1000);
+    updateTime(); // 初始更新
+
+    // 返回上一页
+    function goBack() {
+      // 模拟小程序的返回功能
+      const container = document.querySelector('.main-content');
+      container.style.transform = 'translateX(-100%)';
+      container.style.transition = 'transform 0.3s ease-out';
+      
+      setTimeout(() => {
+        // 恢复原位
+        container.style.transform = 'translateX(0)';
+        
+        // 显示提示
+        const successDiv = document.createElement('div');
+        successDiv.className = 'fixed top-[100px] left-1/2 transform -translate-x-1/2 bg-success text-white px-[16px] py-[10px] rounded-[16px] text-xs font-medium z-50';
+        successDiv.textContent = '返回上一页';
+        document.body.appendChild(successDiv);
+        
+        setTimeout(() => {
+          successDiv.remove();
+        }, 2000);
+      }, 300);
+    }
+
+    // 页面加载完成后的初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 添加页面加载动画
+      const mainContent = document.querySelector('.main-content');
+      mainContent.style.opacity = '0';
+      setTimeout(() => {
+        mainContent.style.transition = 'opacity 0.5s ease';
+        mainContent.style.opacity = '1';
+      }, 100);
+      
+      // 切换客户类型标签
+      const tabs = ['all', 'success', 'fail'];
+      tabs.forEach(tab => {
+        document.getElementById(`tab-${tab}`).addEventListener('click', function() {
+          // 移除所有标签的激活状态
+          tabs.forEach(t => {
+            document.getElementById(`tab-${t}`).classList.remove('tab-active');
+            document.getElementById(`tab-${t}`).classList.add('text-secondary');
+          });
+          // 激活当前标签
+          this.classList.add('tab-active');
+          this.classList.remove('text-secondary');
+          
+          // 这里可以根据不同标签切换雷达图数据
+          simulateDataLoading();
+        });
+      });
+      
+      // Toast提示函数
+      function showToast(message) {
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-[100px] left-1/2 transform -translate-x-1/2 bg-dark/80 text-white px-[16px] py-[10px] rounded-[16px] text-xs font-medium z-50';
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.remove();
+        }, 2000);
+      }
+    });
+    
+    // 模拟数据加载
+    function simulateDataLoading() {
+      const radarPoints = document.querySelectorAll('.radar-point');
+      const opacityValues = [0.3, 0.5, 0.8];
+      
+      // 先隐藏所有点
+      radarPoints.forEach(point => {
+        point.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        point.style.opacity = '0';
+      });
+      
+      // 模拟加载延迟
+      setTimeout(() => {
+        // 随机显示点（模拟不同客户类型的数据变化）
+        radarPoints.forEach((point, index) => {
+          const randomOpacity = opacityValues[Math.floor(Math.random() * opacityValues.length)];
+          point.style.opacity = randomOpacity;
+          point.style.transform = 'translate(-50%, -50%) scale(1.2)';
+          
+          // 恢复原始大小
+          setTimeout(() => {
+            point.style.transform = 'translate(-50%, -50%) scale(1)';
+          }, 200);
+        });
+      }, 300);
+    }
+    
+    // 显示提示消息
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed bottom-20 left-1/2 transform -translate-x-1/2 bg-dark/80 text-white px-[16px] py-[10px] rounded-[16px] text-sm font-medium z-50';
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => {
+          toast.remove();
+        }, 500);
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

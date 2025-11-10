@@ -1,0 +1,1830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智享车生活后台 - 智能体集市</title>
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36CFC9',
+            warning: '#FF7D00',
+            danger: '#F53F3F',
+            gray: {
+              100: '#F7F8FA',
+              200: '#F2F3F5',
+              300: '#E5E6EB',
+              400: '#C9CDD4',
+              500: '#86909C',
+              600: '#4E5969',
+              700: '#1D2129',
+            }
+          },
+          fontFamily: {
+            sans: ['Microsoft YaHei', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <!-- 自定义工具类 -->
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .sidebar-item-active {
+        @apply bg-primary/10 text-primary border-l-4 border-primary;
+      }
+      .card-hover {
+        @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+      }
+      .btn-primary {
+        @apply bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/90 transition-all;
+      }
+      .btn-secondary {
+        @apply bg-white text-gray-700 border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 transition-all;
+      }
+      .form-input {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary;
+      }
+      .table-row-hover {
+        @apply hover:bg-gray-100 transition-colors;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans text-gray-700 min-h-screen flex overflow-hidden">
+  <!-- 左侧导航栏 -->
+  <aside id="sidebar" class="bg-white w-64 h-screen border-r border-gray-300 flex-shrink-0 transition-all duration-300 ease-in-out z-20">
+    <!-- 系统标题 -->
+    <div class="h-16 flex items-center justify-between px-4 border-b border-gray-300">
+      <h1 class="text-lg font-semibold text-gray-700">智享车生活后台</h1>
+      <button id="collapse-sidebar" class="text-gray-500 hover:text-primary">
+        <i class="fa fa-angle-double-left"></i>
+      </button>
+    </div>
+    
+    <!-- 导航菜单 -->
+    <nav class="py-4 flex-1 overflow-y-auto">
+      <ul>
+        <!-- 智能助理一级菜单（展开状态） -->
+        <li class="mb-1">
+          <div class="flex items-center justify-between px-4 py-3 bg-primary text-white cursor-pointer">
+            <div class="flex items-center">
+              <i class="fa fa-robot w-5 text-center mr-3"></i>
+              <span>智能助理</span>
+            </div>
+            <i class="fa fa-angle-down"></i>
+          </div>
+          <ul class="bg-white pl-2">
+            <li>
+              <a href="岗位助理配置.html" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary/10 hover:text-primary transition-colors">
+                <i class="fa fa-cogs w-5 text-center mr-3"></i>
+                <span>岗位助理配置</span>
+              </a>
+            </li>
+            <li>
+              <a href="知识管理.html" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary/10 hover:text-primary transition-colors">
+                <i class="fa fa-file-text w-5 text-center mr-3"></i>
+                <span>知识管理</span>
+              </a>
+            </li>
+            <li>
+              <a href="智能体管理.html" class="sidebar-item-active flex items-center px-4 py-3 transition-colors">
+            <i class="fa fa-cog w-5 text-center mr-3"></i>
+            <span>智能体管理</span>
+          </a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- 主内容区 -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+    <!-- 顶部导航 -->
+    <header class="h-16 bg-white border-b border-gray-300 flex items-center justify-between px-6 z-10">
+      <div class="flex items-center">
+        <button id="toggle-sidebar" class="text-gray-500 hover:text-primary md:hidden">
+          <i class="fa fa-bars"></i>
+        </button>
+      </div>
+      
+      <div class="flex items-center">
+        <button class="relative p-2 text-gray-500 hover:text-primary mr-4">
+          <i class="fa fa-bell"></i>
+          <span class="absolute top-1 right-1 w-2 h-2 bg-danger rounded-full"></span>
+        </button>
+        <div class="flex items-center">
+          <img src="https://picsum.photos/id/1005/40/40" alt="用户头像" class="w-8 h-8 rounded-full mr-2">
+          <span class="mr-2">张经理</span>
+          <i class="fa fa-angle-down text-gray-500"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- 页面内容区 -->
+    <main class="flex-1 overflow-y-auto p-6 bg-gray-100">
+      <!-- 系统管理面板 -->
+      <div class="module-panel">
+        <div class="flex justify-between items-center mb-6">
+          <h2 class="text-xl font-semibold text-gray-700">智能体集市</h2>
+        </div>
+        
+        <!-- 标签页切换 -->
+        <div class="bg-white rounded-lg shadow-sm mb-6">
+          <div class="border-b border-gray-300">
+            <nav class="flex space-x-8 px-6">
+              <button class="tab-button active py-4 px-1 border-b-2 border-primary text-primary font-medium">
+                智能体集市
+              </button>
+            </nav>
+          </div>
+          
+          <!-- 权限管理内容 -->
+          <div class="p-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              <!-- 智能体列表 -->
+              <div class="lg:col-span-1">
+                <h3 class="font-medium text-gray-700 mb-4">智能体列表</h3>
+                <div class="space-y-2">
+                  <div class="agent-item p-3 bg-white border border-gray-300 rounded-md cursor-pointer hover:border-primary">
+                    <div class="flex items-center">
+                      <i class="fa fa-search text-gray-500 mr-3"></i>
+                      <span class="font-medium text-gray-700">质检智能体</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-1">用于对话质量检测和评估</p>
+                  </div>
+                  <div class="agent-item active p-3 bg-primary/10 border border-primary rounded-md cursor-pointer">
+                    <div class="flex items-center">
+                      <i class="fa fa-users text-primary mr-3"></i>
+                      <span class="font-medium text-primary">对练智能体</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-1">用于销售和客服对话训练</p>
+                  </div>
+                  <div class="agent-item p-3 bg-white border border-gray-300 rounded-md cursor-pointer hover:border-primary">
+                    <div class="flex items-center">
+                      <i class="fa fa-history text-gray-500 mr-3"></i>
+                      <span class="font-medium text-gray-700">复盘智能体</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-1">用于对话过程分析和总结</p>
+                  </div>
+                  <div class="agent-item p-3 bg-white border border-gray-300 rounded-md cursor-pointer hover:border-primary">
+                    <div class="flex items-center">
+                      <i class="fa fa-graduation-cap text-gray-500 mr-3"></i>
+                      <span class="font-medium text-gray-700">培训智能体</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mt-1">用于员工产品知识培训</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 智能体详情容器 -->
+              <div class="lg:col-span-3">
+                <h3 class="font-medium text-gray-700 mb-4" id="agent-detail-title">智能体详情 - 对练智能体</h3>
+                
+                <!-- 质检智能体详情 -->
+                <div id="quality-control-agent-detail" class="bg-gray-50 rounded-lg p-6 overflow-y-auto max-h-[70vh] hidden">
+                  <!-- 智能体概览 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">智能体概览</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                          <i class="fa fa-search text-2xl text-primary"></i>
+                        </div>
+                        <div>
+                          <h5 class="text-xl font-semibold text-gray-800">质检智能体</h5>
+                          <p class="text-gray-600 mt-1">用于对话质量检测和评估</p>
+                        </div>
+                      </div>
+                      <p class="text-gray-700">
+                        质检智能体是一个专业的对话质量评估工具，能够对客服和销售人员的对话进行多维度分析，识别话术合规性、服务态度、专业知识等方面的问题，并提供改进建议，帮助企业提升整体服务质量。
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <!-- 工作流程 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">工作流程</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <ol class="relative border-l border-gray-300 ml-3">
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-microphone"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">接收录音文件</h3>
+                          <p class="text-gray-600 mt-2">系统接收客服或销售与客户的通话录音文件，支持多种音频格式</p>
+                        </li>
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-volume-up"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">文字转义</h3>
+                          <p class="text-gray-600 mt-2">将录音内容自动转换为文字，提取关键信息和对话要点</p>
+                        </li>
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-list-check"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">指定质检模板</h3>
+                          <p class="text-gray-600 mt-2">根据业务需求选择或创建适合的质检模板，设定评估维度和标准</p>
+                        </li>
+                        <li class="ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-chart-bar"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">输出质检结果</h3>
+                          <p class="text-gray-600 mt-2">智能分析对话内容，生成详细的质检报告，包括得分、问题点和改进建议</p>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                  
+                  <!-- 质检规则管理 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">质检规则管理</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="flex justify-between items-center mb-4">
+                        <h5 class="font-semibold text-gray-800">规则列表</h5>
+                        <button id="create-rule-btn" class="btn-primary">创建规则</button>
+                      </div>
+                      
+                      <!-- 规则列表 -->
+                      <div class="overflow-x-auto">
+                        <table class="w-full">
+                          <thead class="bg-gray-50">
+                            <tr>
+                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">规则名称</th>
+                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">描述</th>
+                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                          </thead>
+                          <tbody class="bg-white divide-y divide-gray-200">
+                            <tr class="table-row-hover">
+                              <td class="px-4 py-3 text-sm text-gray-900">开场白完整性</td>
+                              <td class="px-4 py-3 text-sm text-gray-600">检查客服是否使用标准开场白，包含问候语、自我介绍和服务意愿</td>
+                              <td class="px-4 py-3 text-sm">
+                                <button class="text-primary hover:text-primary/80 mr-3">编辑</button>
+                                <button class="text-danger hover:text-danger/80">删除</button>
+                              </td>
+                            </tr>
+                            <tr class="table-row-hover">
+                              <td class="px-4 py-3 text-sm text-gray-900">产品信息准确性</td>
+                              <td class="px-4 py-3 text-sm text-gray-600">检查客服提供的产品信息是否准确，无错误或误导性描述</td>
+                              <td class="px-4 py-3 text-sm">
+                                <button class="text-primary hover:text-primary/80 mr-3">编辑</button>
+                                <button class="text-danger hover:text-danger/80">删除</button>
+                              </td>
+                            </tr>
+                            <tr class="table-row-hover">
+                              <td class="px-4 py-3 text-sm text-gray-900">服务态度评分</td>
+                              <td class="px-4 py-3 text-sm text-gray-600">评估客服在对话中的语气、用词和耐心程度</td>
+                              <td class="px-4 py-3 text-sm">
+                                <button class="text-primary hover:text-primary/80 mr-3">编辑</button>
+                                <button class="text-danger hover:text-danger/80">删除</button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <!-- 分页 -->
+                      <div class="flex justify-between items-center mt-4 text-sm">
+                        <div class="text-gray-600">显示 1-3 条，共 15 条</div>
+                        <div class="flex space-x-1">
+                          <button class="px-2 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50">上一页</button>
+                          <button class="px-2 py-1 bg-primary text-white rounded">1</button>
+                          <button class="px-2 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50">2</button>
+                          <button class="px-2 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50">3</button>
+                          <button class="px-2 py-1 border border-gray-300 rounded text-gray-600 hover:bg-gray-50">下一页</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- 质检模板管理 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">质检模板管理</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="flex justify-between items-center mb-4">
+                        <h5 class="font-semibold text-gray-800">模板列表</h5>
+                        <button id="create-template-btn" class="btn-primary">创建模板</button>
+                      </div>
+                      
+                      <!-- 模板列表 -->
+                      <div class="overflow-x-auto">
+                        <table class="w-full">
+                          <thead class="bg-gray-50">
+                            <tr>
+                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">模板名称</th>
+                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">模板说明</th>
+                              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                          </thead>
+                          <tbody class="bg-white divide-y divide-gray-200">
+                            <tr class="table-row-hover">
+                              <td class="px-4 py-3 text-sm text-gray-900">标准客服对话模板</td>
+                              <td class="px-4 py-3 text-sm text-gray-600">日常客户咨询服务</td>
+                              <td class="px-4 py-3 text-sm">
+                                <button class="text-primary hover:text-primary/80 mr-3">编辑</button>
+                                <button class="text-danger hover:text-danger/80">删除</button>
+                              </td>
+                            </tr>
+                            <tr class="table-row-hover">
+                              <td class="px-4 py-3 text-sm text-gray-900">销售转化模板</td>
+                              <td class="px-4 py-3 text-sm text-gray-600">产品销售场景</td>
+                              <td class="px-4 py-3 text-sm">
+                                <button class="text-primary hover:text-primary/80 mr-3">编辑</button>
+                                <button class="text-danger hover:text-danger/80">删除</button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- 创建规则弹窗 -->
+                <div id="create-rule-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                  <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+                    <div class="flex justify-between items-center p-4 border-b border-gray-200">
+                      <h3 class="text-lg font-semibold text-gray-800">创建规则</h3>
+                      <button id="close-rule-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fa fa-times text-xl"></i>
+                      </button>
+                    </div>
+                    <div class="p-6">
+                      <div class="space-y-4">
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">规则名称 <span class="text-danger">*</span></label>
+                          <input type="text" placeholder="请输入规则名称（最多20字符，支持中英文数字）" class="form-input" maxlength="20" required>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">文字描述 <span class="text-danger">*</span></label>
+                          <textarea placeholder="请输入规则详细描述（最多500字符，支持中英文数字）" rows="3" class="form-input" maxlength="500" required></textarea>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">请选择素材</label>
+                          <div class="relative">
+                            <button id="materials-dropdown-toggle" class="w-full flex justify-between items-center px-3 py-2 border border-gray-300 rounded-md bg-white text-left focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                              <span>请选择关联知识库中的文件</span>
+                              <i class="fa fa-chevron-down text-gray-500"></i>
+                            </button>
+                            <!-- 下拉复选框 -->
+                            <div id="materials-dropdown-menu" class="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 hidden max-h-60 overflow-y-auto">
+                              <!-- 搜索框 -->
+                              <div class="p-2 border-b border-gray-200">
+                                <input type="text" id="materials-search" placeholder="搜索文件..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm">
+                              </div>
+                              <!-- 知识库文件选项 -->
+                              <div class="p-2">
+                                <div class="font-medium text-xs text-gray-500 mb-1 pl-2">客服话术标准库</div>
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2 ml-4">
+                                  <input type="checkbox" id="file1" class="mr-2">
+                                  <label for="file1" class="text-gray-700">标准问候语模板</label>
+                                </div>
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2 ml-4">
+                                  <input type="checkbox" id="file2" class="mr-2">
+                                  <label for="file2" class="text-gray-700">客户问题应答指南</label>
+                                </div>
+                                
+                                <div class="font-medium text-xs text-gray-500 mb-1 pl-2 mt-2">产品信息库</div>
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2 ml-4">
+                                  <input type="checkbox" id="file3" class="mr-2">
+                                  <label for="file3" class="text-gray-700">产品功能介绍</label>
+                                </div>
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2 ml-4">
+                                  <input type="checkbox" id="file4" class="mr-2">
+                                  <label for="file4" class="text-gray-700">产品定价策略</label>
+                                </div>
+                                
+                                <div class="font-medium text-xs text-gray-500 mb-1 pl-2 mt-2">客户常见问题库</div>
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2 ml-4">
+                                  <input type="checkbox" id="file5" class="mr-2">
+                                  <label for="file5" class="text-gray-700">FAQ解答标准</label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 p-4 border-t border-gray-200">
+                      <button id="cancel-rule-btn" class="btn-secondary">取消</button>
+                      <button class="btn-primary">保存规则</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- 创建模板弹窗 -->
+                <div id="create-template-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+                  <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+                    <div class="flex justify-between items-center p-4 border-b border-gray-200">
+                      <h3 class="text-lg font-semibold text-gray-800">创建模板</h3>
+                      <button id="close-template-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fa fa-times text-xl"></i>
+                      </button>
+                    </div>
+                    <div class="p-6">
+                      <div class="space-y-4">
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">模板名称<span class="text-danger">*</span></label>
+                          <input type="text" id="template-name" placeholder="请输入模板名称（最多20个字符，支持中英文数字）" maxlength="20" pattern="^[\u4e00-\u9fa5a-zA-Z0-9]{1,20}$" class="form-input" required>
+                          <p class="text-danger text-xs mt-1 hidden" id="template-name-error">请输入有效的模板名称（最多20个字符）</p>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">质检规则<span class="text-danger">*</span></label>
+                          <div class="relative">
+                          <p class="text-danger text-xs mt-1 hidden" id="rules-error">请至少选择一个质检规则</p>
+                            <button id="rules-dropdown-toggle" class="w-full flex justify-between items-center px-3 py-2 border border-gray-300 rounded-md bg-white text-left focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                              <span>请选择质检规则</span>
+                              <i class="fa fa-chevron-down text-gray-500"></i>
+                            </button>
+                            <!-- 下拉复选框 -->
+                            <div id="rules-dropdown-menu" class="absolute left-0 right-0 mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10 hidden max-h-60 overflow-y-auto">
+                              <!-- 搜索框 -->
+                              <div class="p-2 border-b border-gray-200">
+                                <input type="text" id="rules-search" placeholder="搜索规则..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm">
+                              </div>
+                              <!-- 规则选项 -->
+                              <div class="p-2">
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2">
+                                  <input type="checkbox" id="rule1" class="mr-2">
+                                  <label for="rule1" class="text-gray-700">开场白完整性</label>
+                                </div>
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2">
+                                  <input type="checkbox" id="rule2" class="mr-2">
+                                  <label for="rule2" class="text-gray-700">产品信息准确性</label>
+                                </div>
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2">
+                                  <input type="checkbox" id="rule3" class="mr-2">
+                                  <label for="rule3" class="text-gray-700">服务态度评分</label>
+                                </div>
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2">
+                                  <input type="checkbox" id="rule4" class="mr-2">
+                                  <label for="rule4" class="text-gray-700">问题解决效率</label>
+                                </div>
+                                <div class="flex items-center py-2 hover:bg-gray-50 rounded px-2">
+                                  <input type="checkbox" id="rule5" class="mr-2">
+                                  <label for="rule5" class="text-gray-700">结束语规范性</label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div>
+                          <label class="block text-sm font-medium text-gray-700 mb-2">模板说明<span class="text-danger">*</span></label>
+                          <textarea id="template-description" placeholder="请输入模板说明（最多500个字符，支持中英文数字）" rows="3" maxlength="500" pattern="^[\u4e00-\u9fa5a-zA-Z0-9]{1,500}$" class="form-input" required></textarea>
+                          <p class="text-danger text-xs mt-1 hidden" id="template-description-error">请输入有效的模板说明（最多500个字符）</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex justify-end space-x-3 p-4 border-t border-gray-200">
+                      <button id="cancel-template-btn" class="btn-secondary">取消</button>
+                      <button id="save-template-btn" class="btn-primary">保存模板</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- 对练智能体详情 -->
+                <div id="practice-agent-detail" class="bg-gray-50 rounded-lg p-6 overflow-y-auto max-h-[70vh]">
+                  <!-- 智能体概览 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">智能体概览</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                          <i class="fa fa-users text-2xl text-primary"></i>
+                        </div>
+                        <div>
+                          <h5 class="text-xl font-semibold text-gray-800">对练智能体</h5>
+                          <p class="text-gray-600 mt-1">用于销售和客服人员的对话技能训练与提升</p>
+                        </div>
+                      </div>
+                      <p class="text-gray-700">
+                        对练智能体是一个专业的对话训练助手，能够模拟不同类型的客户角色，帮助销售人员和客服人员提升沟通技巧、产品介绍能力和问题解决能力。通过与智能体的反复练习，员工可以在实际工作中更加从容应对各种客户场景。
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <!-- 工作流程 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">工作流程</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <ol class="relative border-l border-gray-300 ml-3">
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-arrow-right"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">外部指令输入</h3>
+                          <p class="text-gray-600 mt-2">支持输入对练主题、产品信息、客户画像等指令，智能体根据指令生成相应的对话场景</p>
+                        </li>
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-bullseye"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">对练目标设定</h3>
+                          <p class="text-gray-600 mt-2">可设置具体的训练目标，如产品介绍、异议处理、促成交易等，智能体据此调整对话策略</p>
+                        </li>
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-check-circle"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">通过标准设定</h3>
+                          <p class="text-gray-600 mt-2">系统内置练习通过标准，包括对话流畅度、产品知识准确性、应对技巧等多维度评估</p>
+                        </li>
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-magic"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">会话场景生成</h3>
+                          <p class="text-gray-600 mt-2">智能体自动生成符合设定目标的对话场景，包括初始问题、常见异议和特殊情况</p>
+                        </li>
+                        <li class="ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-mobile"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">移动端H5练习</h3>
+                          <p class="text-gray-600 mt-2">员工可在移动端H5页面进行对话练习，获得即时反馈和改进建议</p>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                  
+                  <!-- 客户角色类型 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">客户角色类型</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-primary transition-colors">
+                        <div class="flex items-center mb-2">
+                          <i class="fa fa-user-circle text-xl text-primary mr-2"></i>
+                          <h5 class="font-semibold text-gray-800">独裁型客户</h5>
+                        </div>
+                        <p class="text-gray-600 text-sm">具有强烈的控制欲，决策迅速，注重效率，对产品细节要求高</p>
+                      </div>
+                      <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-primary transition-colors">
+                        <div class="flex items-center mb-2">
+                          <i class="fa fa-user-circle text-xl text-primary mr-2"></i>
+                          <h5 class="font-semibold text-gray-800">沉默型客户</h5>
+                        </div>
+                        <p class="text-gray-600 text-sm">不善言辞，需要引导，决策谨慎，注重产品可靠性和口碑</p>
+                      </div>
+                      <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-primary transition-colors">
+                        <div class="flex items-center mb-2">
+                          <i class="fa fa-user-circle text-xl text-primary mr-2"></i>
+                          <h5 class="font-semibold text-gray-800">人际型客户</h5>
+                        </div>
+                        <p class="text-gray-600 text-sm">注重人际关系，友好健谈，容易建立信任，但决策可能受情感影响</p>
+                      </div>
+                      <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-primary transition-colors">
+                        <div class="flex items-center mb-2">
+                          <i class="fa fa-user-circle text-xl text-primary mr-2"></i>
+                          <h5 class="font-semibold text-gray-800">分析型客户</h5>
+                        </div>
+                        <p class="text-gray-600 text-sm">理性思考，注重数据和事实，决策过程长，需要充分的信息支持</p>
+                      </div>
+                      <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-primary transition-colors">
+                        <div class="flex items-center mb-2">
+                          <i class="fa fa-user-circle text-xl text-primary mr-2"></i>
+                          <h5 class="font-semibold text-gray-800">犹豫型客户</h5>
+                        </div>
+                        <p class="text-gray-600 text-sm">顾虑较多，决策缓慢，需要更多的产品信息和客户见证</p>
+                      </div>
+                      <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-primary transition-colors">
+                        <div class="flex items-center mb-2">
+                          <i class="fa fa-user-circle text-xl text-primary mr-2"></i>
+                          <h5 class="font-semibold text-gray-800">价格型客户</h5>
+                        </div>
+                        <p class="text-gray-600 text-sm">对价格敏感，追求性价比，注重产品优惠和折扣</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- 核心功能 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">核心功能</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="space-y-4">
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">岗位助理配置</h5>
+                            <p class="text-gray-600 text-sm">无需复杂配置，可直接与岗位助理系统对接，自动获取相关岗位信息</p>
+                          </div>
+                        </div>
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">智能体编排</h5>
+                            <p class="text-gray-600 text-sm">支持与其他智能体协同工作，如培训智能体、质检智能体等，形成完整的训练体系</p>
+                          </div>
+                        </div>
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">实时反馈</h5>
+                            <p class="text-gray-600 text-sm">提供即时的对话分析和改进建议，帮助员工快速提升技能</p>
+                          </div>
+                        </div>
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">学习记录追踪</h5>
+                            <p class="text-gray-600 text-sm">记录员工的训练历史和进步情况，生成学习报告和能力评估</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- 复盘智能体详情 -->
+                <div id="review-agent-detail" class="bg-gray-50 rounded-lg p-6 overflow-y-auto max-h-[70vh] hidden">
+                  <!-- 智能体概览 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">智能体概览</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                          <i class="fa fa-history text-2xl text-primary"></i>
+                        </div>
+                        <div>
+                          <h5 class="text-xl font-semibold text-gray-800">复盘智能体</h5>
+                          <p class="text-gray-600 mt-1">用于对话过程分析和总结</p>
+                        </div>
+                      </div>
+                      <p class="text-gray-700">
+                        复盘智能体是一个专业的对话分析工具，能够对已完成的客户对话进行深度分析，识别关键节点、问题所在和改进空间，并提供针对性的优化建议，帮助团队不断提升服务质量和销售效果。
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <!-- 工作流程 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">工作流程</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <ol class="relative border-l border-gray-300 ml-3">
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-file-text"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">对话数据导入</h3>
+                          <p class="text-gray-600 mt-2">导入客服或销售与客户的对话记录，支持多种格式如文本、录音转写等</p>
+                        </li>
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-search-plus"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">智能分析</h3>
+                          <p class="text-gray-600 mt-2">系统自动分析对话内容，识别关键节点、客户情绪变化、问题解决过程等</p>
+                        </li>
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-bar-chart"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">数据可视化</h3>
+                          <p class="text-gray-600 mt-2">将分析结果以图表形式展示，直观呈现对话质量、问题分布等关键指标</p>
+                        </li>
+                        <li class="ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-lightbulb-o"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">优化建议生成</h3>
+                          <p class="text-gray-600 mt-2">根据分析结果，生成针对性的改进建议和培训重点，助力团队能力提升</p>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                  
+                  <!-- 复盘配置 -->
+                  <div class="mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                      <h4 class="text-lg font-medium text-gray-800">复盘配置</h4>
+                      <button id="edit-review-config" class="btn-primary">
+                        <i class="fa fa-pencil mr-2"></i>编辑
+                      </button>
+                    </div>
+                    
+                    <!-- 详情视图 -->
+                    <div id="review-config-view" class="bg-white p-6 rounded-lg border border-gray-200">
+                      <div class="space-y-6">
+                        <!-- 复盘提示词 -->
+                        <div>
+                          <h5 class="text-base font-medium text-gray-700 mb-3">复盘提示词模板</h5>
+                          <div class="bg-gray-50 p-4 rounded-md border border-gray-200">
+                            <pre class="whitespace-pre-wrap text-sm text-gray-700 font-mono">请对以下对话进行全面复盘分析，重点关注以下几个方面：
+1. 开场白是否符合标准流程和礼貌规范
+2. 产品介绍是否准确、全面，重点突出
+3. 对客户问题的回应是否及时、专业
+4. 服务态度是否热情友好，是否展现耐心
+5. 是否有效处理客户异议，提供合理解决方案
+6. 对话流程是否顺畅，是否有不必要的冗长
+7. 结束语是否完整，是否确认客户需求得到满足
+
+请针对每个方面提供具体改进建议，并总结对话中的亮点和不足。</pre>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- 编辑视图 -->
+                    <div id="review-config-edit" class="bg-white p-6 rounded-lg border border-gray-200 hidden">
+                      <form id="review-config-form">
+                        <div class="space-y-6">
+                          <!-- 复盘提示词 -->
+                          <div>
+                            <label for="review-prompt" class="block text-sm font-medium text-gray-700 mb-2">复盘提示词模板</label>
+                            <textarea id="review-prompt" name="review-prompt" rows="8" class="form-input" placeholder="请输入复盘提示词模板，用于控制复盘分析的方向和重点">请对以下对话进行全面复盘分析，重点关注以下几个方面：
+1. 开场白是否符合标准流程和礼貌规范
+2. 产品介绍是否准确、全面，重点突出
+3. 对客户问题的回应是否及时、专业
+4. 服务态度是否热情友好，是否展现耐心
+5. 是否有效处理客户异议，提供合理解决方案
+6. 对话流程是否顺畅，是否有不必要的冗长
+7. 结束语是否完整，是否确认客户需求得到满足
+
+请针对每个方面提供具体改进建议，并总结对话中的亮点和不足。</textarea>
+                            <p class="mt-2 text-xs text-gray-500">提示词将指导AI如何进行对话分析，可根据需求调整分析重点和输出格式</p>
+                          </div>
+                        </div>
+                        
+                        <!-- 操作按钮 -->
+                        <div class="mt-8 flex justify-end space-x-3">
+                          <button type="button" id="cancel-review-config" class="btn-secondary">取消</button>
+                          <button type="submit" class="btn-primary">确认保存</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                  
+                  <!-- 核心功能 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">核心功能</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="space-y-4">
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">触发方式灵活</h5>
+                            <p class="text-gray-600 text-sm">支持定时触发（每日18点自动推送复盘提醒）和手动触发（销售可通过交互主动发起复盘）</p>
+                          </div>
+                        </div>
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">流程简化高效</h5>
+                            <p class="text-gray-600 text-sm">自动整合数据（客户接待记录、沟通录音、成交数据），降低操作成本，避免繁琐流程</p>
+                          </div>
+                        </div>
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">问题精准定位</h5>
+                            <p class="text-gray-600 text-sm">结合质检功能自动识别录音中的话术问题，对比历史数据标记重复出现的问题</p>
+                          </div>
+                        </div>
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">闭环优化导向</h5>
+                            <p class="text-gray-600 text-sm">生成改进建议（话术模板、攻坚技巧），关联培训功能推送针对性学习内容</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- 培训智能体详情 -->
+                <div id="training-agent-detail" class="bg-gray-50 rounded-lg p-6 overflow-y-auto max-h-[70vh]">
+                  <!-- 智能体概览 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">智能体概览</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mr-4">
+                          <i class="fa fa-graduation-cap text-2xl text-primary"></i>
+                        </div>
+                        <div>
+                          <h5 class="text-xl font-semibold text-gray-800">培训智能体</h5>
+                          <p class="text-gray-600 mt-1">个性化销售能力提升系统</p>
+                        </div>
+                      </div>
+                      <p class="text-gray-700">
+                        培训智能体是一个基于AI的闭环式学习系统，专为销售人员设计。它通过知识结构化处理、个性化建模、精准推送、互动巩固和进度可视化，打造完整的学习成长链路，帮助销售快速掌握产品知识、谈判话术和销售技巧，提升成交能力。
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <!-- 工作流程 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">闭环式学习全链路</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <ol class="relative border-l border-gray-300 ml-3">
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-cogs"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">前置准备：知识加工与个性化建模</h3>
+                          <div class="text-gray-600 mt-2 space-y-2">
+                            <p><span class="font-medium">知识结构化处理：</span>将车型配置、报价策略、谈判话术等知识点，转化为 "钩子 + 案例 + 解析" 的营销式内容包。</p>
+                            <p><span class="font-medium">用户画像建模：</span>通过销售历史交互数据、学习偏好反馈、理解习惯，构建个性化学习标签；结合成长路径，生成适配的阶段性学习计划。</p>
+                          </div>
+                        </li>
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-paper-plane"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">精准推送：碎片化 + 场景化触达</h3>
+                          <div class="text-gray-600 mt-2 space-y-2">
+                            <p><span class="font-medium">推送时机匹配：</span>基于学习计划，在销售碎片化时间（如晨会前 10 分钟、客户接待间隙）自动推送知识点。</p>
+                            <p><span class="font-medium">内容形态适配：</span>根据销售偏好，推送对应形式内容（短视频、图文解析等），确保接收意愿。</p>
+                          </div>
+                        </li>
+                        <li class="mb-6 ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-refresh"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">互动巩固：练习 + 举一反三验证</h3>
+                          <div class="text-gray-600 mt-2 space-y-2">
+                            <p><span class="font-medium">主动发起小练习：</span>知识点推送后，自动触发场景化练习（如模拟客户对话场景）。</p>
+                            <p><span class="font-medium">举一反三引导：</span>完成练习后提供优化建议，拓展同类场景，强化知识迁移能力。</p>
+                          </div>
+                        </li>
+                        <li class="ml-6">
+                          <span class="absolute flex items-center justify-center w-8 h-8 bg-primary text-white rounded-full -left-4 ring-4 ring-white">
+                            <i class="fa fa-line-chart"></i>
+                          </span>
+                          <h3 class="flex items-center text-lg font-semibold text-gray-800">记录与迭代：记忆 + 进度可视化</h3>
+                          <div class="text-gray-600 mt-2 space-y-2">
+                            <p><span class="font-medium">学习记录记忆：</span>自动存储销售的学习时长、练习完成情况、错题记录、偏好调整等数据，形成个人学习档案。</p>
+                            <p><span class="font-medium">进度生成与反馈：</span>定期基于知识图谱，输出学习进度报告，明确后续学习重点。</p>
+                          </div>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                  
+                  <!-- 核心功能 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">核心功能</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="space-y-4">
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">个性化内容加工与推送功能</h5>
+                            <p class="text-gray-600 text-sm">解决 "知识推送同质化、接收效率低" 痛点，实现营销式内容包装、多形态内容适配、碎片化定时推送和贴合成长路径的计划匹配。</p>
+                          </div>
+                        </div>
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">场景化练习与举一反三功能</h5>
+                            <p class="text-gray-600 text-sm">避免 "学用脱节"，确保知识能落地到实战场景，实现主动触发练习、模拟真实销售场景、提供个性化优化建议和拓展同类场景引导迁移。</p>
+                          </div>
+                        </div>
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">学习全记录与记忆功能</h5>
+                            <p class="text-gray-600 text-sm">实现 "持续跟踪学习轨迹"，为个性化迭代提供数据支撑，包括自动记录学习行为、记忆用户偏好与理解习惯、动态更新个人学习档案。</p>
+                          </div>
+                        </div>
+                        <div class="flex">
+                          <div class="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-primary/10 text-primary mr-3">
+                            <i class="fa fa-check text-xs"></i>
+                          </div>
+                          <div>
+                            <h5 class="font-medium text-gray-800">知识图谱学习进度可视化功能</h5>
+                            <p class="text-gray-600 text-sm">让销售与管理者清晰掌握学习成效，明确提升方向，包括基于知识图谱展示各模块掌握进度、生成阶段性进度报告、自动标注薄弱环节并关联补充学习内容。</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <!-- 岗位培训配置 -->
+                  <div class="mb-8">
+                    <h4 class="text-lg font-medium text-gray-800 mb-4">岗位培训配置</h4>
+                    <div class="bg-white p-4 rounded-lg border border-gray-200">
+                      <div class="flex justify-between items-center mb-4">
+                        <div></div>
+                        <button id="add-training-config-btn" class="btn-primary">
+                          <i class="fa fa-plus mr-2"></i>新增配置
+                        </button>
+                      </div>
+                      <div class="overflow-x-auto">
+                        <table class="w-full">
+                          <thead class="bg-gray-50">
+                            <tr>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">面向部门</th>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">配置知识</th>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">学习目标</th>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">主动联系</th>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">创建时间</th>
+                              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作</th>
+                            </tr>
+                          </thead>
+                          <tbody class="bg-white divide-y divide-gray-200">
+                            <tr class="table-row-hover">
+                              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">销售一部</td>
+                              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">产品知识、谈判技巧</td>
+                              <td class="px-6 py-4 text-sm text-gray-600">15天学习计划，掌握产品核心卖点和应对客户异议</td>
+                              <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  是
+                                </span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-15</td>
+                              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-blue-600 hover:text-blue-900 mr-3">编辑</button>
+                                <button class="text-red-600 hover:text-red-900">删除</button>
+                              </td>
+                            </tr>
+                            <tr class="table-row-hover">
+                              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">销售二部</td>
+                              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">竞品分析、报价策略</td>
+                              <td class="px-6 py-4 text-sm text-gray-600">10天学习计划，熟悉竞品对比和灵活定价技巧</td>
+                              <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                  否
+                                </span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">2024-01-12</td>
+                              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-blue-600 hover:text-blue-900 mr-3">编辑</button>
+                                <button class="text-red-600 hover:text-red-900">删除</button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+        
+        <!-- 资源对接内容 -->
+        <div class="p-6 hidden">
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- 企微通讯录对接 -->
+            <div class="bg-white border border-gray-300 rounded-lg p-6 card-hover">
+              <div class="flex items-center mb-4">
+                <i class="fa fa-wechat text-green-600 text-2xl mr-3"></i>
+                <div>
+                  <h4 class="font-medium text-gray-700">企微通讯录</h4>
+                  <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">已对接</span>
+                </div>
+              </div>
+              <p class="text-sm text-gray-600 mb-4">同步企业微信组织架构和员工信息</p>
+              <div class="space-y-2">
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">最后同步</span>
+                  <span class="font-medium">2024-01-15 10:30</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">同步状态</span>
+                  <span class="text-green-600">正常</span>
+                </div>
+              </div>
+              <button class="w-full mt-4 btn-secondary">同步设置</button>
+            </div>
+            
+            <!-- CRM系统对接 -->
+            <div class="bg-white border border-gray-300 rounded-lg p-6 card-hover">
+              <div class="flex items-center mb-4">
+                <i class="fa fa-users text-blue-600 text-2xl mr-3"></i>
+                <div>
+                  <h4 class="font-medium text-gray-700">CRM系统</h4>
+                  <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">已对接</span>
+                </div>
+              </div>
+              <p class="text-sm text-gray-600 mb-4">同步客户信息和销售数据</p>
+              <div class="space-y-2">
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">最后同步</span>
+                  <span class="font-medium">2024-01-15 09:15</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">同步状态</span>
+                  <span class="text-green-600">正常</span>
+                </div>
+              </div>
+              <button class="w-full mt-4 btn-secondary">同步设置</button>
+            </div>
+            
+            <!-- 现有培训平台 -->
+            <div class="bg-white border border-gray-300 rounded-lg p-6 card-hover">
+              <div class="flex items-center mb-4">
+                <i class="fa fa-graduation-cap text-purple-600 text-2xl mr-3"></i>
+                <div>
+                  <h4 class="font-medium text-gray-700">现有培训平台</h4>
+                  <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded-full">未对接</span>
+                </div>
+              </div>
+              <p class="text-sm text-gray-600 mb-4">对接现有培训平台数据</p>
+              <div class="space-y-2">
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">对接状态</span>
+                  <span class="text-gray-600">待配置</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <span class="text-gray-600">配置进度</span>
+                  <span class="font-medium">0%</span>
+                </div>
+              </div>
+              <button class="w-full mt-4 btn-primary">开始对接</button>
+            </div>
+          </div>
+          
+          <!-- 同步规则配置 -->
+          <div class="bg-white rounded-lg shadow-sm p-6">
+            <h3 class="font-medium text-gray-700 mb-4">同步规则配置</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">同步频率</label>
+                <select class="form-input">
+                  <option>实时同步</option>
+                  <option selected>每小时同步</option>
+                  <option>每日同步</option>
+                  <option>每周同步</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">异常处理方式</label>
+                <select class="form-input">
+                  <option selected>自动重试</option>
+                  <option>发送告警</option>
+                  <option>暂停同步</option>
+                </select>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-2">告警接收人</label>
+                <input type="text" placeholder="请输入邮箱或手机号" class="form-input">
+              </div>
+            </div>
+            <div class="mt-6 flex justify-end">
+              <button class="btn-primary">保存配置</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 创建培训计划弹窗 -->
+        <div id="create-training-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+          <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+              <div class="flex justify-between items-center">
+                <h3 class="text-lg font-semibold text-gray-800">创建培训计划</h3>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-700">
+                  <i class="fa fa-times text-xl"></i>
+                </button>
+              </div>
+            </div>
+            <div class="p-6">
+              <form id="create-training-form">
+                <!-- 部门选择 -->
+                <div class="mb-6">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">面向部门</label>
+                  <select class="form-input w-full" required>
+                    <option value="">请选择部门</option>
+                    <option value="sales1">销售一部</option>
+                    <option value="sales2">销售二部</option>
+                    <option value="sales3">销售三部</option>
+                    <option value="service">售后服务部</option>
+                  </select>
+                </div>
+                
+                <!-- 知识内容选择 -->
+                <div class="mb-6">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">学习内容</label>
+                  <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <div class="flex justify-between items-center mb-3">
+                      <h4 class="font-medium text-gray-700 w-40">知识管理目录</h4>
+                      <input type="text" placeholder="搜索目录" class="form-input w-48">
+                    </div>
+                    <div class="h-40 overflow-y-auto border border-gray-200 rounded bg-white p-2">
+                      <!-- 树状结构示例 -->
+                      <div class="space-y-2">
+                        <div class="flex items-center">
+                          <input type="checkbox" id="knowledge1" class="mr-2">
+                          <label for="knowledge1" class="flex items-center">
+                            <span>产品知识</span>
+                            <i class="fa fa-chevron-down ml-1 text-xs text-gray-500"></i>
+                          </label>
+                        </div>
+                        <div class="pl-4 space-y-1">
+                          <div class="flex items-center">
+                            <input type="checkbox" id="knowledge1-1" class="mr-2">
+                            <label for="knowledge1-1">核心功能介绍</label>
+                          </div>
+                          <div class="flex items-center">
+                            <input type="checkbox" id="knowledge1-2" class="mr-2">
+                            <label for="knowledge1-2">技术规格参数</label>
+                          </div>
+                        </div>
+                        <div class="flex items-center">
+                          <input type="checkbox" id="knowledge2" class="mr-2">
+                          <label for="knowledge2" class="flex items-center">
+                            <span>销售技巧</span>
+                            <i class="fa fa-chevron-down ml-1 text-xs text-gray-500"></i>
+                          </label>
+                        </div>
+                        <div class="pl-4 space-y-1">
+                          <div class="flex items-center">
+                            <input type="checkbox" id="knowledge2-1" class="mr-2">
+                            <label for="knowledge2-1">谈判技巧</label>
+                          </div>
+                          <div class="flex items-center">
+                            <input type="checkbox" id="knowledge2-2" class="mr-2">
+                            <label for="knowledge2-2">异议处理</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div class="bg-gray-50 p-4 rounded-lg">
+                    <div class="flex justify-between items-center mb-3">
+                      <h4 class="font-medium text-gray-700 w-40">通用知识</h4>
+                      <input type="text" placeholder="搜索知识" class="form-input w-48">
+                    </div>
+                    <div class="h-40 overflow-y-auto border border-gray-200 rounded bg-white p-2">
+                      <!-- 树状结构示例 -->
+                      <div class="space-y-2">
+                        <div class="flex items-center">
+                          <input type="checkbox" id="common1" class="mr-2">
+                          <label for="common1" class="flex items-center">
+                            <span>竞品分析方法论</span>
+                            <i class="fa fa-chevron-down ml-1 text-xs text-gray-500"></i>
+                          </label>
+                        </div>
+                        <div class="pl-4 space-y-1">
+                          <div class="flex items-center">
+                            <input type="checkbox" id="common1-1" class="mr-2">
+                            <label for="common1-1">SWOT分析</label>
+                          </div>
+                          <div class="flex items-center">
+                            <input type="checkbox" id="common1-2" class="mr-2">
+                            <label for="common1-2">市场定位分析</label>
+                          </div>
+                        </div>
+                        <div class="flex items-center">
+                          <input type="checkbox" id="common2" class="mr-2">
+                          <label for="common2" class="flex items-center">
+                            <span>客户需求挖掘技巧</span>
+                            <i class="fa fa-chevron-down ml-1 text-xs text-gray-500"></i>
+                          </label>
+                        </div>
+                        <div class="pl-4 space-y-1">
+                          <div class="flex items-center">
+                            <input type="checkbox" id="common2-1" class="mr-2">
+                            <label for="common2-1">提问技巧</label>
+                          </div>
+                          <div class="flex items-center">
+                            <input type="checkbox" id="common2-2" class="mr-2">
+                            <label for="common2-2">倾听技巧</label>
+                          </div>
+                        </div>
+                        <div class="flex items-center">
+                          <input type="checkbox" id="common3" class="mr-2">
+                          <label for="common3" class="flex items-center">
+                            <span>销售流程标准化</span>
+                            <i class="fa fa-chevron-down ml-1 text-xs text-gray-500"></i>
+                          </label>
+                        </div>
+                        <div class="pl-4 space-y-1">
+                          <div class="flex items-center">
+                            <input type="checkbox" id="common3-1" class="mr-2">
+                            <label for="common3-1">销售漏斗管理</label>
+                          </div>
+                          <div class="flex items-center">
+                            <input type="checkbox" id="common3-2" class="mr-2">
+                            <label for="common3-2">客户关系维护</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- 学习目标提示词 -->
+                <div class="mb-6">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">学习目标提示词</label>
+                  <textarea rows="4" class="form-input w-full" placeholder="例如：创建一个15天的学习计划，需要学员了解产品核心卖点、典型案例分析，以及进行场景化小练习。请结合实际销售场景，设计渐进式的学习路径。" required></textarea>
+                </div>
+                
+                <!-- 主动联系选项 -->
+                <div class="mb-6">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">学员无应答时，智能体是否主动联系</label>
+                  <div class="flex space-x-4">
+                    <label class="inline-flex items-center">
+                      <input type="radio" name="auto-contact" value="yes" class="form-radio mr-2" checked>
+                      <span>是</span>
+                    </label>
+                    <label class="inline-flex items-center">
+                      <input type="radio" name="auto-contact" value="no" class="form-radio mr-2">
+                      <span>否</span>
+                    </label>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+              <button id="cancel-create-btn" class="btn-secondary">取消</button>
+              <button id="submit-create-btn" class="btn-primary">创建计划</button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 日志查询内容 -->
+        <div class="p-6 hidden">
+          <!-- 筛选条件 -->
+          <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+            <h3 class="font-medium text-gray-700 mb-4">日志查询</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">日志类型</label>
+                <select class="form-input">
+                  <option value="">全部类型</option>
+                  <option>操作日志</option>
+                  <option>系统日志</option>
+                  <option>错误日志</option>
+                  <option>安全日志</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">操作人/模块</label>
+                <input type="text" placeholder="搜索操作人或模块" class="form-input">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">开始时间</label>
+                <input type="datetime-local" class="form-input">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">结束时间</label>
+                <input type="datetime-local" class="form-input">
+              </div>
+            </div>
+            <div class="mt-4 flex justify-end space-x-4">
+              <button class="btn-secondary">重置</button>
+              <button class="btn-primary">查询</button>
+            </div>
+          </div>
+          
+          <!-- 日志列表 -->
+          <div class="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">日志ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">类型</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">内容</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">操作人</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">时间</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">状态</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr class="table-row-hover">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">LOG20240115001</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full">操作日志</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">用户登录系统</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">张经理</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-01-15 10:30:25</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">成功</span>
+                    </td>
+                  </tr>
+                  <tr class="table-row-hover">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">LOG20240115002</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">系统日志</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">数据同步任务执行</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">系统</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-01-15 10:15:10</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs bg-green-100 text-green-800 rounded-full">成功</span>
+                    </td>
+                  </tr>
+                  <tr class="table-row-hover">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">LOG20240115003</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">错误日志</span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-900">数据库连接超时</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">系统</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-01-15 09:45:33</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                      <span class="px-2 py-1 text-xs bg-red-100 text-red-800 rounded-full">失败</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- 分页 -->
+            <div class="bg-white px-6 py-3 border-t border-gray-200">
+              <div class="flex items-center justify-between">
+                <div class="text-sm text-gray-700">
+                  显示 <span class="font-medium">1-3</span> 条，共 <span class="font-medium">1256</span> 条记录
+                </div>
+                <div class="flex space-x-2">
+                  <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">上一页</button>
+                  <button class="px-3 py-1 bg-primary text-white rounded text-sm">1</button>
+                  <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">2</button>
+                  <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">3</button>
+                  <button class="px-3 py-1 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50">下一页</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+      </div>
+    </main>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // 侧边栏切换功能
+    document.getElementById('toggle-sidebar').addEventListener('click', function() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('-translate-x-full');
+    });
+
+    document.getElementById('collapse-sidebar').addEventListener('click', function() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.classList.toggle('w-64');
+      sidebar.classList.toggle('w-16');
+    });
+
+    // 标签页切换功能
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', function() {
+        // 移除所有active状态
+        document.querySelectorAll('.tab-button').forEach(btn => {
+          btn.classList.remove('active', 'border-primary', 'text-primary');
+          btn.classList.add('border-transparent', 'text-gray-600');
+        });
+        
+        // 添加当前active状态
+        this.classList.add('active', 'border-primary', 'text-primary');
+        this.classList.remove('border-transparent', 'text-gray-600');
+        
+        // 隐藏所有内容区域
+        document.querySelectorAll('.module-panel > div.p-6').forEach(content => {
+          content.classList.add('hidden');
+        });
+        
+        // 显示对应内容区域
+        const tabIndex = Array.from(document.querySelectorAll('.tab-button')).indexOf(this);
+        document.querySelectorAll('.module-panel > div.p-6')[tabIndex].classList.remove('hidden');
+      });
+    });
+
+    // 智能体选择功能
+    document.querySelectorAll('.agent-item').forEach(item => {
+      item.addEventListener('click', function() {
+        // 移除所有active状态
+        document.querySelectorAll('.agent-item').forEach(agent => {
+          agent.classList.remove('active', 'bg-primary/10', 'border-primary');
+          agent.classList.add('bg-white', 'border-gray-300');
+          agent.querySelector('i').classList.remove('text-primary');
+          agent.querySelector('i').classList.add('text-gray-500');
+        });
+        
+        // 添加当前active状态
+        this.classList.add('active', 'bg-primary/10', 'border-primary');
+        this.classList.remove('bg-white', 'border-gray-300');
+        this.querySelector('i').classList.remove('text-gray-500');
+        this.querySelector('i').classList.add('text-primary');
+        
+        // 更新智能体详情标题
+        const agentName = this.querySelector('.font-medium').textContent;
+        document.getElementById('agent-detail-title').textContent = `智能体详情 - ${agentName}`;
+        
+        // 隐藏所有智能体详情
+        document.querySelectorAll('[id$="-agent-detail"]').forEach(detail => {
+          detail.classList.add('hidden');
+        });
+        
+        // 显示对应智能体的详情
+        if (agentName === '质检智能体') {
+          document.getElementById('quality-control-agent-detail').classList.remove('hidden');
+        } else if (agentName === '对练智能体') {
+          document.getElementById('practice-agent-detail').classList.remove('hidden');
+        } else if (agentName === '复盘智能体') {
+          document.getElementById('review-agent-detail').classList.remove('hidden');
+        } else if (agentName === '培训智能体') {
+          document.getElementById('training-agent-detail').classList.remove('hidden');
+        }
+      });
+    });
+    
+    // 弹窗功能 - 创建规则
+    document.getElementById('create-rule-btn').addEventListener('click', function() {
+      document.getElementById('create-rule-modal').classList.remove('hidden');
+      // 设置为创建模式
+      document.querySelector('#create-rule-modal h3').textContent = '创建规则';
+      // 重置表单
+      const ruleForm = document.getElementById('create-rule-modal').querySelector('input[type="text"]');
+      const ruleTextarea = document.getElementById('create-rule-modal').querySelector('textarea');
+      const materialsCheckboxes = document.getElementById('materials-dropdown-menu').querySelectorAll('input[type="checkbox"]');
+      
+      if (ruleForm) ruleForm.value = '';
+      if (ruleTextarea) ruleTextarea.value = '';
+      materialsCheckboxes.forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      // 更新下拉框文本
+      updateMaterialsSelectionText();
+    });
+    
+    // 为所有编辑规则按钮添加事件监听
+    document.querySelectorAll('.table-row-hover button:first-of-type').forEach(button => {
+      if (button.textContent.trim() === '编辑') {
+        button.addEventListener('click', function() {
+          document.getElementById('create-rule-modal').classList.remove('hidden');
+          // 设置为编辑模式
+          document.querySelector('#create-rule-modal h3').textContent = '编辑规则';
+          // 这里可以根据实际需求填充现有数据
+          // 模拟填充数据示例
+          const ruleName = this.closest('tr').querySelector('td:first-child').textContent;
+          const ruleForm = document.getElementById('create-rule-modal').querySelector('input[type="text"]');
+          if (ruleForm) ruleForm.value = ruleName;
+        });
+      }
+    });
+    
+    // 关闭创建规则弹窗
+    document.getElementById('close-rule-modal').addEventListener('click', function() {
+      document.getElementById('create-rule-modal').classList.add('hidden');
+    });
+    
+    document.getElementById('cancel-rule-btn').addEventListener('click', function() {
+      document.getElementById('create-rule-modal').classList.add('hidden');
+    });
+    
+    // 保存规则按钮添加表单验证
+    const saveRuleBtn = document.querySelector('#create-rule-modal button.btn-primary');
+    if (saveRuleBtn) {
+      saveRuleBtn.addEventListener('click', function() {
+        const ruleNameInput = document.getElementById('create-rule-modal').querySelector('input[type="text"]');
+        const ruleDescTextarea = document.getElementById('create-rule-modal').querySelector('textarea');
+        let isValid = true;
+        
+        // 验证规则名称
+        if (!ruleNameInput || ruleNameInput.value.trim() === '') {
+          isValid = false;
+          if (ruleNameInput) {
+            ruleNameInput.classList.add('border-danger');
+            // 添加错误提示
+            if (!ruleNameInput.nextElementSibling || !ruleNameInput.nextElementSibling.classList.contains('text-danger')) {
+              const errorSpan = document.createElement('span');
+              errorSpan.className = 'text-danger text-xs mt-1 block';
+              errorSpan.textContent = '请输入规则名称';
+              ruleNameInput.parentNode.appendChild(errorSpan);
+            }
+          }
+        } else if (ruleNameInput) {
+          ruleNameInput.classList.remove('border-danger');
+          // 移除错误提示
+          const existingError = ruleNameInput.nextElementSibling;
+          if (existingError && existingError.classList.contains('text-danger')) {
+            existingError.remove();
+          }
+        }
+        
+        // 验证文字描述
+        if (!ruleDescTextarea || ruleDescTextarea.value.trim() === '') {
+          isValid = false;
+          if (ruleDescTextarea) {
+            ruleDescTextarea.classList.add('border-danger');
+            // 添加错误提示
+            if (!ruleDescTextarea.nextElementSibling || !ruleDescTextarea.nextElementSibling.classList.contains('text-danger')) {
+              const errorSpan = document.createElement('span');
+              errorSpan.className = 'text-danger text-xs mt-1 block';
+              errorSpan.textContent = '请输入文字描述';
+              ruleDescTextarea.parentNode.appendChild(errorSpan);
+            }
+          }
+        } else if (ruleDescTextarea) {
+          ruleDescTextarea.classList.remove('border-danger');
+          // 移除错误提示
+          const existingError = ruleDescTextarea.nextElementSibling;
+          if (existingError && existingError.classList.contains('text-danger')) {
+            existingError.remove();
+          }
+        }
+        
+        // 如果验证通过，保存规则
+        if (isValid) {
+          const isEditMode = document.querySelector('#create-rule-modal h3').textContent === '编辑规则';
+          alert(isEditMode ? '规则更新成功！' : '规则创建成功！');
+          document.getElementById('create-rule-modal').classList.add('hidden');
+        }
+      });
+    }
+    
+    // 弹窗功能 - 创建模板
+    document.getElementById('create-template-btn').addEventListener('click', function() {
+      document.getElementById('create-template-modal').classList.remove('hidden');
+    });
+    
+    // 关闭创建模板弹窗
+    document.getElementById('close-template-modal').addEventListener('click', function() {
+      document.getElementById('create-template-modal').classList.add('hidden');
+    });
+    
+    document.getElementById('cancel-template-btn').addEventListener('click', function() {
+      document.getElementById('create-template-modal').classList.add('hidden');
+    });
+    
+    // 点击弹窗外部关闭弹窗
+    window.addEventListener('click', function(event) {
+      if (event.target === document.getElementById('create-rule-modal')) {
+        document.getElementById('create-rule-modal').classList.add('hidden');
+      }
+      if (event.target === document.getElementById('create-template-modal')) {
+        document.getElementById('create-template-modal').classList.add('hidden');
+      }
+    });
+    
+    // 模板表单验证
+    document.getElementById('save-template-btn').addEventListener('click', function() {
+      // 隐藏所有错误提示
+      document.getElementById('template-name-error').classList.add('hidden');
+      document.getElementById('rules-error').classList.add('hidden');
+      document.getElementById('template-description-error').classList.add('hidden');
+      
+      // 验证模板名称
+      const templateName = document.getElementById('template-name').value.trim();
+      if (!templateName || templateName.length > 20) {
+        document.getElementById('template-name-error').classList.remove('hidden');
+        return;
+      }
+      
+      // 验证质检规则选择
+      const checkedRules = document.querySelectorAll('#rules-dropdown-menu input[type="checkbox"]:checked');
+      if (checkedRules.length === 0) {
+        document.getElementById('rules-error').classList.remove('hidden');
+        return;
+      }
+      
+      // 验证模板说明
+      const templateDescription = document.getElementById('template-description').value.trim();
+      if (!templateDescription || templateDescription.length > 500) {
+        document.getElementById('template-description-error').classList.remove('hidden');
+        return;
+      }
+      
+      // 表单验证通过，可以提交
+      alert('模板保存成功！');
+      document.getElementById('create-template-modal').classList.add('hidden');
+    });
+    
+    // 质检规则下拉复选框功能
+    const rulesToggle = document.getElementById('rules-dropdown-toggle');
+    const rulesDropdown = document.getElementById('rules-dropdown-menu');
+    const rulesSearch = document.getElementById('rules-search');
+    const rulesOptions = rulesDropdown.querySelectorAll('div.p-2 > div');
+    
+    rulesToggle.addEventListener('click', function() {
+      rulesDropdown.classList.toggle('hidden');
+    });
+    
+    // 点击外部关闭下拉框
+    document.addEventListener('click', function(event) {
+      if (!rulesToggle.contains(event.target) && !rulesDropdown.contains(event.target)) {
+        rulesDropdown.classList.add('hidden');
+      }
+    });
+    
+    // 质检规则搜索功能
+    rulesSearch.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      rulesOptions.forEach(option => {
+        const label = option.querySelector('label').textContent.toLowerCase();
+        if (label.includes(searchTerm)) {
+          option.style.display = 'flex';
+        } else {
+          option.style.display = 'none';
+        }
+      });
+    });
+    
+    // 复选框选中状态更新
+    const rulesCheckboxes = rulesDropdown.querySelectorAll('input[type="checkbox"]');
+    rulesCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', updateRulesSelectionText);
+    });
+    
+    function updateRulesSelectionText() {
+      const selectedRules = [];
+      rulesCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          selectedRules.push(checkbox.nextElementSibling.textContent);
+        }
+      });
+      
+      if (selectedRules.length > 0) {
+        if (selectedRules.length <= 2) {
+          rulesToggle.querySelector('span').textContent = selectedRules.join(', ');
+        } else {
+          rulesToggle.querySelector('span').textContent = `${selectedRules.length} 个规则已选择`;
+        }
+      } else {
+        rulesToggle.querySelector('span').textContent = '请选择质检规则';
+      }
+    }
+    
+    // 素材下拉复选框功能
+    const materialsToggle = document.getElementById('materials-dropdown-toggle');
+    const materialsDropdown = document.getElementById('materials-dropdown-menu');
+    const materialsSearch = document.getElementById('materials-search');
+    const materialsOptions = materialsDropdown.querySelectorAll('div.p-2 > div.font-medium ~ div');
+    
+    materialsToggle.addEventListener('click', function() {
+      materialsDropdown.classList.toggle('hidden');
+    });
+    
+    // 点击外部关闭下拉框
+    document.addEventListener('click', function(event) {
+      if (!materialsToggle.contains(event.target) && !materialsDropdown.contains(event.target)) {
+        materialsDropdown.classList.add('hidden');
+      }
+    });
+    
+    // 素材搜索功能
+    materialsSearch.addEventListener('input', function() {
+      const searchTerm = this.value.toLowerCase();
+      materialsOptions.forEach(option => {
+        const label = option.querySelector('label').textContent.toLowerCase();
+        if (label.includes(searchTerm)) {
+          option.style.display = 'flex';
+          // 确保父知识库标题可见
+          let parentCategory = option.previousElementSibling;
+          while (parentCategory && !parentCategory.classList.contains('font-medium')) {
+            parentCategory = parentCategory.previousElementSibling;
+          }
+          if (parentCategory) parentCategory.style.display = 'block';
+        } else {
+          option.style.display = 'none';
+        }
+      });
+    });
+    
+    // 复选框选中状态更新
+    const materialsCheckboxes = materialsDropdown.querySelectorAll('input[type="checkbox"]');
+    materialsCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', updateMaterialsSelectionText);
+    });
+    
+    function updateMaterialsSelectionText() {
+      const selectedMaterials = [];
+      materialsCheckboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          selectedMaterials.push(checkbox.nextElementSibling.textContent);
+        }
+      });
+      
+      if (selectedMaterials.length > 0) {
+        if (selectedMaterials.length <= 2) {
+          materialsToggle.querySelector('span').textContent = selectedMaterials.join(', ');
+        } else {
+          materialsToggle.querySelector('span').textContent = `${selectedMaterials.length} 个素材已选择`;
+        }
+      } else {
+        materialsToggle.querySelector('span').textContent = '请选择关联知识库中的文件';
+      }
+    }
+    
+    // 复盘智能体配置编辑功能
+    const editReviewConfigBtn = document.getElementById('edit-review-config');
+    const cancelReviewConfigBtn = document.getElementById('cancel-review-config');
+    const reviewConfigView = document.getElementById('review-config-view');
+    const reviewConfigEdit = document.getElementById('review-config-edit');
+    const reviewConfigForm = document.getElementById('review-config-form');
+    
+    if (editReviewConfigBtn && cancelReviewConfigBtn && reviewConfigView && reviewConfigEdit && reviewConfigForm) {
+      // 编辑按钮点击事件
+      editReviewConfigBtn.addEventListener('click', function() {
+        reviewConfigView.classList.add('hidden');
+        reviewConfigEdit.classList.remove('hidden');
+      });
+      
+      // 取消按钮点击事件
+      cancelReviewConfigBtn.addEventListener('click', function() {
+        reviewConfigEdit.classList.add('hidden');
+        reviewConfigView.classList.remove('hidden');
+      });
+      
+      // 表单提交事件
+      reviewConfigForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // 这里可以添加表单提交逻辑
+        alert('配置保存成功！');
+        reviewConfigEdit.classList.add('hidden');
+        reviewConfigView.classList.remove('hidden');
+        
+        // 更新详情视图中的提示词模板
+        const reviewPromptInput = document.getElementById('review-prompt');
+        const reviewPromptDisplay = reviewConfigView.querySelector('pre');
+        if (reviewPromptInput && reviewPromptDisplay) {
+          reviewPromptDisplay.textContent = reviewPromptInput.value;
+        }
+      });
+    }
+    
+    // 培训配置相关功能
+    const modal = document.getElementById('create-training-modal');
+    const addBtn = document.getElementById('add-training-config-btn');
+    const closeBtn = document.getElementById('close-modal-btn');
+    const cancelBtn = document.getElementById('cancel-create-btn');
+    const submitBtn = document.getElementById('submit-create-btn');
+    const form = document.getElementById('create-training-form');
+    
+    // 检查元素是否存在，避免错误
+    if (modal && addBtn && closeBtn && cancelBtn && submitBtn && form) {
+      // 打开弹窗
+      addBtn.addEventListener('click', function() {
+        modal.classList.remove('hidden');
+      });
+      
+      // 关闭弹窗
+      function closeModal() {
+        modal.classList.add('hidden');
+        form.reset();
+      }
+      
+      closeBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+      
+      // 点击弹窗外部关闭
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          closeModal();
+        }
+      });
+      
+      // 提交表单
+      submitBtn.addEventListener('click', function() {
+        if (form.checkValidity()) {
+          // 模拟创建成功
+          alert('培训计划创建成功！');
+          closeModal();
+          // 这里可以添加刷新列表的逻辑
+        } else {
+          alert('请填写必填项');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
