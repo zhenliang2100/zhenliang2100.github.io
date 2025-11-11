@@ -207,7 +207,7 @@
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-01-10</td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button class="text-primary hover:text-primary/80 mr-3 edit-agent-btn" data-agent-id="agent001">编辑</button>
+                        <button class="text-primary mr-3" disabled>编辑</button>
                         <button class="text-gray-600 hover:text-gray-900">禁用</button>
                       </td>
                     </tr>
@@ -228,7 +228,7 @@
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-01-08</td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button class="text-primary hover:text-primary/80 mr-3 edit-agent-btn" data-agent-id="agent002">编辑</button>
+                        <button class="text-primary mr-3" disabled>编辑</button>
                         <button class="text-gray-600 hover:text-gray-900">禁用</button>
                       </td>
                     </tr>
@@ -249,7 +249,7 @@
                       </td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">2024-01-05</td>
                       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button class="text-primary hover:text-primary/80 mr-3 edit-agent-btn" data-agent-id="agent003">编辑</button>
+                        <button class="text-primary mr-3" disabled>编辑</button>
                         <button class="text-gray-600 hover:text-gray-900">启用</button>
                       </td>
                     </tr>
@@ -275,70 +275,16 @@
           </div>
         </div>
 
-        <!-- 智能体编辑配置面板 -->
-        <div id="agent-edit-panel" class="bg-white rounded-lg shadow-sm p-6 mt-6 hidden">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-semibold text-gray-700">编辑智能体配置</h3>
-            <button id="close-edit-panel" class="btn-secondary">
-              <i class="fa fa-times mr-1"></i> 关闭
-            </button>
-          </div>
-          
-          <!-- 岗位关联配置 -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">关联岗位</label>
-            <select id="position-select" class="w-full form-input">
-              <option value="">请选择岗位</option>
-              <option value="sales">销售顾问</option>
-              <option value="customer-service">客服助手</option>
-              <option value="trainer">培训导师</option>
-              <option value="technician">技术工程师</option>
-              <option value="manager">部门经理</option>
-            </select>
-            <p class="text-xs text-gray-500 mt-1">选择岗位后，智能体将自动关联该岗位的所有知识文档</p>
-          </div>
-          
-          <!-- 知识体系配置模块（基于岗位关联） -->
-          <div class="mb-8">
-            <h4 class="text-md font-medium text-gray-700 mb-4">知识体系配置</h4>
-            
-            <!-- 岗位知识库展示 -->
-            <div id="position-knowledge" class="hidden">
-              <div class="mb-4">
-                <h5 class="text-sm font-medium text-gray-700 mb-2">可访问的知识文档</h5>
-                <div class="space-y-2">
-                  <!-- 知识文档列表将根据岗位动态加载 -->
-                </div>
-              </div>
-              
-              <!-- 知识图谱生成选项 -->
-              <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">知识图谱生成</label>
-                <div class="flex items-center space-x-4">
-                  <label class="inline-flex items-center">
-                    <input type="checkbox" id="generate-kg" checked class="form-checkbox">
-                    <span class="ml-2">基于关联知识生成知识图谱</span>
-                  </label>
-                </div>
-                <p class="text-xs text-gray-500 mt-1">系统将基于岗位关联的知识文档自动生成知识图谱</p>
-              </div>
-            </div>
-            
-            <!-- 无岗位关联提示 -->
-            <div id="no-position-knowledge" class="text-center py-8 text-gray-500">
-              <i class="fa fa-info-circle text-2xl mb-2"></i>
-              <p>请先选择关联岗位，系统将自动加载该岗位的知识文档</p>
-            </div>
-          </div>
-          
-          <div class="flex justify-end space-x-3">
-            <button class="btn-secondary">取消</button>
-            <button class="btn-primary">保存配置</button>
-          </div>
-        </div>
       </div>
     </main>
   </div>
+
+
+      </div>
+    </main>
+  </div>
+</body>
+</html>
 
   <!-- JavaScript -->
   <script>
@@ -369,205 +315,7 @@
       });
     });
 
-    // 智能体编辑功能
-    document.addEventListener('DOMContentLoaded', function() {
-      const editPanel = document.getElementById('agent-edit-panel');
-      const closeEditBtn = document.getElementById('close-edit-panel');
-      const positionSelect = document.getElementById('position-select');
-      const positionKnowledge = document.getElementById('position-knowledge');
-      const noPositionKnowledge = document.getElementById('no-position-knowledge');
-      
-      // 编辑按钮点击事件
-      document.querySelectorAll('.edit-agent-btn').forEach(button => {
-        button.addEventListener('click', function() {
-          const agentId = this.getAttribute('data-agent-id');
-          openEditPanel(agentId);
-        });
-      });
-      
-      // 关闭编辑面板
-      closeEditBtn.addEventListener('click', function() {
-        editPanel.classList.add('hidden');
-      });
-      
-      // 岗位选择变更事件
-      positionSelect.addEventListener('change', function() {
-        const position = this.value;
-        if (position) {
-          loadPositionKnowledge(position);
-          positionKnowledge.classList.remove('hidden');
-          noPositionKnowledge.classList.add('hidden');
-        } else {
-          positionKnowledge.classList.add('hidden');
-          noPositionKnowledge.classList.remove('hidden');
-        }
-      });
-      
-      // 打开编辑面板函数
-      function openEditPanel(agentId) {
-        // 这里可以加载特定智能体的配置数据
-        console.log('编辑智能体:', agentId);
-        
-        // 重置表单
-        positionSelect.value = '';
-        positionKnowledge.classList.add('hidden');
-        noPositionKnowledge.classList.remove('hidden');
-        
-        // 显示编辑面板
-        editPanel.classList.remove('hidden');
-        
-        // 滚动到编辑面板
-        editPanel.scrollIntoView({ behavior: 'smooth' });
-      }
-      
-      // 加载岗位关联的知识文档
-      function loadPositionKnowledge(position) {
-        // 根据岗位获取关联的知识文档
-        const positionKnowledgeData = getKnowledgeByPosition(position);
-        
-        // 更新知识文档列表
-        const knowledgeList = positionKnowledge.querySelector('.space-y-2');
-        knowledgeList.innerHTML = '';
-        
-        positionKnowledgeData.forEach(doc => {
-          const docElement = createKnowledgeDocumentElement(doc);
-          knowledgeList.appendChild(docElement);
-        });
-        
-        console.log(`岗位 ${position} 的知识文档:`, positionKnowledgeData);
-      }
-      
-      // 根据岗位获取知识文档（模拟数据）
-      function getKnowledgeByPosition(position) {
-        const knowledgeMap = {
-          'sales': [
-            {
-              id: 'doc001',
-              name: '销售培训手册.pdf',
-              type: 'enterprise',
-              icon: 'fa-file-pdf-o',
-              iconColor: 'text-red-500',
-              uploadTime: '2024-01-15',
-              size: '2.3MB'
-            },
-            {
-              id: 'doc002',
-              name: '产品介绍视频.mp4',
-              type: 'industry',
-              icon: 'fa-file-video-o',
-              iconColor: 'text-purple-500',
-              uploadTime: '2024-01-10',
-              size: '15.7MB'
-            },
-            {
-              id: 'doc003',
-              name: '客户沟通话术.docx',
-              type: 'enterprise',
-              icon: 'fa-file-text-o',
-              iconColor: 'text-orange-500',
-              uploadTime: '2024-01-08',
-              size: '0.8MB'
-            }
-          ],
-          'customer-service': [
-            {
-              id: 'doc004',
-              name: '客服工作流程.pdf',
-              type: 'enterprise',
-              icon: 'fa-file-pdf-o',
-              iconColor: 'text-red-500',
-              uploadTime: '2024-01-12',
-              size: '1.2MB'
-            },
-            {
-              id: 'doc005',
-              name: '常见问题解答.docx',
-              type: 'industry',
-              icon: 'fa-file-text-o',
-              iconColor: 'text-orange-500',
-              uploadTime: '2024-01-05',
-              size: '0.5MB'
-            }
-          ],
-          'trainer': [
-            {
-              id: 'doc006',
-              name: '培训课程大纲.pdf',
-              type: 'enterprise',
-              icon: 'fa-file-pdf-o',
-              iconColor: 'text-red-500',
-              uploadTime: '2024-01-20',
-              size: '3.1MB'
-            },
-            {
-              id: 'doc007',
-              name: '教学视频合集.mp4',
-              type: 'industry',
-              icon: 'fa-file-video-o',
-              iconColor: 'text-purple-500',
-              uploadTime: '2024-01-18',
-              size: '25.3MB'
-            }
-          ],
-          'technician': [
-            {
-              id: 'doc008',
-              name: '技术手册.pdf',
-              type: 'enterprise',
-              icon: 'fa-file-pdf-o',
-              iconColor: 'text-red-500',
-              uploadTime: '2024-01-22',
-              size: '4.5MB'
-            }
-          ],
-          'manager': [
-            {
-              id: 'doc009',
-              name: '管理规范.pdf',
-              type: 'enterprise',
-              icon: 'fa-file-pdf-o',
-              iconColor: 'text-red-500',
-              uploadTime: '2024-01-25',
-              size: '1.8MB'
-            }
-          ]
-        };
-        
-        return knowledgeMap[position] || [];
-      }
-      
-      // 创建知识文档元素
-      function createKnowledgeDocumentElement(doc) {
-        const div = document.createElement('div');
-        div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded border';
-        
-        div.innerHTML = `
-          <div class="flex items-center">
-            <i class="fa ${doc.icon} ${doc.iconColor} mr-3"></i>
-            <div>
-              <div class="font-medium text-sm">${doc.name}</div>
-              <div class="text-xs text-gray-500">
-                <span class="mr-3">${doc.uploadTime}</span>
-                <span>${doc.size}</span>
-              </div>
-            </div>
-          </div>
-          <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${getTypeLabel(doc.type)}</span>
-        `;
-        
-        return div;
-      }
-      
-      // 获取类型标签
-      function getTypeLabel(type) {
-        const typeLabels = {
-          'enterprise': '企业知识',
-          'industry': '行业知识',
-          'personal': '个人知识'
-        };
-        return typeLabels[type] || type;
-      }
-    });
+
   </script>
 </body>
 </html>
