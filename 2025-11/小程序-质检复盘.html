@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>轻改专家 - 质检复盘 (小程序版)</title>
+  <title>轻改专家 - 接待复盘 (小程序版)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
   <script>
@@ -17,7 +17,9 @@
             warning: '#FF9500',
             danger: '#FF3B30',
             light: '#F2F2F7',
-            dark: '#1C1C1E'
+            dark: '#1C1C1E',
+            encouragement: '#5856D6',
+            highlight: '#FF2D55'
           },
           fontFamily: {
             'sf': ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Display', 'Segoe UI', 'Roboto', 'sans-serif']
@@ -57,69 +59,83 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
         padding: 16px;
       }
-      .tab-active {
-        color: #007AFF;
-        border-bottom: 2px solid #007AFF;
+      .highlight-card {
+        background: linear-gradient(135deg, #FFE2E5 0%, #FFC7CC 100%);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 4px 20px rgba(255, 45, 85, 0.1);
       }
-      .radar-chart-container {
-        position: relative;
-        width: 280px;
-        height: 280px;
-        margin: 0 auto;
+      .encouragement-card {
+        background: linear-gradient(135deg, #E5E4F8 0%, #D1D0FF 100%);
+        border-radius: 16px;
+        padding: 16px;
+        box-shadow: 0 4px 20px rgba(88, 86, 214, 0.1);
       }
-      .radar-axis {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 100%;
-        height: 100%;
-        transform-origin: center;
-      }
-      .radar-point {
-        position: absolute;
-        transform: translate(-50%, -50%);
-        width: 8px;
-        height: 8px;
-        background-color: #007AFF;
-        border-radius: 50%;
-      }
-      .radar-line {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 50%;
-        height: 2px;
-        background-color: #E5E5EA;
-        transform-origin: center left;
-      }
-      .ability-label {
-        position: absolute;
-        transform: translate(-50%, -50%);
-        font-size: 10px;
-        color: #8E8E93;
-        text-align: center;
-        width: 50px;
-      }
-      .stat-card {
-        background-color: white;
-        border-radius: 12px;
-        padding: 12px;
-        text-align: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-      }
-      .practice-btn {
+      .action-btn {
         background-color: #007AFF;
         color: white;
         border: none;
-        border-radius: 8px;
-        padding: 8px 16px;
-        font-size: 12px;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
+      .action-btn:hover {
+        background-color: #0066CC;
+        transform: translateY(-1px);
+      }
+      .secondary-btn {
+        background-color: white;
+        color: #007AFF;
+        border: 1px solid #007AFF;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-size: 14px;
         font-weight: 500;
         transition: all 0.2s ease;
       }
-      .practice-btn:hover {
-        background-color: #0066CC;
-        transform: translateY(-1px);
+      .secondary-btn:hover {
+        background-color: #F2F2F7;
+      }
+      .timeline-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #007AFF;
+      }
+      .timeline-line {
+        width: 2px;
+        background-color: #E5E5EA;
+        flex-grow: 1;
+        margin: 0 4px;
+      }
+      .quick-view-btn {
+        background-color: #F2F2F7;
+        color: #007AFF;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+      .quick-view-btn:hover {
+        background-color: #E5E5EA;
+      }
+      .banner-animation {
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 4px 20px rgba(255, 45, 85, 0.1);
+        }
+        50% {
+          box-shadow: 0 4px 20px rgba(255, 45, 85, 0.2);
+        }
+        100% {
+          box-shadow: 0 4px 20px rgba(255, 45, 85, 0.1);
+        }
       }
     }
   </style>
@@ -148,7 +164,7 @@
         
         <!-- 标题 -->
         <div class="absolute left-1/2 transform -translate-x-1/2 text-center">
-          <h1 class="text-lg font-semibold text-dark">质检复盘</h1>
+          <h1 class="text-lg font-semibold text-dark">接待复盘</h1>
         </div>
         
         <!-- 右侧功能按钮 -->
@@ -163,162 +179,115 @@
 
     <!-- 主要内容区域 -->
     <div class="main-content h-[calc(100%-88px)] overflow-y-auto px-[16px] py-[16px] bg-light">
-      
-      <!-- 复盘周期选择 -->
+      <!-- 虚拟形象问候 -->
       <div class="card-iphone mb-[16px]">
-        <div class="flex items-center justify-between mb-[10px]">
-          <h3 class="text-base font-semibold text-dark">复盘周期</h3>
-          <button class="text-primary text-sm flex items-center">
-            选择日期 <i class="fa fa-chevron-right ml-1 text-xs"></i>
-          </button>
-        </div>
-        <p class="text-lg font-bold text-primary">2025年11月10日</p>
-      </div>
-      
-      <!-- 基础看板 -->
-      <div class="card-iphone mb-[16px] cursor-pointer hover:opacity-90 transition-opacity duration-200" onclick="window.location.href='小程序-质检列表.html'">
-        <div class="flex items-center justify-between mb-[12px]">
-          <h3 class="text-base font-semibold text-dark">基础数据看板</h3>
-          <i class="fa fa-chevron-right text-secondary text-xs"></i>
-        </div>
-        <div class="grid grid-cols-2 gap-[12px]">
-          <div class="stat-card">
-            <p class="text-secondary text-xs mb-1">接待次数</p>
-            <p class="text-2xl font-bold text-dark">16</p>
+        <div class="flex items-center">
+          <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+            <i class="fa fa-comment text-primary text-xl"></i>
           </div>
-          <div class="stat-card">
-            <p class="text-secondary text-xs mb-1">成交次数</p>
-            <p class="text-2xl font-bold text-success">5</p>
-          </div>
-          <div class="stat-card">
-            <p class="text-secondary text-xs mb-1">成交占比</p>
-            <p class="text-2xl font-bold text-success">31%</p>
-          </div>
-          <div class="stat-card">
-            <p class="text-secondary text-xs mb-1">战败占比</p>
-            <p class="text-2xl font-bold text-danger">69%</p>
+          <div class="flex-grow">
+            <p class="text-sm text-dark leading-relaxed">
+              <strong>你好！</strong> 这是2025年11月10日的接待复盘，请重点关注张先生的案例，同时恭喜你在客户需求识别方面表现优秀！
+            </p>
           </div>
         </div>
       </div>
       
-      <!-- 能力分析 - 9维图 -->
-      <div class="card-iphone mb-[16px]">
-        <div class="flex items-center justify-between mb-[12px]">
-          <h3 class="text-base font-semibold text-dark">话术能力分析</h3>
-          <div class="flex text-xs">
-            <button id="tab-all" class="tab-active px-3 py-1">全部</button>
-            <button id="tab-success" class="px-3 py-1 text-secondary">成交</button>
-            <button id="tab-fail" class="px-3 py-1 text-secondary">战败</button>
+      <!-- 重点提醒（引流/总结区） -->
+      <div class="highlight-card mb-[16px]">
+        <div class="flex items-center mb-2">
+          <div class="w-7 h-7 rounded-full bg-highlight/20 flex items-center justify-center mr-2">
+            <i class="fa fa-bullhorn text-highlight text-sm"></i>
           </div>
+          <h2 class="text-base font-bold text-dark">重点提醒</h2>
         </div>
+        <p class="text-sm text-dark leading-relaxed">
+          张先生案例：今天上午10:23接待的张先生，您在介绍完产品后没有及时询问购买意向，比店内平均水平低<span class="text-danger font-semibold">28%</span>。
+        </p>
+      </div>
+      <!-- 做得好的地方（鼓励机制） -->
+      <div class="encouragement-card mb-[16px]">
+        <div class="flex items-center mb-2">
+          <div class="w-7 h-7 rounded-full bg-encouragement/20 flex items-center justify-center mr-2">
+            <i class="fa fa-thumbs-up text-encouragement text-sm"></i>
+          </div>
+          <h2 class="text-base font-bold text-dark">做得好！</h2>
+        </div>
+        <p class="text-sm text-dark leading-relaxed">
+          本周关于材质和工艺的讲解评分比上周提升了<span class="text-success font-semibold">15%</span>，继续保持！
+        </p>
+      </div>
+      
+      <!-- 待改进案例（使用具体场景） -->
+      <div class="card-iphone mb-[16px]">
+        <h3 class="text-base font-semibold text-dark mb-[12px]">需要改进的接待案例（2个）</h3>
         
-        <!-- 9维雷达图容器 -->
-        <div class="radar-chart-container mb-[10px]">
-          <!-- 雷达图背景线 -->
-          <div class="absolute inset-0 flex items-center justify-center">
-            <div class="w-[80%] h-[80%] rounded-full border border-gray-200"></div>
-            <div class="absolute w-[60%] h-[60%] rounded-full border border-gray-200"></div>
-            <div class="absolute w-[40%] h-[40%] rounded-full border border-gray-200"></div>
-            <div class="absolute w-[20%] h-[20%] rounded-full border border-gray-200"></div>
-          </div>
-          <!-- 坐标轴 -->
-          <div class="radar-line" style="transform: rotate(0deg);"></div>
-          <div class="radar-line" style="transform: rotate(40deg);"></div>
-          <div class="radar-line" style="transform: rotate(80deg);"></div>
-          <div class="radar-line" style="transform: rotate(120deg);"></div>
-          <div class="radar-line" style="transform: rotate(160deg);"></div>
-          <div class="radar-line" style="transform: rotate(200deg);"></div>
-          <div class="radar-line" style="transform: rotate(240deg);"></div>
-          <div class="radar-line" style="transform: rotate(280deg);"></div>
-          <div class="radar-line" style="transform: rotate(320deg);"></div>
-          <!-- 能力标签 -->
-          <div class="ability-label" style="top: 10%; left: 50%;">身份介绍</div>
-          <div class="ability-label" style="top: 25%; left: 80%;">服务意识</div>
-          <div class="ability-label" style="top: 60%; left: 90%;">逼单能力</div>
-          <div class="ability-label" style="top: 85%; left: 70%;">话题介入</div>
-          <div class="ability-label" style="top: 90%; left: 30%;">攻防能力</div>
-          <div class="ability-label" style="top: 60%; left: 10%;">需求分析</div>
-          <div class="ability-label" style="top: 25%; left: 20%;">案例展示</div>
-          <div class="ability-label" style="top: 15%; left: 40%;">场景塑造</div>
-          <div class="ability-label" style="top: 18%; left: 60%;">专业知识</div>
-          <!-- 数据点 -->
-          <div class="radar-point" style="top: 15%; left: 50%;"></div>
-          <div class="radar-point" style="top: 30%; left: 75%;"></div>
-          <div class="radar-point" style="top: 50%; left: 85%;"></div>
-          <div class="radar-point" style="top: 75%; left: 70%;"></div>
-          <div class="radar-point" style="top: 80%; left: 35%;"></div>
-          <div class="radar-point" style="top: 50%; left: 15%;"></div>
-          <div class="radar-point" style="top: 30%; left: 25%;"></div>
-          <div class="radar-point" style="top: 20%; left: 45%;"></div>
-          <div class="radar-point" style="top: 25%; left: 65%;"></div>
-        </div>
-        <p class="text-xs text-center text-secondary">数据来源：系统自动分析16次接待记录</p>
-      </div>
-      
-      <!-- 接待剖析 -->
-      <div class="card-iphone mb-[16px]">
-        <h3 class="text-base font-semibold text-dark mb-[12px]">接待剖析（不足项）</h3>
-        
-        <!-- 不足项1 -->
-        <div class="mb-[16px] pb-[16px] border-b border-gray-100">
-          <div class="flex justify-between items-start mb-[8px]">
+        <!-- 案例1 -->
+        <div class="mb-[16px] pb-[16px] border-b border-gray-200">
+          <div class="flex items-center mb-[8px]">
             <h4 class="text-sm font-semibold text-dark flex items-center">
               <span class="inline-block w-6 h-6 rounded-full bg-danger/20 text-danger text-xs flex items-center justify-center mr-2">1</span>
-              逼单能力
-            </h4>
-            <span class="text-xs text-danger font-medium">待提升</span>
-          </div>
+              上午10:23 - 张先生</h4>
+            </div>
           <p class="text-xs text-gray-600 mb-[8px] leading-relaxed">
-            <strong class="text-dark">不足点评：</strong>在客户表示考虑时，未能有效推进决策过程，缺少明确的行动建议和利益强调。
+            <strong class="text-dark">当时的情况：</strong>客户看完产品后表示"这个不错，我再考虑一下"，您回应说"好的，您考虑考虑"，没有进一步推进。
           </p>
+          <!-- 录音切片播放按钮 -->
+          <div class="flex items-center mb-[10px] bg-gray-50 p-2 rounded-lg">
+            <button class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+              <i class="fa fa-play text-primary"></i>
+            </button>
+            <div class="flex-grow">
+              <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full" style="width: 35%"></div>
+              </div>
+            </div>
+            <span class="text-xs text-gray-500 ml-2">0:28</span>
+          </div>
           <p class="text-xs text-gray-600 mb-[10px] leading-relaxed">
-            <strong class="text-dark">改善意见：</strong>采用假设成交法，如"如果您今天确定下来，我可以为您申请免费的内饰升级"，或提供限时优惠增加紧迫感。
+            <strong class="text-dark">改进建议：</strong>您可以说"张先生，我理解您需要考虑的心情。其实我们今天正好有一个限时活动，如果您确定的话，我可以为您申请额外的内饰清洁套装。您更在意产品的哪些方面呢？我们可以再详细聊一下。"
           </p>
-          <button class="practice-btn" onclick="window.location.href='小程序-话术对练.html'">
-            <i class="fa fa-play-circle mr-1"></i> 练一练
+          <button class="action-btn w-full text-xs py-1.5 px-2 rounded">
+            <i class="fa fa-play-circle mr-1"></i> 话术练习
           </button>
         </div>
         
-        <!-- 不足项2 -->
-        <div class="mb-[16px] pb-[16px] border-b border-gray-100">
-          <div class="flex justify-between items-start mb-[8px]">
+        <!-- 案例2 -->
+        <div>
+          <div class="flex items-center mb-[8px]">
             <h4 class="text-sm font-semibold text-dark flex items-center">
               <span class="inline-block w-6 h-6 rounded-full bg-warning/20 text-warning text-xs flex items-center justify-center mr-2">2</span>
-              需求分析
-            </h4>
-            <span class="text-xs text-warning font-medium">需加强</span>
+              下午14:15 - 王先生</h4>
           </div>
           <p class="text-xs text-gray-600 mb-[8px] leading-relaxed">
-            <strong class="text-dark">不足点评：</strong>询问客户需求时过于表面，未能深入挖掘客户的潜在需求和痛点。
+            <strong class="text-dark">当时的情况：</strong>王先生只是简单问了价格，您就直接报价了，没有先了解他的用车需求和预算范围。
           </p>
-          <p class="text-xs text-gray-600 mb-[10px] leading-relaxed">
-            <strong class="text-dark">改善意见：</strong>使用开放式问题引导客户，如"您对车辆最看重的三个方面是什么？"，并根据回答进一步追问。
-          </p>
-          <button class="practice-btn" onclick="window.location.href='小程序-话术对练.html'">
-            <i class="fa fa-play-circle mr-1"></i> 练一练
-          </button>
-        </div>
-        
-        <!-- 不足项3 -->
-        <div class="mb-[16px]">
-          <div class="flex justify-between items-start mb-[8px]">
-            <h4 class="text-sm font-semibold text-dark flex items-center">
-              <span class="inline-block w-6 h-6 rounded-full bg-warning/20 text-warning text-xs flex items-center justify-center mr-2">3</span>
-              场景塑造
-            </h4>
-            <span class="text-xs text-warning font-medium">需加强</span>
+          <!-- 录音切片播放按钮 -->
+          <div class="flex items-center mb-[10px] bg-gray-50 p-2 rounded-lg">
+            <button class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+              <i class="fa fa-play text-primary"></i>
+            </button>
+            <div class="flex-grow">
+              <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full" style="width: 45%"></div>
+              </div>
+            </div>
+            <span class="text-xs text-gray-500 ml-2">0:42</span>
           </div>
-          <p class="text-xs text-gray-600 mb-[8px] leading-relaxed">
-            <strong class="text-dark">不足点评：</strong>未能有效描绘产品使用场景，帮助客户想象拥有产品后的体验。
-          </p>
           <p class="text-xs text-gray-600 mb-[10px] leading-relaxed">
-            <strong class="text-dark">改善意见：</strong>结合客户需求，描述具体使用场景，如"您周末带家人自驾游时，这个全景天窗会让旅程更加愉悦"。
+            <strong class="text-dark">改进建议：</strong>您可以先问"王先生，您平时主要是自己开还是家用？大概预算在什么范围？这样我可以给您推荐最适合的方案。"
           </p>
-          <button class="practice-btn" onclick="window.location.href='小程序-话术对练.html'">
-            <i class="fa fa-play-circle mr-1"></i> 练一练
+          <button class="action-btn w-full text-xs py-1.5 px-2 rounded">
+            <i class="fa fa-play-circle mr-1"></i> 话术练习
           </button>
         </div>
       </div>
+      
+      <!-- 底部链接（查看更多接待数据） -->
+      <button class="quick-view-btn w-full flex items-center justify-center" onclick="window.location.href='小程序-质检列表.html'">
+        <i class="fa fa-bar-chart mr-2"></i> 查看更多接待数据
+        <i class="fa fa-chevron-right ml-2 text-xs"></i>
+      </button>
     </div>
   </div>
 
@@ -350,85 +319,10 @@
         container.style.transform = 'translateX(0)';
         
         // 显示提示
-        const successDiv = document.createElement('div');
-        successDiv.className = 'fixed top-[100px] left-1/2 transform -translate-x-1/2 bg-success text-white px-[16px] py-[10px] rounded-[16px] text-xs font-medium z-50';
-        successDiv.textContent = '返回上一页';
-        document.body.appendChild(successDiv);
-        
-        setTimeout(() => {
-          successDiv.remove();
-        }, 2000);
+        showToast('返回上一页');
       }, 300);
     }
 
-    // 页面加载完成后的初始化
-    document.addEventListener('DOMContentLoaded', function() {
-      // 添加页面加载动画
-      const mainContent = document.querySelector('.main-content');
-      mainContent.style.opacity = '0';
-      setTimeout(() => {
-        mainContent.style.transition = 'opacity 0.5s ease';
-        mainContent.style.opacity = '1';
-      }, 100);
-      
-      // 切换客户类型标签
-      const tabs = ['all', 'success', 'fail'];
-      tabs.forEach(tab => {
-        document.getElementById(`tab-${tab}`).addEventListener('click', function() {
-          // 移除所有标签的激活状态
-          tabs.forEach(t => {
-            document.getElementById(`tab-${t}`).classList.remove('tab-active');
-            document.getElementById(`tab-${t}`).classList.add('text-secondary');
-          });
-          // 激活当前标签
-          this.classList.add('tab-active');
-          this.classList.remove('text-secondary');
-          
-          // 这里可以根据不同标签切换雷达图数据
-          simulateDataLoading();
-        });
-      });
-      
-      // Toast提示函数
-      function showToast(message) {
-        const toast = document.createElement('div');
-        toast.className = 'fixed top-[100px] left-1/2 transform -translate-x-1/2 bg-dark/80 text-white px-[16px] py-[10px] rounded-[16px] text-xs font-medium z-50';
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        
-        setTimeout(() => {
-          toast.remove();
-        }, 2000);
-      }
-    });
-    
-    // 模拟数据加载
-    function simulateDataLoading() {
-      const radarPoints = document.querySelectorAll('.radar-point');
-      const opacityValues = [0.3, 0.5, 0.8];
-      
-      // 先隐藏所有点
-      radarPoints.forEach(point => {
-        point.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        point.style.opacity = '0';
-      });
-      
-      // 模拟加载延迟
-      setTimeout(() => {
-        // 随机显示点（模拟不同客户类型的数据变化）
-        radarPoints.forEach((point, index) => {
-          const randomOpacity = opacityValues[Math.floor(Math.random() * opacityValues.length)];
-          point.style.opacity = randomOpacity;
-          point.style.transform = 'translate(-50%, -50%) scale(1.2)';
-          
-          // 恢复原始大小
-          setTimeout(() => {
-            point.style.transform = 'translate(-50%, -50%) scale(1)';
-          }, 200);
-        });
-      }, 300);
-    }
-    
     // 显示提示消息
     function showToast(message) {
       const toast = document.createElement('div');
@@ -444,6 +338,17 @@
         }, 500);
       }, 2000);
     }
+
+    // 页面加载完成后的初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 添加页面加载动画
+      const mainContent = document.querySelector('.main-content');
+      mainContent.style.opacity = '0';
+      setTimeout(() => {
+        mainContent.style.transition = 'opacity 0.5s ease';
+        mainContent.style.opacity = '1';
+      }, 100);
+    });
   </script>
 </body>
 </html>
