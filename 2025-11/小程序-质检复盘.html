@@ -194,28 +194,38 @@
       </div>
       
       <!-- 重点提醒（引流/总结区） -->
-      <div class="highlight-card mb-[16px]">
-        <div class="flex items-center mb-2">
-          <div class="w-7 h-7 rounded-full bg-highlight/20 flex items-center justify-center mr-2">
-            <i class="fa fa-bullhorn text-highlight text-sm"></i>
+      <div class="highlight-card mb-[16px] overflow-hidden" style="display: none;">
+        <div class="flex items-center justify-between mb-2 cursor-pointer" id="highlight-card-header">
+          <div class="flex items-center">
+            <div class="w-7 h-7 rounded-full bg-highlight/20 flex items-center justify-center mr-2">
+              <i class="fa fa-bullhorn text-highlight text-sm"></i>
+            </div>
+            <h2 class="text-base font-bold text-dark">重点提醒</h2>
           </div>
-          <h2 class="text-base font-bold text-dark">重点提醒</h2>
+          <i class="fa fa-chevron-down text-highlight transition-transform duration-300" id="highlight-card-icon"></i>
         </div>
-        <p class="text-sm text-dark leading-relaxed">
-          张先生案例：今天上午10:23接待的张先生，您在介绍完产品后没有及时询问购买意向，比店内平均水平低<span class="text-danger font-semibold">28%</span>。
-        </p>
+        <div class="text-sm text-dark leading-relaxed overflow-hidden transition-all duration-300 max-h-0" id="highlight-card-content">
+          <p>
+            张先生案例：今天上午10:23接待的张先生，您在介绍完产品后没有及时询问购买意向，比店内平均水平低<span class="text-danger font-semibold">28%</span>。
+          </p>
+        </div>
       </div>
       <!-- 做得好的地方（鼓励机制） -->
-      <div class="encouragement-card mb-[16px]">
-        <div class="flex items-center mb-2">
-          <div class="w-7 h-7 rounded-full bg-encouragement/20 flex items-center justify-center mr-2">
-            <i class="fa fa-thumbs-up text-encouragement text-sm"></i>
+      <div class="encouragement-card mb-[16px] overflow-hidden" style="display: none;">
+        <div class="flex items-center justify-between mb-2 cursor-pointer" id="encouragement-card-header">
+          <div class="flex items-center">
+            <div class="w-7 h-7 rounded-full bg-encouragement/20 flex items-center justify-center mr-2">
+              <i class="fa fa-thumbs-up text-encouragement text-sm"></i>
+            </div>
+            <h2 class="text-base font-bold text-dark">做得好！</h2>
           </div>
-          <h2 class="text-base font-bold text-dark">做得好！</h2>
+          <i class="fa fa-chevron-down text-encouragement transition-transform duration-300" id="encouragement-card-icon"></i>
         </div>
-        <p class="text-sm text-dark leading-relaxed">
-          本周关于材质和工艺的讲解评分比上周提升了<span class="text-success font-semibold">15%</span>，继续保持！
-        </p>
+        <div class="text-sm text-dark leading-relaxed overflow-hidden transition-all duration-300 max-h-0" id="encouragement-card-content">
+          <p>
+            本周关于材质和工艺的讲解评分比上周提升了<span class="text-success font-semibold">15%</span>，继续保持！
+          </p>
+        </div>
       </div>
       
       <!-- 待改进案例（使用具体场景） -->
@@ -229,9 +239,11 @@
               <span class="inline-block w-6 h-6 rounded-full bg-danger/20 text-danger text-xs flex items-center justify-center mr-2">1</span>
               上午10:23 - 张先生</h4>
             </div>
-          <p class="text-xs text-gray-600 mb-[8px] leading-relaxed">
-            <strong class="text-dark">当时的情况：</strong>客户看完产品后表示"这个不错，我再考虑一下"，您回应说"好的，您考虑考虑"，没有进一步推进。
+          <p class="text-sm text-dark leading-relaxed mb-[8px]">
+            "客户需求挖不透，报价再低也难成交！质检发现您在做需求分析时，提问类型比较单一，得分偏低。多问两类问题，比如客户的驾驶习惯和出险历史，能更快找到痛点。花3分钟练一练，下次接待就能切中要害，提升成交率"
           </p>
+          <!-- 点击播放现场原声小标题 -->
+          <h5 class="text-xs font-semibold text-gray-500 mb-[4px]">点击播放现场原声</h5>
           <!-- 录音切片播放按钮 -->
           <div class="flex items-center mb-[10px] bg-gray-50 p-2 rounded-lg">
             <button class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
@@ -244,9 +256,6 @@
             </div>
             <span class="text-xs text-gray-500 ml-2">0:28</span>
           </div>
-          <p class="text-xs text-gray-600 mb-[10px] leading-relaxed">
-            <strong class="text-dark">改进建议：</strong>您可以说"张先生，我理解您需要考虑的心情。其实我们今天正好有一个限时活动，如果您确定的话，我可以为您申请额外的内饰清洁套装。您更在意产品的哪些方面呢？我们可以再详细聊一下。"
-          </p>
           <button class="action-btn w-full text-xs py-1.5 px-2 rounded">
             <i class="fa fa-play-circle mr-1"></i> 话术练习
           </button>
@@ -259,9 +268,11 @@
               <span class="inline-block w-6 h-6 rounded-full bg-warning/20 text-warning text-xs flex items-center justify-center mr-2">2</span>
               下午14:15 - 王先生</h4>
           </div>
-          <p class="text-xs text-gray-600 mb-[8px] leading-relaxed">
-            <strong class="text-dark">当时的情况：</strong>王先生只是简单问了价格，您就直接报价了，没有先了解他的用车需求和预算范围。
+          <p class="text-sm text-dark leading-relaxed mb-[8px]">
+            "⚠️ 特别注意！您的'逼单能力'维度近3天的复盘得分持续偏低，看来之前的练习还没完全掌握。这意味着很多临门一脚的客户可能流失掉。这个问题直接影响您的成交率！建议您今天重点再强化一次，攻克这个关键短板，把快到手的订单牢牢锁住。"
           </p>
+          <!-- 点击播放现场原声小标题 -->
+          <h5 class="text-xs font-semibold text-gray-500 mb-[4px]">点击播放现场原声</h5>
           <!-- 录音切片播放按钮 -->
           <div class="flex items-center mb-[10px] bg-gray-50 p-2 rounded-lg">
             <button class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center mr-3">
@@ -274,9 +285,6 @@
             </div>
             <span class="text-xs text-gray-500 ml-2">0:42</span>
           </div>
-          <p class="text-xs text-gray-600 mb-[10px] leading-relaxed">
-            <strong class="text-dark">改进建议：</strong>您可以先问"王先生，您平时主要是自己开还是家用？大概预算在什么范围？这样我可以给您推荐最适合的方案。"
-          </p>
           <button class="action-btn w-full text-xs py-1.5 px-2 rounded">
             <i class="fa fa-play-circle mr-1"></i> 话术练习
           </button>
@@ -339,6 +347,41 @@
       }, 2000);
     }
 
+    // 折叠面板交互逻辑
+    function initCollapsibleCards() {
+      // 处理重点提醒卡片
+      const highlightHeader = document.getElementById('highlight-card-header');
+      const highlightContent = document.getElementById('highlight-card-content');
+      const highlightIcon = document.getElementById('highlight-card-icon');
+      
+      // 处理做得好卡片
+      const encouragementHeader = document.getElementById('encouragement-card-header');
+      const encouragementContent = document.getElementById('encouragement-card-content');
+      const encouragementIcon = document.getElementById('encouragement-card-icon');
+      
+      // 点击展开/收起功能
+      function toggleCard(header, content, icon) {
+        header.addEventListener('click', function() {
+          // 获取内容的实际高度
+          const isExpanded = content.style.maxHeight !== '0px' && content.style.maxHeight !== '';
+          
+          if (isExpanded) {
+            // 收起卡片
+            content.style.maxHeight = '0px';
+            icon.style.transform = 'rotate(0deg)';
+          } else {
+            // 展开卡片
+            content.style.maxHeight = content.scrollHeight + 'px';
+            icon.style.transform = 'rotate(180deg)';
+          }
+        });
+      }
+      
+      // 初始化两个卡片
+      toggleCard(highlightHeader, highlightContent, highlightIcon);
+      toggleCard(encouragementHeader, encouragementContent, encouragementIcon);
+    }
+
     // 页面加载完成后的初始化
     document.addEventListener('DOMContentLoaded', function() {
       // 添加页面加载动画
@@ -348,6 +391,9 @@
         mainContent.style.transition = 'opacity 0.5s ease';
         mainContent.style.opacity = '1';
       }, 100);
+      
+      // 初始化折叠面板
+      initCollapsibleCards();
     });
   </script>
 </body>
