@@ -1,9 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { ChevronLeft, MoreVertical, CheckCircle2, Bot, User, Sparkles, X, Activity, Lightbulb, Target, ShieldAlert, MessageSquareText } from 'lucide-react';
 
 export default function App() {
   // 视图状态: 'chat' (聊天列表), 'form' (档案表单页), 'report' (诊断报告页), 'success' (成功页)
-  const [view, setView] = useState('chat');
+  const location = useLocation();
+  const [view, setView] = useState(() => {
+    // 根据 URL 路径设置初始视图 (在 Hash Router 中，路径信息在 hash 中)
+    if (location.hash.includes('/i')) {
+      return 'chat'; // 可以根据需要设置特定路径的默认视图
+    }
+    return 'chat';
+  });
   const chatEndRef = useRef(null);
 
   // 表单状态数据
